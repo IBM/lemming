@@ -1,0 +1,53 @@
+{
+    "metadata": {
+        "name": "Lemming",
+        "title_text": "A Guided Disambiguation Tool for Plan Selection",
+        "citation_text": "@inproceedings{lemming, \n title={{Lemming: A Guided Disambiguation Tool\n\t for Plan Selection}}, \n author={Michael Katz and Jungkoo Kang and \n\t Tathagata Chakraborti and Francesco\n\t Fuggitti and Shirin Sohrabi}, \n booktitle={ICAPS 2023 Demonstration Track}, \n year={2023}}",
+        "link_to_code": "https://github.com/IBM/lemming",
+        "primary_link": "lemming",
+        "secondary_links": [
+            {
+                "name": "Planning for Automated Composition of Aggregated Assistants",
+                "venue": "ICAPS 2021 Demonstration",
+                "link": "https://icaps21.icaps-conference.org/demos/demos/389.pdf"
+            },
+            {
+                "name": "Towards End-to-End Business Process Automation",
+                "venue": "Robotic Process Automation",
+                "link": "https://www.degruyter.com/document/doi/10.1515/9783110676693-008"
+            },
+            {
+                "name": "Explainable Composition of Aggregated Assistants",
+                "venue": "ICAPS 2020 Workshop on Explainable AI Planning",
+                "link": "https://arxiv.org/abs/2011.10707"
+            },
+            {
+                "name": "A Unified Conversational Assistant Framework for Business Process Automation",
+                "venue": "AAAI 2020 Workshop on Intelligent Process Automation",
+                "link": "https://arxiv.org/abs/2001.03543"
+            }
+        ],
+        "community_link": "https://join.slack.com/t/vam-hri/shared_invite/zt-gjq1jtld-PzxfFywTi0qBF6CUX5julw",
+        "info_text": "Lemming uses landmarks to guide a user to select a plan from a set of plans while minimizing for the number of disambiguation points. It also provides multiple views into the set of plans, reflecting different considerations for the user in terms of how much information they need to deal with during the disambgiuation process."
+    },
+    "link_to_server": "http://localhost:1234",
+    "default_view": "Select View",
+    "views": [
+        {
+            "name": "Select View",
+            "disabled": false
+        },
+        {
+            "name": "Build Forward",
+            "disabled": false
+        },
+        {
+            "name": "Build Backward",
+            "disabled": false
+        },
+        {
+            "name": "Landmarks View",
+            "disabled": false
+        }
+    ]
+}

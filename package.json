@@ -1,0 +1,71 @@
+{
+  "name": "Lemming",
+  "version": "0.0.0",
+  "private": true,
+  "repository": "https://github.com/IBM/lemming",
+  "bugs": "https://github.com/IBM/lemming/issues",
+  "license": "Apache License 2.0",
+  "scripts": {
+    "build": "react-scripts build",
+    "ci-check": "yarn format:diff",
+    "clean": "yarn cache clean && yarn install",
+    "eject": "react-scripts eject",
+    "format": "prettier --write \"**/*.{js,md,scss}\"",
+    "format:diff": "prettier --list-different \"**/*.{js,md,scss}\"",
+    "format:staged": "prettier --write",
+    "start": "react-scripts start",
+    "test": "react-scripts test",
+    "deploy": "rm -rf ./build && yarn build && cf push -f manifest.yml"
+  },
+  "dependencies": {
+    "@carbon/react": "1.1.0",
+    "react": "^16.12.0",
+    "react-device-detect": "2.1.2",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.51.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.5",
+    "prettier": "^1.17.0",
+    "react-github-btn": "1.2.1"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*.js": [
+      "yarn format:staged",
+      "git add"
+    ],
+    "*.{scss,css}": [
+      "yarn format:staged",
+      "git add"
+    ],
+    "*.md": [
+      "yarn format:staged",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "jsxBracketSameLine": true,
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  }
+}

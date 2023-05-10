@@ -1,0 +1,79 @@
+.text-blue {
+  color: #0f62fe;
+}
+
+.text-secondary {
+  color: gray;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.sidebar {
+}
+
+.see-also-accordion .cds--accordion__content {
+  padding: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.see-also-accordion .cds--structured-list-row:last-child {
+  border-bottom: none;
+}
+
+.logo {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
+.bx--grid--full-width {
+  padding: 0;
+}
+
+.bx--container {
+  padding: 20px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  font-size: smaller;
+  background-color: white;
+}
+
+.bonus-link {
+  box-shadow: none !important;
+  width: fit-content !important;
+}
+
+.bonus-link path {
+  fill: #0f62fe !important;
+}
+
+.buttonset {
+  box-shadow: none !important;
+}
+
+.tertiary-danger {
+  border-color: red;
+  color: red;
+}
+
+.tertiary-danger:hover {
+  background-color: red;
+}
+
+.tertiary-secondary {
+  border-color: black;
+  color: black;
+}
+
+.tertiary-secondary:hover {
+  background-color: black;
+}

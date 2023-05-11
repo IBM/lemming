@@ -134,8 +134,10 @@ dmypy.json
 
 /node_modules/
 /build/
-
-!.env
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
 
 *.idea
 *.DS_Store

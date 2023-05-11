@@ -99,7 +99,7 @@ class LandingPage extends React.Component {
                         <StructuredListBody>
                           {this.state.metadata.secondary_links.map(
                             (item, i) => (
-                              <StructuredListRow key={i} tabIndex={0}>
+                              <StructuredListRow key={i}>
                                 <StructuredListCell>
                                   <Button
                                     target="_blank"

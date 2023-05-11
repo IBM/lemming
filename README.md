@@ -7,8 +7,8 @@
 <img src="https://media.github.ibm.com/user/93001/files/c843e2f5-b515-4c1a-bcb2-988ca0bf40e7" width="40%" height="auto"/>
 
 This repository hosts the source code for **Lemming: A Guided Disambiguation Tool for Plan Selection**.
-Lemming makes use of landmarks to proactively guide the user to select a plan from a set of plans 
-while greedily minimizing for the number of disambiguation points. It also provides multiple views into the set of 
+Lemming makes use of landmarks to proactively guide the user to select a plan from a set of plans
+while greedily minimizing for the number of disambiguation points. It also provides multiple views into the set of
 plans that need to be disambiguated, reflecting different considerations for the user in terms of how much
 information they need to deal with during the disambgiuation process.
 

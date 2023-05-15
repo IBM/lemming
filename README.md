@@ -1,7 +1,7 @@
 # Lemming
 
 [![Carbon](https://img.shields.io/badge/carbon-v11-blue)](https://www.carbondesignsystem.com)
-[![Carbon](https://img.shields.io/badge/python-3.10-green)](https://www.carbondesignsystem.com)
+[![Carbon](https://img.shields.io/badge/python-3.8-green)](https://www.carbondesignsystem.com)
 
 <br/>
 <img src="https://media.github.ibm.com/user/93001/files/c843e2f5-b515-4c1a-bcb2-988ca0bf40e7" width="40%" height="auto"/>

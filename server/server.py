@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from schemas import *
+from schemas import PlanningTask, LemmingTask, Landmark, Selection, Plan
 from typing import List, Any
 
 import os
@@ -14,72 +14,66 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 
 @app.route("/")
-def hello_world():
+def hello_world() -> Any:
     return "<p>Lemming!</p>"
 
 
 @app.route("/file_upload", methods=["POST"])
-def file_upload():
+def file_upload() -> Any:
     payload = request.get_data().decode("utf-8")
     return jsonify(payload)
 
 
 @app.route("/import_domain", methods=["POST"])
-def import_domain() -> LemmingTask:
-
+def import_domain() -> Any:
     payload = json.loads(request.get_data().decode("utf-8"))
     domain_name: str = payload["name"]
 
     planning_task = PlanningTask(
-      domain=open(f'./data/{domain_name}/domain.pddl').read(),
-      problem=open(f'./data/{domain_name}/problem.pddl').read(),
+        domain=open(f"./data/{domain_name}/domain.pddl").read(),
+        problem=open(f"./data/{domain_name}/problem.pddl").read(),
     )
 
     try:
-        plans = json.load(open(f'./data/{domain_name}/plans.json'))
+        plans = json.load(open(f"./data/{domain_name}/plans.json"))
         plans = [Plan(steps=item["plan"], cost=item["cost"]) for item in plans["plans"]]
 
     except Exception as e:
         print(e)
         plans = []
 
-    new_lemming_task = LemmingTask(
-      planning_task=planning_task,
-      plans=plans
-    )
-
+    new_lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
     return jsonify(new_lemming_task.dict())
 
 
 @app.route("/get_landmarks", methods=["POST"])
-def get_landmarks(planning_task: PlanningTask) -> List[Landmark]:
-
+def get_landmarks(planning_task: PlanningTask) -> Any:
     if not planning_task:
         planning_task = PlanningTask(json.loads(request.get_data().decode("utf-8")))
 
     # Call to service
     _ = planning_task
 
-    landmarks = []
+    landmarks: Any = []
     return jsonify(landmarks)
 
 
 @app.route("/get_plans", methods=["POST"])
-def get_plans(planning_task: PlanningTask) -> List[Plan]:
-
+def get_plans(planning_task: PlanningTask) -> Any:
     if not planning_task:
         planning_task = PlanningTask(json.loads(request.get_data().decode("utf-8")))
 
     # Call to service
     _ = planning_task
 
-    plans = []
+    plans: Any = []
     return jsonify(plans)
 
 
 @app.route("/generate_selection_view", methods=["POST"])
-def generate_selection_view(lemming_task: LemmingTask, landmarks: List[Landmark]) -> Any:
-
+def generate_selection_view(
+    lemming_task: LemmingTask, landmarks: List[Landmark]
+) -> Any:
     if not lemming_task or not landmarks:
         payload = json.loads(request.get_data().decode("utf-8"))
 
@@ -89,13 +83,12 @@ def generate_selection_view(lemming_task: LemmingTask, landmarks: List[Landmark]
     # Call to service
     _ = lemming_task, landmarks
 
-    viz = dict()
+    viz: Any = dict()
     return jsonify(viz)
 
 
 @app.route("/new_selection", methods=["POST"])
 def new_selection(selections: List[Selection]) -> Any:
-
     if not selections:
         payload = json.loads(request.get_data().decode("utf-8"))
         selections = payload
@@ -103,7 +96,7 @@ def new_selection(selections: List[Selection]) -> Any:
     # Call to service
     _ = selections
 
-    viz = dict()
+    viz: Any = dict()
     return jsonify(viz)
 
 

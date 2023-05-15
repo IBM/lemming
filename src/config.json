@@ -31,6 +31,10 @@
         "info_text": "Lemming uses landmarks to guide a user to select a plan from a set of plans while minimizing for the number of disambiguation points. It also provides multiple views into the set of plans, reflecting different considerations for the user in terms of how much information they need to deal with during the disambgiuation process."
     },
     "link_to_server": "http://localhost:1234",
+    "planner_config": {
+        "use_planner": true,
+        "link_to_planner": "http://localhost:4501"
+    },
     "default_view": "Select View",
     "views": [
         {

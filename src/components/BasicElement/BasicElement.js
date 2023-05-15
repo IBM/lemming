@@ -28,6 +28,9 @@ import {
   RadioButton,
 } from '@carbon/react';
 
+const config = require('../../config.json');
+const link_to_server = config.link_to_server;
+
 const components = {
   BuildForward: BuildForward,
   BuildBackward: BuildBackward,
@@ -39,6 +42,8 @@ class PlanArea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedFile: null,
+      selectedFileType: null,
       domain: null,
       problem: null,
       plans: null,
@@ -58,6 +63,36 @@ class PlanArea extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {}
+
+  onFileChange(file_type, e) {
+    this.setState(
+      {
+        ...this.state,
+        selectedFile: e.target.files[0],
+        selectedFileType: file_type,
+      },
+      () => {
+        if (!this.state.selectedFile) return;
+
+        fetch(link_to_server + '/file_upload', {
+          method: 'POST',
+          body: this.state.selectedFile,
+          headers: {
+            'content-type': this.state.selectedFile.type,
+            'content-length': `${this.state.selectedFile.size}`,
+          },
+        })
+          .then(res => res.json())
+          .then(data => {
+            this.setState({
+              ...this.state,
+              [this.state.selectedFileType]: data,
+            });
+          })
+          .catch(err => console.error(err));
+      }
+    );
+  }
 
   uploadFiles() {
     if (this.state.controls.upload_tab === 0) {
@@ -90,6 +125,26 @@ class PlanArea extends React.Component {
           },
         });
       } else {
+        fetch(link_to_server + '/import_domain', {
+          method: 'POST',
+          body: JSON.stringify(
+            IMPORT_OPTIONS[this.state.controls.selected_domain]
+          ),
+          headers: { 'Content-Type': 'application/json' },
+        })
+          .then(res => res.json())
+          .then(data => {
+            const planning_task = data['planning_task'];
+
+            this.setState({
+              ...this.state,
+              domain: planning_task['domain'],
+              problem: planning_task['problem'],
+              plans: data['plans'],
+            });
+          })
+          .catch(err => console.error(err));
+
         this.setState({
           ...this.state,
           controls: {
@@ -127,16 +182,13 @@ class PlanArea extends React.Component {
   }
 
   selectImport(itemIndex) {
-    this.setState(
-      {
-        ...this.state,
-        controls: {
-          ...this.state.controls,
-          selected_domain: itemIndex,
-        },
+    this.setState({
+      ...this.state,
+      controls: {
+        ...this.state.controls,
+        selected_domain: itemIndex,
       },
-      console.log(this.state.controls.selected_domain)
-    );
+    });
   }
 
   render() {
@@ -169,9 +221,11 @@ class PlanArea extends React.Component {
             Start
           </Button>
 
-          <Button style={{ marginLeft: '10px' }} kind="danger" size="sm">
-            Plan
-          </Button>
+          {this.state.domain && this.state.problem && (
+            <Button style={{ marginLeft: '10px' }} kind="danger" size="sm">
+              Plan
+            </Button>
+          )}
 
           <Modal
             passiveModal
@@ -227,19 +281,28 @@ class PlanArea extends React.Component {
                       <StructuredListRow>
                         <StructuredListCell>Domain</StructuredListCell>
                         <StructuredListCell>
-                          <input type="file" onChange={this.onFileChange} />
+                          <input
+                            type="file"
+                            onChange={this.onFileChange.bind(this, 'domain')}
+                          />
                         </StructuredListCell>
                       </StructuredListRow>
                       <StructuredListRow>
                         <StructuredListCell>Problem</StructuredListCell>
                         <StructuredListCell>
-                          <input type="file" onChange={this.onFileChange} />
+                          <input
+                            type="file"
+                            onChange={this.onFileChange.bind(this, 'problem')}
+                          />
                         </StructuredListCell>
                       </StructuredListRow>
                       <StructuredListRow>
                         <StructuredListCell>Plans</StructuredListCell>
                         <StructuredListCell>
-                          <input type="file" onChange={this.onFileChange} />
+                          <input
+                            type="file"
+                            onChange={this.onFileChange.bind(this, 'plans')}
+                          />
                         </StructuredListCell>
                       </StructuredListRow>
                     </StructuredListBody>

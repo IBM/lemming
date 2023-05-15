@@ -1,0 +1,10 @@
+{
+    "TIMEOUT": 10,
+    "use_planner": true,
+    "link_to_planner": "http://localhost:4501",
+    "planner_config": {
+        "plans_endpoint": "topq",
+        "landmarks_endpoint": null,
+        "selection_view_endpoint": null
+    }
+}

@@ -51,7 +51,7 @@
         },
         {
             "name": "Landmarks View",
-            "disabled": false
+            "disabled": true
         }
     ]
 }

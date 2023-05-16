@@ -26,6 +26,7 @@ import {
   Link,
   Tile,
   RadioButton,
+  Loading,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -58,6 +59,7 @@ class PlanArea extends React.Component {
         import_select: false,
         pddl_upload: false,
         no_plans_error: false,
+        viz_loading: false,
       },
     };
   }
@@ -182,6 +184,15 @@ class PlanArea extends React.Component {
   }
 
   getPlans(e) {
+    this.setState({
+      ...this.state,
+      plans: [],
+      notifications: {
+        ...this.state.notifications,
+        viz_loading: true,
+      },
+    });
+
     fetch(link_to_server + '/get_plans', {
       method: 'POST',
       body: JSON.stringify({
@@ -195,6 +206,10 @@ class PlanArea extends React.Component {
         this.setState({
           ...this.state,
           plans: data['plans'],
+          notifications: {
+            ...this.state.notifications,
+            viz_loading: false,
+          },
         });
       })
       .catch(err => {
@@ -205,6 +220,7 @@ class PlanArea extends React.Component {
           notifications: {
             ...this.state.notifications,
             no_plans_error: true,
+            viz_loading: false,
           },
         });
       });
@@ -431,22 +447,41 @@ class PlanArea extends React.Component {
 
               if (view.disabled) {
                 return (
-                  <ToastNotification
-                    lowContrast
-                    hideCloseButton
-                    key={id}
-                    type="error"
-                    subtitle={
-                      <span>
-                        The authors have disabled the {view.name}. Please check
-                        out the other viewing options for now.
-                      </span>
-                    }
-                    title="DISABLED"
-                  />
+                  <>
+                    <br />
+                    <br />
+                    <ToastNotification
+                      lowContrast
+                      hideCloseButton
+                      key={id}
+                      type="error"
+                      subtitle={
+                        <span>
+                          The authors have disabled the {view.name}. Please
+                          check out the other viewing options for now.
+                        </span>
+                      }
+                      title="DISABLED VIEW"
+                    />
+                  </>
                 );
               } else {
-                return <Component key={id} props={this.state} />;
+                return (
+                  <>
+                    {this.state.notifications.viz_loading && (
+                      <div style={{ margin: '200px' }}>
+                        <Loading
+                          description="Active loading indicator"
+                          withOverlay={false}
+                        />
+                      </div>
+                    )}
+
+                    {!this.state.notifications.viz_loading && (
+                      <Component key={id} props={this.state} />
+                    )}
+                  </>
+                );
               }
             }
 

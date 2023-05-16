@@ -11,7 +11,7 @@ class PlanningTask(BaseModel):
 
 
 class Plan(BaseModel):
-    steps: List[str]
+    actions: List[str]
     cost: float
 
 

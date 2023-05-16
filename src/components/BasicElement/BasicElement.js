@@ -57,7 +57,7 @@ class PlanArea extends React.Component {
       notifications: {
         import_select: false,
         pddl_upload: false,
-        plan_upload: false,
+        no_plans_error: false,
       },
     };
   }
@@ -181,6 +181,35 @@ class PlanArea extends React.Component {
     });
   }
 
+  getPlans(e) {
+    fetch(link_to_server + '/get_plans', {
+      method: 'POST',
+      body: JSON.stringify({
+        domain: this.state.domain,
+        problem: this.state.problem,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          ...this.state,
+          plans: data['plans'],
+        });
+      })
+      .catch(err => {
+        console.error(err);
+
+        this.setState({
+          ...this.state,
+          notifications: {
+            ...this.state.notifications,
+            no_plans_error: true,
+          },
+        });
+      });
+  }
+
   selectImport(itemIndex) {
     this.setState({
       ...this.state,
@@ -222,26 +251,30 @@ class PlanArea extends React.Component {
           </Button>
 
           {this.state.domain && this.state.problem && (
-            <Button style={{ marginLeft: '10px' }} kind="danger" size="sm">
+            <Button
+              style={{ marginLeft: '10px' }}
+              kind="danger"
+              size="sm"
+              onClick={this.getPlans.bind(this)}>
               Plan
             </Button>
           )}
 
           <Modal
             passiveModal
-            open={this.state.notifications.plan_upload}
+            open={this.state.notifications.no_plans_error}
             onRequestClose={() => {
               this.setState({
                 ...this.state,
                 notifications: {
                   ...this.state.notifications,
-                  plan_upload: false,
+                  no_plans_error: false,
                 },
               });
             }}
-            modalHeading="You can ask Lemming to generate the plans for you. Inshallah the domain and problem files are error free."
+            modalHeading="Try again with different files and inshallah it works out."
             modalLabel={
-              <span className="text-danger">Could not parse plan file!</span>
+              <span className="text-danger">Failed to generate plans!</span>
             }
             size="xs"></Modal>
 

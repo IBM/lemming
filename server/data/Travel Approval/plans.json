@@ -1,117 +1,115 @@
-{
-    "plans": [
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball1 rooma left",
-                "pick ball2 rooma right",
-                "move rooma roomb",
-                "drop ball2 roomb right",
-                "drop ball1 roomb left",
-                "move roomb rooma",
-                "pick ball3 rooma right",
-                "pick ball4 rooma left",
-                "move rooma roomb",
-                "drop ball4 roomb left",
-                "drop ball3 roomb right"
-            ]
-        },
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball1 rooma left",
-                "pick ball2 rooma right",
-                "move rooma roomb",
-                "drop ball2 roomb right",
-                "drop ball1 roomb left",
-                "move roomb rooma",
-                "pick ball4 rooma right",
-                "pick ball3 rooma left",
-                "move rooma roomb",
-                "drop ball3 roomb left",
-                "drop ball4 roomb right"
-            ]
-        },
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball2 rooma left",
-                "pick ball1 rooma right",
-                "move rooma roomb",
-                "drop ball1 roomb right",
-                "drop ball2 roomb left",
-                "move roomb rooma",
-                "pick ball3 rooma right",
-                "pick ball4 rooma left",
-                "move rooma roomb",
-                "drop ball4 roomb left",
-                "drop ball3 roomb right"
-            ]
-        },
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball1 rooma right",
-                "pick ball2 rooma left",
-                "move rooma roomb",
-                "drop ball2 roomb left",
-                "drop ball1 roomb right",
-                "move roomb rooma",
-                "pick ball3 rooma left",
-                "pick ball4 rooma right",
-                "move rooma roomb",
-                "drop ball4 roomb right",
-                "drop ball3 roomb left"
-            ]
-        },
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball1 rooma left",
-                "pick ball3 rooma right",
-                "move rooma roomb",
-                "drop ball3 roomb right",
-                "drop ball1 roomb left",
-                "move roomb rooma",
-                "pick ball4 rooma right",
-                "pick ball2 rooma left",
-                "move rooma roomb",
-                "drop ball2 roomb left",
-                "drop ball4 roomb right"
-            ]
-        },
-        {
-            "cost": 11,
-            "actions": [
-                "pick ball3 rooma left",
-                "pick ball1 rooma right",
-                "move rooma roomb",
-                "drop ball1 roomb right",
-                "drop ball3 roomb left",
-                "move roomb rooma",
-                "pick ball2 rooma right",
-                "pick ball4 rooma left",
-                "move rooma roomb",
-                "drop ball4 roomb left",
-                "drop ball2 roomb right"
-            ]
-        },
-        {
-            "cost": 12,
-            "actions": [
-                "pick ball1 rooma left",
-                "pick ball2 rooma right",
-                "move rooma roomb",
-                "drop ball1 roomb left",
-                "drop ball2 roomb right",
-                "move roomb rooma",
-                "pick ball3 rooma left",
-                "pick ball4 rooma right",
-                "move rooma roomb",
-                "drop ball3 roomb left",
-                "drop ball4 roomb right",
-                "move roomb rooma"
-            ]
-        }
-    ]
-}
+[
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball1 rooma left",
+            "pick ball2 rooma right",
+            "move rooma roomb",
+            "drop ball2 roomb right",
+            "drop ball1 roomb left",
+            "move roomb rooma",
+            "pick ball3 rooma right",
+            "pick ball4 rooma left",
+            "move rooma roomb",
+            "drop ball4 roomb left",
+            "drop ball3 roomb right"
+        ]
+    },
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball1 rooma left",
+            "pick ball2 rooma right",
+            "move rooma roomb",
+            "drop ball2 roomb right",
+            "drop ball1 roomb left",
+            "move roomb rooma",
+            "pick ball4 rooma right",
+            "pick ball3 rooma left",
+            "move rooma roomb",
+            "drop ball3 roomb left",
+            "drop ball4 roomb right"
+        ]
+    },
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball2 rooma left",
+            "pick ball1 rooma right",
+            "move rooma roomb",
+            "drop ball1 roomb right",
+            "drop ball2 roomb left",
+            "move roomb rooma",
+            "pick ball3 rooma right",
+            "pick ball4 rooma left",
+            "move rooma roomb",
+            "drop ball4 roomb left",
+            "drop ball3 roomb right"
+        ]
+    },
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball1 rooma right",
+            "pick ball2 rooma left",
+            "move rooma roomb",
+            "drop ball2 roomb left",
+            "drop ball1 roomb right",
+            "move roomb rooma",
+            "pick ball3 rooma left",
+            "pick ball4 rooma right",
+            "move rooma roomb",
+            "drop ball4 roomb right",
+            "drop ball3 roomb left"
+        ]
+    },
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball1 rooma left",
+            "pick ball3 rooma right",
+            "move rooma roomb",
+            "drop ball3 roomb right",
+            "drop ball1 roomb left",
+            "move roomb rooma",
+            "pick ball4 rooma right",
+            "pick ball2 rooma left",
+            "move rooma roomb",
+            "drop ball2 roomb left",
+            "drop ball4 roomb right"
+        ]
+    },
+    {
+        "cost": 11,
+        "actions": [
+            "pick ball3 rooma left",
+            "pick ball1 rooma right",
+            "move rooma roomb",
+            "drop ball1 roomb right",
+            "drop ball3 roomb left",
+            "move roomb rooma",
+            "pick ball2 rooma right",
+            "pick ball4 rooma left",
+            "move rooma roomb",
+            "drop ball4 roomb left",
+            "drop ball2 roomb right"
+        ]
+    },
+    {
+        "cost": 12,
+        "actions": [
+            "pick ball1 rooma left",
+            "pick ball2 rooma right",
+            "move rooma roomb",
+            "drop ball1 roomb left",
+            "drop ball2 roomb right",
+            "move roomb rooma",
+            "pick ball3 rooma left",
+            "pick ball4 rooma right",
+            "move rooma roomb",
+            "drop ball3 roomb left",
+            "drop ball4 roomb right",
+            "move roomb rooma"
+        ]
+    }
+]

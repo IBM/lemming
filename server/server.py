@@ -40,10 +40,7 @@ def import_domain() -> Any:
 
     try:
         plans = json.load(open(f"./data/{domain_name}/plans.json"))
-        plans = [
-            Plan(actions=item["actions"], cost=item["cost"])
-            for item in plans.get("plans", [])
-        ]
+        plans = [Plan(actions=item["actions"], cost=item["cost"]) for item in plans]
 
     except Exception as e:
         print(e)

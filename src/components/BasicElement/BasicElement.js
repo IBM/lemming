@@ -43,13 +43,16 @@ class PlanArea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      views: config.views,
+      active_view: config.default_view,
       selectedFile: null,
       selectedFileType: null,
       domain: null,
       problem: null,
       plans: [],
-      views: props.props.views,
-      active_view: props.props.default_view,
+      feedback: 'Welcome to Lemming! Get started by loading a planning task.',
+      selected_landmarks: ['aaaa', 'bbbbb', 'cccccc'],
+      unselected_landmarks: ['xxxxxx', 'yyyyyyyyyy', 'zzzz'],
       controls: {
         selected_domain: null,
         modal_open: false,
@@ -86,6 +89,9 @@ class PlanArea extends React.Component {
         })
           .then(res => res.json())
           .then(data => {
+            if (this.state.selectedFileType === 'plans')
+              data = JSON.parse(data);
+
             this.setState({
               ...this.state,
               [this.state.selectedFileType]: data,
@@ -140,7 +146,6 @@ class PlanArea extends React.Component {
           .then(res => res.json())
           .then(data => {
             const planning_task = data['planning_task'];
-
             this.setState(
               {
                 ...this.state,
@@ -235,6 +240,13 @@ class PlanArea extends React.Component {
   }
 
   generateViz() {
+    const feedback = this.generateFeedback();
+    if (feedback)
+      this.setState({
+        ...this.state,
+        feedback: feedback,
+      });
+
     if (!this.state.plans || !this.state.plans.length) return;
 
     const viz_endpoint =
@@ -266,266 +278,33 @@ class PlanArea extends React.Component {
     });
   }
 
-  render() {
-    return (
-      <Grid>
-        <Column lg={6} md={6} sm={4}>
-          <ContentSwitcher
-            onChange={e => this.logViewChange(e)}
-            size="sm"
-            selectedIndex={this.state.views
-              .map(e => e.name)
-              .indexOf(this.state.active_view)}>
-            {this.state.views.map((view, id) => (
-              <Switch key={id} name={view.name} text={view.name} />
-            ))}
-          </ContentSwitcher>
-          <br />
-        </Column>
+  generateFeedback() {
+    var feedback = '';
 
-        <Column lg={12} md={8} sm={4}>
-          <Button
-            kind="primary"
-            size="sm"
-            onClick={() => {
-              this.setState({
-                ...this.state,
-                controls: { ...this.state.controls, modal_open: true },
-              });
-            }}>
-            Start
-          </Button>
+    if (this.state.domain) {
+      const reg = /.*\(domain (.*)\).*/g;
+      const domain_name = reg.exec(this.state.domain)[1];
 
-          {this.state.domain && this.state.problem && (
-            <Button
-              style={{ marginLeft: '10px' }}
-              kind="danger"
-              size="sm"
-              onClick={this.getPlans.bind(this)}>
-              Plan
-            </Button>
-          )}
+      feedback += `Have fun with the ${domain_name} domain!`;
+    }
 
-          <Modal
-            passiveModal
-            open={this.state.notifications.no_plans_error}
-            onRequestClose={() => {
-              this.setState({
-                ...this.state,
-                notifications: {
-                  ...this.state.notifications,
-                  no_plans_error: false,
-                },
-              });
-            }}
-            modalHeading="Try again with different files and inshallah it works out."
-            modalLabel={
-              <span className="text-danger">Failed to generate plans!</span>
-            }
-            size="xs"></Modal>
+    if (this.state.plans) {
+      const max_cost = this.state.plans.reduce(
+        (max_cost, item) => (item.cost > max_cost ? item.cost : max_cost),
+        0
+      );
+      const min_cost = this.state.plans.reduce(
+        (min_cost, item) => (item.cost <= min_cost ? item.cost : min_cost),
+        Infinity
+      );
+      const num_plans = this.state.plans.length;
 
-          <Modal
-            preventCloseOnClickOutside
-            onRequestClose={() => {
-              this.setState({
-                ...this.state,
-                controls: { ...this.state.controls, modal_open: false },
-              });
-            }}
-            onRequestSubmit={this.uploadFiles.bind(this)}
-            open={this.state.controls.modal_open}
-            modalHeading="Planning Task"
-            modalLabel="Getting Started"
-            primaryButtonText="Upload"
-            size="sm">
-            <Tabs selectedIndex={this.state.controls.upload_tab}>
-              <TabList
-                aria-label="List of tabs"
-                contained
-                activation="automatic">
-                <Tab onClick={this.changeTab.bind(this, 0)}>Upload</Tab>
-                <Tab onClick={this.changeTab.bind(this, 1)}>Import</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <div>
-                    Start by uploading a PDDL domain and problem file, and
-                    optionally, a set of plans. Alternatively, you can request
-                    Lemming to compute a set of plans.
-                  </div>
-                  <br />
+      if (num_plans > 1)
+        feedback += ` You have ${num_plans} plans to select from with minimum cost ${min_cost} and maximal cost ${max_cost}.`;
+    }
 
-                  <StructuredListWrapper ariaLabel="Structured list">
-                    <StructuredListBody>
-                      <StructuredListRow>
-                        <StructuredListCell>Domain</StructuredListCell>
-                        <StructuredListCell>
-                          <input
-                            type="file"
-                            onChange={this.onFileChange.bind(this, 'domain')}
-                          />
-                        </StructuredListCell>
-                      </StructuredListRow>
-                      <StructuredListRow>
-                        <StructuredListCell>Problem</StructuredListCell>
-                        <StructuredListCell>
-                          <input
-                            type="file"
-                            onChange={this.onFileChange.bind(this, 'problem')}
-                          />
-                        </StructuredListCell>
-                      </StructuredListRow>
-                      <StructuredListRow>
-                        <StructuredListCell>Plans</StructuredListCell>
-                        <StructuredListCell>
-                          <input
-                            type="file"
-                            onChange={this.onFileChange.bind(this, 'plans')}
-                          />
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    </StructuredListBody>
-                  </StructuredListWrapper>
-
-                  {this.state.notifications.pddl_upload && (
-                    <InlineNotification
-                      hideCloseButton
-                      iconDescription="Close"
-                      subtitle="Both domain and problem files must be provided."
-                      timeout={0}
-                      title="MISSING FILES"
-                      kind="error"
-                      lowContrast
-                    />
-                  )}
-
-                  <br />
-                  <div>
-                    You can also import from a set of illustrative examples{' '}
-                    <Link
-                      style={{ cursor: 'pointer' }}
-                      onClick={this.changeTab.bind(this, 1)}>
-                      here
-                    </Link>
-                    .
-                  </div>
-                </TabPanel>
-                <TabPanel>
-                  {this.state.notifications.import_select && (
-                    <InlineNotification
-                      hideCloseButton
-                      iconDescription="Close"
-                      subtitle="Please select a domain"
-                      timeout={0}
-                      title="NO SELECTION"
-                      kind="error"
-                      lowContrast
-                    />
-                  )}
-                  <StructuredListWrapper
-                    selection
-                    ariaLabel="Illustrative Domains">
-                    <StructuredListHead>
-                      <StructuredListRow head>
-                        <StructuredListCell head>Domain</StructuredListCell>
-                        <StructuredListCell head>
-                          Description
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    </StructuredListHead>
-                    <StructuredListBody>
-                      {IMPORT_OPTIONS.map((item, i) => (
-                        <StructuredListRow key={`row-${i}`}>
-                          <StructuredListCell
-                            onClick={this.selectImport.bind(this, i)}>
-                            {item.name}
-                          </StructuredListCell>
-                          <StructuredListCell
-                            onClick={this.selectImport.bind(this, i)}>
-                            {item.description}
-                          </StructuredListCell>
-                          <StructuredListCell>
-                            <br />
-                            <RadioButton
-                              checked={
-                                i === this.state.controls.selected_domain
-                              }
-                              onClick={this.selectImport.bind(this, i)}
-                              id={`row-${i}`}
-                              title={`row-${i}`}
-                              value={`row-${i}`}
-                              name={item.name}
-                              labelText={``}
-                            />
-                          </StructuredListCell>
-                        </StructuredListRow>
-                      ))}
-                    </StructuredListBody>
-                  </StructuredListWrapper>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </Modal>
-
-          {this.state.views.map((view, id) => {
-            if (this.state.active_view === view.name) {
-              const Component = components[view.name.replace(/\s/g, '')];
-
-              if (view.disabled) {
-                return (
-                  <div key={id}>
-                    <br />
-                    <br />
-                    <ToastNotification
-                      lowContrast
-                      hideCloseButton
-                      key={id}
-                      type="error"
-                      subtitle={`The authors have disabled the ${view.name}. Please
-                          check out the other viewing options for now.`}
-                      title="DISABLED VIEW"
-                    />
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={id}>
-                    {this.state.notifications.viz_loading && (
-                      <div style={{ margin: '200px' }}>
-                        <Loading
-                          description="Active loading indicator"
-                          withOverlay={false}
-                        />
-                      </div>
-                    )}
-
-                    {!this.state.notifications.viz_loading && (
-                      <Component key={id} props={this.state} />
-                    )}
-                  </div>
-                );
-              }
-            }
-
-            return null;
-          })}
-        </Column>
-      </Grid>
-    );
+    return feedback;
   }
-}
-
-class FeedbackArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      feedback: 'Welcome to Lemming! Get started by loading a planning task.',
-      selected_landmarks: ['aaaa', 'bbbbb', 'cccccc'],
-      unselected_landmarks: ['xxxxxx', 'yyyyyyyyyy', 'zzzz'],
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState) {}
 
   selectLandmark(landmark) {
     var selected_landmarks = this.state.selected_landmarks;
@@ -536,11 +315,16 @@ class FeedbackArea extends React.Component {
 
     selected_landmarks.push(landmark);
 
-    this.setState({
-      ...this.state,
-      selected_landmarks: selected_landmarks,
-      unselected_landmarks: unselected_landmarks,
-    });
+    this.setState(
+      {
+        ...this.state,
+        selected_landmarks: selected_landmarks,
+        unselected_landmarks: unselected_landmarks,
+      },
+      () => {
+        this.generateViz();
+      }
+    );
   }
 
   deselectLandmark(landmark) {
@@ -552,48 +336,335 @@ class FeedbackArea extends React.Component {
 
     unselected_landmarks.push(landmark);
 
-    this.setState({
-      ...this.state,
-      selected_landmarks: selected_landmarks,
-      unselected_landmarks: unselected_landmarks,
-    });
+    this.setState(
+      {
+        ...this.state,
+        selected_landmarks: selected_landmarks,
+        unselected_landmarks: unselected_landmarks,
+      },
+      () => {
+        this.generateViz();
+      }
+    );
   }
 
   render() {
     return (
       <Grid>
-        <Column lg={4} md={4} sm={4}>
-          <Tile>{this.state.feedback}</Tile>
+        <Column lg={12} md={6} sm={4}>
+          <ContentSwitcher
+            onChange={e => this.logViewChange(e)}
+            size="sm"
+            selectedIndex={this.state.views
+              .map(e => e.name)
+              .indexOf(this.state.active_view)}>
+            {this.state.views.map((view, id) => (
+              <Switch key={id} name={view.name} text={view.name} />
+            ))}
+          </ContentSwitcher>
+          <br />
 
-          <StructuredListWrapper ariaLabel="Selected Landmarks">
-            <StructuredListHead>
-              <StructuredListRow head>
-                <StructuredListCell head>Selected Landmarks</StructuredListCell>
-              </StructuredListRow>
-            </StructuredListHead>
-            <StructuredListBody className="landmarks-list">
-              {this.state.selected_landmarks.map((item, i) => (
-                <StructuredListRow key={item}>
-                  <StructuredListCell
-                    className="text-blue landmark-list-item"
-                    onClick={this.deselectLandmark.bind(this, item)}>
-                    {item}
-                  </StructuredListCell>
-                </StructuredListRow>
-              ))}
-              {this.state.unselected_landmarks.map((item, i) => (
-                <StructuredListRow key={item}>
-                  <StructuredListCell
-                    className="text-secondary landmark-list-item"
-                    onClick={this.selectLandmark.bind(this, item)}>
-                    {item}
-                  </StructuredListCell>
-                </StructuredListRow>
-              ))}
-            </StructuredListBody>
-          </StructuredListWrapper>
+          <Grid>
+            <Column lg={12} md={8} sm={4}>
+              <Button
+                kind="primary"
+                size="sm"
+                onClick={() => {
+                  this.setState({
+                    ...this.state,
+                    controls: { ...this.state.controls, modal_open: true },
+                  });
+                }}>
+                Start
+              </Button>
+
+              {this.state.domain && this.state.problem && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="danger"
+                  size="sm"
+                  onClick={this.getPlans.bind(this)}>
+                  Plan
+                </Button>
+              )}
+
+              <Modal
+                passiveModal
+                open={this.state.notifications.no_plans_error}
+                onRequestClose={() => {
+                  this.setState({
+                    ...this.state,
+                    notifications: {
+                      ...this.state.notifications,
+                      no_plans_error: false,
+                    },
+                  });
+                }}
+                modalHeading="Try again with different files and inshallah it works out."
+                modalLabel={
+                  <span className="text-danger">Failed to generate plans!</span>
+                }
+                size="xs"></Modal>
+
+              <Modal
+                preventCloseOnClickOutside
+                onRequestClose={() => {
+                  this.setState({
+                    ...this.state,
+                    controls: { ...this.state.controls, modal_open: false },
+                  });
+                }}
+                onRequestSubmit={this.uploadFiles.bind(this)}
+                open={this.state.controls.modal_open}
+                modalHeading="Planning Task"
+                modalLabel="Getting Started"
+                primaryButtonText="Upload"
+                size="sm">
+                <Tabs selectedIndex={this.state.controls.upload_tab}>
+                  <TabList
+                    aria-label="List of tabs"
+                    contained
+                    activation="automatic">
+                    <Tab onClick={this.changeTab.bind(this, 0)}>Upload</Tab>
+                    <Tab onClick={this.changeTab.bind(this, 1)}>Import</Tab>
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      <div>
+                        Start by uploading a PDDL domain and problem file, and
+                        optionally, a set of plans. Alternatively, you can
+                        request Lemming to compute a set of plans.
+                      </div>
+                      <br />
+
+                      <StructuredListWrapper ariaLabel="Structured list">
+                        <StructuredListBody>
+                          <StructuredListRow>
+                            <StructuredListCell>Domain</StructuredListCell>
+                            <StructuredListCell>
+                              <input
+                                type="file"
+                                onChange={this.onFileChange.bind(
+                                  this,
+                                  'domain'
+                                )}
+                              />
+                            </StructuredListCell>
+                          </StructuredListRow>
+                          <StructuredListRow>
+                            <StructuredListCell>Problem</StructuredListCell>
+                            <StructuredListCell>
+                              <input
+                                type="file"
+                                onChange={this.onFileChange.bind(
+                                  this,
+                                  'problem'
+                                )}
+                              />
+                            </StructuredListCell>
+                          </StructuredListRow>
+                          <StructuredListRow>
+                            <StructuredListCell>Plans</StructuredListCell>
+                            <StructuredListCell>
+                              <input
+                                type="file"
+                                onChange={this.onFileChange.bind(this, 'plans')}
+                              />
+                            </StructuredListCell>
+                          </StructuredListRow>
+                        </StructuredListBody>
+                      </StructuredListWrapper>
+
+                      {this.state.notifications.pddl_upload && (
+                        <InlineNotification
+                          hideCloseButton
+                          iconDescription="Close"
+                          subtitle="Both domain and problem files must be provided."
+                          timeout={0}
+                          title="MISSING FILES"
+                          kind="error"
+                          lowContrast
+                        />
+                      )}
+
+                      <br />
+                      <div>
+                        You can also import from a set of illustrative examples{' '}
+                        <Link
+                          style={{ cursor: 'pointer' }}
+                          onClick={this.changeTab.bind(this, 1)}>
+                          here
+                        </Link>
+                        .
+                      </div>
+                    </TabPanel>
+                    <TabPanel>
+                      {this.state.notifications.import_select && (
+                        <InlineNotification
+                          hideCloseButton
+                          iconDescription="Close"
+                          subtitle="Please select a domain"
+                          timeout={0}
+                          title="NO SELECTION"
+                          kind="error"
+                          lowContrast
+                        />
+                      )}
+                      <StructuredListWrapper
+                        selection
+                        ariaLabel="Illustrative Domains">
+                        <StructuredListHead>
+                          <StructuredListRow head>
+                            <StructuredListCell head>Domain</StructuredListCell>
+                            <StructuredListCell head>
+                              Description
+                            </StructuredListCell>
+                          </StructuredListRow>
+                        </StructuredListHead>
+                        <StructuredListBody>
+                          {IMPORT_OPTIONS.map((item, i) => (
+                            <StructuredListRow key={`row-${i}`}>
+                              <StructuredListCell
+                                onClick={this.selectImport.bind(this, i)}>
+                                {item.name}
+                              </StructuredListCell>
+                              <StructuredListCell
+                                onClick={this.selectImport.bind(this, i)}>
+                                {item.description}
+                              </StructuredListCell>
+                              <StructuredListCell>
+                                <br />
+                                <RadioButton
+                                  checked={
+                                    i === this.state.controls.selected_domain
+                                  }
+                                  onClick={this.selectImport.bind(this, i)}
+                                  id={`row-${i}`}
+                                  title={`row-${i}`}
+                                  value={`row-${i}`}
+                                  name={item.name}
+                                  labelText={``}
+                                />
+                              </StructuredListCell>
+                            </StructuredListRow>
+                          ))}
+                        </StructuredListBody>
+                      </StructuredListWrapper>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              </Modal>
+
+              {this.state.views.map((view, id) => {
+                if (this.state.active_view === view.name) {
+                  const Component = components[view.name.replace(/\s/g, '')];
+
+                  if (view.disabled) {
+                    return (
+                      <div key={id}>
+                        <br />
+                        <br />
+                        <ToastNotification
+                          lowContrast
+                          hideCloseButton
+                          key={id}
+                          type="error"
+                          subtitle={`The authors have disabled the ${view.name}. Please
+                          check out the other viewing options for now.`}
+                          title="DISABLED VIEW"
+                        />
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={id}>
+                        {this.state.notifications.viz_loading && (
+                          <div style={{ margin: '200px' }}>
+                            <Loading
+                              description="Active loading indicator"
+                              withOverlay={false}
+                            />
+                          </div>
+                        )}
+
+                        {!this.state.notifications.viz_loading && (
+                          <Component key={id} props={this.state} />
+                        )}
+                      </div>
+                    );
+                  }
+                }
+
+                return null;
+              })}
+            </Column>
+          </Grid>
+        </Column>
+        <Column lg={4} md={2} sm={1}>
+          <FeedbackArea
+            state={this.state}
+            selectLandmark={this.selectLandmark.bind(this)}
+            deselectLandmark={this.deselectLandmark.bind(this)}
+          />
         </Column>
       </Grid>
+    );
+  }
+}
+
+class FeedbackArea extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = props.state;
+  }
+
+  componentDidUpdate(prevProps, prevState) {}
+
+  static getDerivedStateFromProps(props, state) {
+    return props.state;
+  }
+
+  selectLandmark(landmark) {
+    this.props.selectLandmark(landmark);
+  }
+
+  deselectLandmark(landmark) {
+    this.props.deselectLandmark(landmark);
+  }
+
+  render() {
+    return (
+      <>
+        <Tile>{this.state.feedback}</Tile>
+
+        <StructuredListWrapper ariaLabel="Selected Landmarks">
+          <StructuredListHead>
+            <StructuredListRow head>
+              <StructuredListCell head>Selected Landmarks</StructuredListCell>
+            </StructuredListRow>
+          </StructuredListHead>
+          <StructuredListBody className="landmarks-list">
+            {this.state.selected_landmarks.map((item, i) => (
+              <StructuredListRow key={item}>
+                <StructuredListCell
+                  className="text-blue landmark-list-item"
+                  onClick={this.deselectLandmark.bind(this, item)}>
+                  {item}
+                </StructuredListCell>
+              </StructuredListRow>
+            ))}
+            {this.state.unselected_landmarks.map((item, i) => (
+              <StructuredListRow key={item}>
+                <StructuredListCell
+                  className="text-secondary landmark-list-item"
+                  onClick={this.selectLandmark.bind(this, item)}>
+                  {item}
+                </StructuredListCell>
+              </StructuredListRow>
+            ))}
+          </StructuredListBody>
+        </StructuredListWrapper>
+      </>
     );
   }
 }

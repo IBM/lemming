@@ -1,0 +1,1213 @@
+digraph {
+node122 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node122\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball1, right)
+<none of those>
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node121 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node121\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node120 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node120\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node118 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node118\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node117 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node117\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node114 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node114\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node112 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node112\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node110 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node110\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node124 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node124\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node109 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node109\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball1, right)
+<none of those>
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node108 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node108\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball1, right)
+<none of those>
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node106 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node106\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node105 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node105\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node104 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node104\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node102 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node102\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node125 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node125\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node100 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node100\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node97 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node97\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node96 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node96\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node95 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node95\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node92 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node92\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+<none of those>
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node91 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node91\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+<none of those>
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node90 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node90\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node84 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node84\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node115 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node115\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node98 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node98\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node86 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node86\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+<none of those>
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node83 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node83\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node113 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node113\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node81 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node81\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node80 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node80\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+<none of those>
+\n" ]
+node78 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node78\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node25 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node25\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+<none of those>
+\n" ]
+node18 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node18\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node50 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node50\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node68 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node68\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball4, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node31 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node31\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball2, right)
+<none of those>
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node126 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="red", label="node126\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node54 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node54\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node20 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node20\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node62 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node62\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+<none of those>
+\n" ]
+node19 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node19\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node29 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node29\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node4 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node4\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node6 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node6\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node82 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node82\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node27 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node27\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node22 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node22\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node53 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node53\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node107 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node107\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node5 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node5\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node3 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node3\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball2, right)
+<none of those>
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node26 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node26\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+<none of those>
+\n" ]
+node111 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node111\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node30 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node30\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node2 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node2\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball2, right)
+<none of those>
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node79 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node79\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+<none of those>
+\n" ]
+node32 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node32\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball2, right)
+<none of those>
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node12 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node12\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node93 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node93\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node89 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node89\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node71 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node71\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node7 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node7\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node14 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node14\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball3, right)
+<none of those>
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node66 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node66\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node85 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node85\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node1 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node1\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node48 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node48\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node28 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node28\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node0 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node0\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node34 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node34\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node15 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node15\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node39 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node39\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node10 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node10\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node75 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node75\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node36 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node36\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node11 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="red", label="node11\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node35 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node35\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node13 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node13\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball3, right)
+<none of those>
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node33 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node33\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node38 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node38\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node87 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node87\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+<none of those>
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node40 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node40\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node119 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node119\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node63 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node63\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+<none of those>
+\n" ]
+node41 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node41\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node37 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node37\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node42 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node42\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node9 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node9\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+<none of those>
+\n" ]
+node43 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node43\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node16 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node16\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node74 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node74\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node44 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node44\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node45 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node45\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball3, right)
+<none of those>
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node46 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node46\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball3, right)
+<none of those>
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node21 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node21\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node77 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node77\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node64 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node64\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node47 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node47\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node49 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node49\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, rooma)
+\n" ]
+node101 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node101\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node8 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node8\nAtom at-robby(rooma)
+Atom carry(ball4, left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+<none of those>
+<none of those>
+\n" ]
+node51 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node51\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node52 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node52\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node103 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node103\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node57 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node57\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball4, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node58 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node58\nAtom at-robby(roomb)
+Atom carry(ball1, left)
+Atom carry(ball4, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node123 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node123\nAtom at-robby(roomb)
+Atom carry(ball2, left)
+Atom carry(ball1, right)
+<none of those>
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, roomb)
+\n" ]
+node116 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node116\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node24 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node24\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node55 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node55\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node76 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node76\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node56 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node56\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom free(right)
+<none of those>
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node59 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node59\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node23 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node23\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node67 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node67\nAtom at-robby(rooma)
+Atom carry(ball1, left)
+Atom carry(ball4, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node60 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node60\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+Atom at(ball3, roomb)
+<none of those>
+\n" ]
+node61 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node61\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, rooma)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node88 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node88\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball3, right)
+Atom at(ball1, rooma)
+Atom at(ball2, roomb)
+<none of those>
+Atom at(ball4, rooma)
+\n" ]
+node65 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node65\nAtom at-robby(roomb)
+Atom carry(ball3, left)
+Atom free(right)
+Atom at(ball1, rooma)
+Atom at(ball2, rooma)
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node69 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node69\nAtom at-robby(roomb)
+Atom free(left)
+Atom carry(ball4, right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node99 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node99\nAtom at-robby(roomb)
+Atom carry(ball4, left)
+Atom carry(ball1, right)
+<none of those>
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+<none of those>
+\n" ]
+node17 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node17\nAtom at-robby(rooma)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node70 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node70\nAtom at-robby(roomb)
+Atom free(left)
+Atom free(right)
+Atom at(ball1, roomb)
+Atom at(ball2, rooma)
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node72 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node72\nAtom at-robby(rooma)
+Atom free(left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, rooma)
+Atom at(ball4, roomb)
+\n" ]
+node94 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node94\nAtom at-robby(rooma)
+Atom carry(ball2, left)
+Atom free(right)
+Atom at(ball1, roomb)
+<none of those>
+Atom at(ball3, roomb)
+Atom at(ball4, rooma)
+\n" ]
+node73 [ peripheries="1", shape="rectangle", style="rounded, filled", fillcolor="yellow", label="node73\nAtom at-robby(rooma)
+Atom carry(ball3, left)
+Atom carry(ball2, right)
+Atom at(ball1, roomb)
+<none of those>
+<none of those>
+Atom at(ball4, roomb)
+\n" ]
+node122  ->  node123 [ label="move rooma roomb" ]
+node121  ->  node122 [ label="pick ball2 rooma left" ]
+node120  ->  node118 [ label="pick ball1 rooma right" ]
+node118  ->  node119 [ label="move rooma roomb" ]
+node117  ->  node118 [ label="pick ball3 rooma left" ]
+node114  ->  node115 [ label="drop ball4 roomb left" ]
+node114  ->  node22 [ label="drop ball1 roomb right" ]
+node112  ->  node113 [ label="pick ball1 rooma right" ]
+node110  ->  node5 [ label="drop ball2 roomb left" ]
+node124  ->  node79 [ label="pick ball3 rooma left" ]
+node109  ->  node111 [ label="drop ball2 roomb left" ]
+node109  ->  node110 [ label="drop ball1 roomb right" ]
+node108  ->  node109 [ label="move rooma roomb" ]
+node106  ->  node95 [ label="pick ball2 rooma left" ]
+node105  ->  node16 [ label="drop ball1 roomb right" ]
+node104  ->  node107 [ label="drop ball1 roomb right" ]
+node104  ->  node105 [ label="drop ball3 roomb left" ]
+node102  ->  node70 [ label="drop ball1 roomb right" ]
+node125  ->  node122 [ label="pick ball1 rooma right" ]
+node100  ->  node70 [ label="drop ball4 roomb left" ]
+node97  ->  node108 [ label="pick ball2 rooma left" ]
+node97  ->  node98 [ label="pick ball4 rooma left" ]
+node97  ->  node103 [ label="pick ball3 rooma left" ]
+node96  ->  node59 [ label="drop ball2 roomb left" ]
+node96  ->  node93 [ label="drop ball4 roomb right" ]
+node95  ->  node96 [ label="move rooma roomb" ]
+node92  ->  node93 [ label="drop ball3 roomb right" ]
+node92  ->  node10 [ label="drop ball2 roomb left" ]
+node91  ->  node92 [ label="move rooma roomb" ]
+node90  ->  node91 [ label="pick ball2 rooma left" ]
+node84  ->  node42 [ label="drop ball2 roomb left" ]
+node115  ->  node11 [ label="drop ball1 roomb right" ]
+node98  ->  node99 [ label="move rooma roomb" ]
+node86  ->  node87 [ label="move rooma roomb" ]
+node83  ->  node85 [ label="drop ball2 roomb left" ]
+node83  ->  node84 [ label="drop ball4 roomb right" ]
+node113  ->  node114 [ label="move rooma roomb" ]
+node81  ->  node108 [ label="pick ball1 rooma right" ]
+node81  ->  node82 [ label="pick ball4 rooma right" ]
+node81  ->  node86 [ label="pick ball3 rooma right" ]
+node80  ->  node75 [ label="drop ball4 roomb right" ]
+node80  ->  node59 [ label="drop ball3 roomb left" ]
+node78  ->  node79 [ label="pick ball4 rooma right" ]
+node25  ->  node26 [ label="move rooma roomb" ]
+node18  ->  node19 [ label="pick ball2 rooma right" ]
+node50  ->  node103 [ label="pick ball1 rooma right" ]
+node50  ->  node51 [ label="pick ball2 rooma right" ]
+node50  ->  node62 [ label="pick ball4 rooma right" ]
+node68  ->  node77 [ label="drop ball4 roomb right" ]
+node68  ->  node69 [ label="drop ball1 roomb left" ]
+node31  ->  node32 [ label="move rooma roomb" ]
+node54  ->  node55 [ label="move roomb rooma" ]
+node20  ->  node22 [ label="drop ball2 roomb right" ]
+node20  ->  node21 [ label="drop ball4 roomb left" ]
+node62  ->  node63 [ label="move rooma roomb" ]
+node19  ->  node20 [ label="move rooma roomb" ]
+node29  ->  node125 [ label="pick ball2 rooma left" ]
+node29  ->  node121 [ label="pick ball1 rooma right" ]
+node29  ->  node30 [ label="pick ball2 rooma right" ]
+node29  ->  node34 [ label="pick ball1 rooma left" ]
+node4  ->  node5 [ label="drop ball1 roomb left" ]
+node6  ->  node124 [ label="pick ball4 rooma right" ]
+node6  ->  node78 [ label="pick ball3 rooma left" ]
+node6  ->  node7 [ label="pick ball3 rooma right" ]
+node6  ->  node37 [ label="pick ball4 rooma left" ]
+node82  ->  node83 [ label="move rooma roomb" ]
+node27  ->  node28 [ label="drop ball4 roomb left" ]
+node22  ->  node11 [ label="drop ball4 roomb left" ]
+node53  ->  node54 [ label="drop ball3 roomb left" ]
+node107  ->  node16 [ label="drop ball3 roomb left" ]
+node5  ->  node6 [ label="move roomb rooma" ]
+node3  ->  node36 [ label="drop ball1 roomb left" ]
+node3  ->  node4 [ label="drop ball2 roomb right" ]
+node26  ->  node35 [ label="drop ball4 roomb left" ]
+node26  ->  node27 [ label="drop ball3 roomb right" ]
+node111  ->  node5 [ label="drop ball1 roomb right" ]
+node30  ->  node31 [ label="pick ball1 rooma left" ]
+node2  ->  node3 [ label="move rooma roomb" ]
+node79  ->  node80 [ label="move rooma roomb" ]
+node32  ->  node33 [ label="drop ball2 roomb right" ]
+node32  ->  node21 [ label="drop ball1 roomb left" ]
+node12  ->  node86 [ label="pick ball2 rooma left" ]
+node12  ->  node13 [ label="pick ball1 rooma left" ]
+node12  ->  node25 [ label="pick ball4 rooma left" ]
+node93  ->  node11 [ label="drop ball2 roomb left" ]
+node89  ->  node54 [ label="drop ball2 roomb left" ]
+node71  ->  node101 [ label="pick ball2 rooma left" ]
+node71  ->  node90 [ label="pick ball3 rooma right" ]
+node71  ->  node72 [ label="pick ball2 rooma right" ]
+node71  ->  node76 [ label="pick ball3 rooma left" ]
+node7  ->  node8 [ label="pick ball4 rooma left" ]
+node14  ->  node24 [ label="drop ball1 roomb left" ]
+node14  ->  node15 [ label="drop ball3 roomb right" ]
+node66  ->  node82 [ label="pick ball2 rooma left" ]
+node66  ->  node62 [ label="pick ball3 rooma left" ]
+node66  ->  node67 [ label="pick ball1 rooma left" ]
+node85  ->  node42 [ label="drop ball4 roomb right" ]
+node1  ->  node67 [ label="pick ball4 rooma right" ]
+node1  ->  node2 [ label="pick ball2 rooma right" ]
+node1  ->  node13 [ label="pick ball3 rooma right" ]
+node48  ->  node42 [ label="drop ball4 roomb left" ]
+node28  ->  node29 [ label="move roomb rooma" ]
+node0  ->  node97 [ label="pick ball1 rooma right" ]
+node0  ->  node81 [ label="pick ball2 rooma left" ]
+node0  ->  node12 [ label="pick ball3 rooma right" ]
+node0  ->  node1 [ label="pick ball1 rooma left" ]
+node0  ->  node38 [ label="pick ball4 rooma left" ]
+node0  ->  node49 [ label="pick ball2 rooma right" ]
+node0  ->  node50 [ label="pick ball3 rooma left" ]
+node0  ->  node66 [ label="pick ball4 rooma right" ]
+node34  ->  node31 [ label="pick ball2 rooma right" ]
+node15  ->  node16 [ label="drop ball1 roomb left" ]
+node39  ->  node40 [ label="move rooma roomb" ]
+node10  ->  node11 [ label="drop ball3 roomb right" ]
+node75  ->  node11 [ label="drop ball3 roomb left" ]
+node36  ->  node5 [ label="drop ball2 roomb right" ]
+node11  ->  node21 [ label="pick ball2 roomb right" ]
+node11  ->  node33 [ label="pick ball1 roomb left" ]
+node11  ->  node93 [ label="pick ball2 roomb left" ]
+node11  ->  node126 [ label="move roomb rooma" ]
+node11  ->  node115 [ label="pick ball1 roomb right" ]
+node35  ->  node28 [ label="drop ball3 roomb right" ]
+node13  ->  node14 [ label="move rooma roomb" ]
+node33  ->  node11 [ label="drop ball1 roomb left" ]
+node38  ->  node98 [ label="pick ball1 rooma right" ]
+node38  ->  node25 [ label="pick ball3 rooma right" ]
+node38  ->  node39 [ label="pick ball2 rooma right" ]
+node87  ->  node89 [ label="drop ball3 roomb right" ]
+node87  ->  node88 [ label="drop ball2 roomb left" ]
+node40  ->  node48 [ label="drop ball2 roomb right" ]
+node40  ->  node41 [ label="drop ball4 roomb left" ]
+node119  ->  node75 [ label="drop ball1 roomb right" ]
+node119  ->  node115 [ label="drop ball3 roomb left" ]
+node63  ->  node65 [ label="drop ball4 roomb right" ]
+node63  ->  node64 [ label="drop ball3 roomb left" ]
+node41  ->  node42 [ label="drop ball2 roomb right" ]
+node37  ->  node8 [ label="pick ball3 rooma right" ]
+node42  ->  node43 [ label="move roomb rooma" ]
+node9  ->  node22 [ label="drop ball3 roomb right" ]
+node9  ->  node10 [ label="drop ball4 roomb left" ]
+node43  ->  node120 [ label="pick ball3 rooma left" ]
+node43  ->  node117 [ label="pick ball1 rooma right" ]
+node43  ->  node44 [ label="pick ball3 rooma right" ]
+node43  ->  node47 [ label="pick ball1 rooma left" ]
+node16  ->  node17 [ label="move roomb rooma" ]
+node74  ->  node21 [ label="drop ball3 roomb left" ]
+node74  ->  node75 [ label="drop ball2 roomb right" ]
+node44  ->  node45 [ label="pick ball1 rooma left" ]
+node45  ->  node46 [ label="move rooma roomb" ]
+node46  ->  node10 [ label="drop ball1 roomb left" ]
+node46  ->  node33 [ label="drop ball3 roomb right" ]
+node21  ->  node11 [ label="drop ball2 roomb right" ]
+node77  ->  node70 [ label="drop ball1 roomb left" ]
+node64  ->  node28 [ label="drop ball4 roomb right" ]
+node47  ->  node45 [ label="pick ball3 rooma right" ]
+node49  ->  node51 [ label="pick ball3 rooma left" ]
+node49  ->  node2 [ label="pick ball1 rooma left" ]
+node49  ->  node39 [ label="pick ball4 rooma left" ]
+node101  ->  node91 [ label="pick ball3 rooma right" ]
+node8  ->  node9 [ label="move rooma roomb" ]
+node51  ->  node52 [ label="move rooma roomb" ]
+node52  ->  node61 [ label="drop ball3 roomb left" ]
+node52  ->  node53 [ label="drop ball2 roomb right" ]
+node103  ->  node104 [ label="move rooma roomb" ]
+node57  ->  node58 [ label="move rooma roomb" ]
+node58  ->  node33 [ label="drop ball4 roomb right" ]
+node58  ->  node59 [ label="drop ball1 roomb left" ]
+node123  ->  node115 [ label="drop ball2 roomb left" ]
+node123  ->  node93 [ label="drop ball1 roomb right" ]
+node116  ->  node113 [ label="pick ball4 rooma left" ]
+node24  ->  node16 [ label="drop ball3 roomb right" ]
+node55  ->  node116 [ label="pick ball1 rooma right" ]
+node55  ->  node112 [ label="pick ball4 rooma left" ]
+node55  ->  node56 [ label="pick ball1 rooma left" ]
+node55  ->  node60 [ label="pick ball4 rooma right" ]
+node76  ->  node73 [ label="pick ball2 rooma right" ]
+node56  ->  node57 [ label="pick ball4 rooma right" ]
+node59  ->  node11 [ label="drop ball4 roomb right" ]
+node23  ->  node19 [ label="pick ball4 rooma left" ]
+node67  ->  node68 [ label="move rooma roomb" ]
+node60  ->  node57 [ label="pick ball1 rooma left" ]
+node61  ->  node54 [ label="drop ball2 roomb right" ]
+node88  ->  node54 [ label="drop ball3 roomb right" ]
+node65  ->  node28 [ label="drop ball3 roomb left" ]
+node69  ->  node70 [ label="drop ball4 roomb right" ]
+node99  ->  node102 [ label="drop ball4 roomb left" ]
+node99  ->  node100 [ label="drop ball1 roomb right" ]
+node17  ->  node106 [ label="pick ball4 rooma right" ]
+node17  ->  node94 [ label="pick ball2 rooma left" ]
+node17  ->  node18 [ label="pick ball4 rooma left" ]
+node17  ->  node23 [ label="pick ball2 rooma right" ]
+node70  ->  node71 [ label="move roomb rooma" ]
+node72  ->  node73 [ label="pick ball3 rooma left" ]
+node94  ->  node95 [ label="pick ball4 rooma right" ]
+node73  ->  node74 [ label="move rooma roomb" ]
+}

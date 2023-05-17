@@ -47,7 +47,7 @@ class PlanArea extends React.Component {
       selectedFileType: null,
       domain: null,
       problem: null,
-      plans: null,
+      plans: [],
       views: props.props.views,
       active_view: props.props.default_view,
       controls: {
@@ -107,13 +107,16 @@ class PlanArea extends React.Component {
           },
         });
       } else {
-        this.setState({
-          ...this.state,
-          controls: {
-            ...this.state.controls,
-            modal_open: false,
+        this.setState(
+          {
+            ...this.state,
+            controls: {
+              ...this.state.controls,
+              modal_open: false,
+            },
           },
-        });
+          this.generateViz
+        );
       }
     }
 
@@ -138,22 +141,21 @@ class PlanArea extends React.Component {
           .then(data => {
             const planning_task = data['planning_task'];
 
-            this.setState({
-              ...this.state,
-              domain: planning_task['domain'],
-              problem: planning_task['problem'],
-              plans: data['plans'],
-            });
+            this.setState(
+              {
+                ...this.state,
+                domain: planning_task['domain'],
+                problem: planning_task['problem'],
+                plans: data['plans'],
+                controls: {
+                  ...this.state.controls,
+                  modal_open: false,
+                },
+              },
+              this.generateViz
+            );
           })
           .catch(err => console.error(err));
-
-        this.setState({
-          ...this.state,
-          controls: {
-            ...this.state.controls,
-            modal_open: false,
-          },
-        });
       }
     }
   }
@@ -165,22 +167,25 @@ class PlanArea extends React.Component {
   }
 
   changeTab(tabIndex) {
-    this.setState({
-      ...this.state,
-      domain: null,
-      problem: null,
-      plans: null,
-      controls: {
-        ...this.state.controls,
-        selected_domain: null,
-        upload_tab: tabIndex,
+    this.setState(
+      {
+        ...this.state,
+        domain: null,
+        problem: null,
+        plans: [],
+        controls: {
+          ...this.state.controls,
+          selected_domain: null,
+          upload_tab: tabIndex,
+        },
+        notifications: {
+          ...this.state.notifications,
+          import_select: false,
+          pddl_upload: false,
+        },
       },
-      notifications: {
-        ...this.state.notifications,
-        import_select: false,
-        pddl_upload: false,
-      },
-    });
+      this.generateViz
+    );
   }
 
   getPlans(e) {
@@ -203,14 +208,17 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        this.setState({
-          ...this.state,
-          plans: data['plans'],
-          notifications: {
-            ...this.state.notifications,
-            viz_loading: false,
+        this.setState(
+          {
+            ...this.state,
+            plans: data,
+            notifications: {
+              ...this.state.notifications,
+              viz_loading: false,
+            },
           },
-        });
+          this.generateViz
+        );
       })
       .catch(err => {
         console.error(err);
@@ -223,6 +231,28 @@ class PlanArea extends React.Component {
             viz_loading: false,
           },
         });
+      });
+  }
+
+  generateViz() {
+    if (!this.state.plans || !this.state.plans.length) return;
+
+    const viz_endpoint =
+      link_to_server +
+      '/generate_' +
+      this.state.active_view.toLowerCase().replace(/\s/g, '_');
+
+    fetch(viz_endpoint, {
+      method: 'POST',
+      body: JSON.stringify(this.state),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(666, data);
+      })
+      .catch(err => {
+        console.error(err);
       });
   }
 
@@ -361,11 +391,7 @@ class PlanArea extends React.Component {
                     <InlineNotification
                       hideCloseButton
                       iconDescription="Close"
-                      subtitle={
-                        <span>
-                          Both domain and problem files must be provided.
-                        </span>
-                      }
+                      subtitle="Both domain and problem files must be provided."
                       timeout={0}
                       title="MISSING FILES"
                       kind="error"
@@ -385,6 +411,17 @@ class PlanArea extends React.Component {
                   </div>
                 </TabPanel>
                 <TabPanel>
+                  {this.state.notifications.import_select && (
+                    <InlineNotification
+                      hideCloseButton
+                      iconDescription="Close"
+                      subtitle="Please select a domain"
+                      timeout={0}
+                      title="NO SELECTION"
+                      kind="error"
+                      lowContrast
+                    />
+                  )}
                   <StructuredListWrapper
                     selection
                     ariaLabel="Illustrative Domains">
@@ -425,17 +462,6 @@ class PlanArea extends React.Component {
                       ))}
                     </StructuredListBody>
                   </StructuredListWrapper>
-                  {this.state.notifications.import_select && (
-                    <InlineNotification
-                      hideCloseButton
-                      iconDescription="Close"
-                      subtitle={<span>Please select a domain.</span>}
-                      timeout={0}
-                      title="NO SELECTION"
-                      kind="error"
-                      lowContrast
-                    />
-                  )}
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -447,7 +473,7 @@ class PlanArea extends React.Component {
 
               if (view.disabled) {
                 return (
-                  <>
+                  <div key={id}>
                     <br />
                     <br />
                     <ToastNotification
@@ -455,19 +481,15 @@ class PlanArea extends React.Component {
                       hideCloseButton
                       key={id}
                       type="error"
-                      subtitle={
-                        <span>
-                          The authors have disabled the {view.name}. Please
-                          check out the other viewing options for now.
-                        </span>
-                      }
+                      subtitle={`The authors have disabled the ${view.name}. Please
+                          check out the other viewing options for now.`}
                       title="DISABLED VIEW"
                     />
-                  </>
+                  </div>
                 );
               } else {
                 return (
-                  <>
+                  <div key={id}>
                     {this.state.notifications.viz_loading && (
                       <div style={{ margin: '200px' }}>
                         <Loading
@@ -480,7 +502,7 @@ class PlanArea extends React.Component {
                     {!this.state.notifications.viz_loading && (
                       <Component key={id} props={this.state} />
                     )}
-                  </>
+                  </div>
                 );
               }
             }

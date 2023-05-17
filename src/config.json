@@ -38,16 +38,13 @@
     "default_view": "Select View",
     "views": [
         {
-            "name": "Select View",
-            "disabled": false
+            "name": "Select View"
         },
         {
-            "name": "Build Forward",
-            "disabled": false
+            "name": "Build Forward"
         },
         {
-            "name": "Build Backward",
-            "disabled": false
+            "name": "Build Backward"
         },
         {
             "name": "Landmarks View",

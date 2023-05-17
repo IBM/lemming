@@ -6,6 +6,9 @@ from typing import Any, List
 import os
 import json
 import requests
+import networkx
+
+from networkx.readwrite import json_graph
 
 config = json.loads(open("config.json").read())
 app = Flask(__name__)
@@ -88,9 +91,28 @@ def get_plans() -> Any:
     return jsonify(plans)
 
 
-@app.route("/generate_selection_view", methods=["POST"])
-def generate_selection_view() -> Any:
-    viz: Any = dict()
+@app.route("/generate_select_view", methods=["POST"])
+def generate_select_view() -> Any:
+    # UNDER CONSTRUCTION #
+    dot_graph = networkx.nx_pydot.read_dot("./data/example.dot")
+    return json_graph.node_link_data(dot_graph)
+
+
+@app.route("/generate_build_forward", methods=["POST"])
+def generate_build_forward() -> Any:
+    viz: Any = None
+    return jsonify(viz)
+
+
+@app.route("/generate_build_backward", methods=["POST"])
+def generate_build_backward() -> Any:
+    viz: Any = None
+    return jsonify(viz)
+
+
+@app.route("/generate_landmarks_view", methods=["POST"])
+def generate_landmarks_view() -> Any:
+    viz: Any = None
     return jsonify(viz)
 
 

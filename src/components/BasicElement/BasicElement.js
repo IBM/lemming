@@ -52,8 +52,8 @@ class PlanArea extends React.Component {
       plans: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
-      selected_landmarks: ['aaaa', 'bbbbb', 'cccccc'],
-      unselected_landmarks: ['xxxxxx', 'yyyyyyyyyy', 'zzzz'],
+      selected_landmarks: [],
+      unselected_landmarks: [],
       controls: {
         selected_domain: null,
         modal_open: false,
@@ -246,9 +246,33 @@ class PlanArea extends React.Component {
       this.setState({
         ...this.state,
         feedback: feedback,
+        notifications: {
+          ...this.state.notifications,
+          viz_loading: true,
+        },
       });
 
     if (!this.state.plans || !this.state.plans.length) return;
+
+    const landmarks_endpoint = link_to_server + '/get_landmarks';
+
+    fetch(landmarks_endpoint, {
+      method: 'POST',
+      body: JSON.stringify(this.state),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          ...this.state,
+          unselected_landmarks: data.map((item, id) => {
+            return item.name;
+          }),
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
 
     const viz_endpoint =
       link_to_server +
@@ -265,6 +289,10 @@ class PlanArea extends React.Component {
         this.setState({
           ...this.state,
           graph: data,
+          notifications: {
+            ...this.state.notifications,
+            viz_loading: false,
+          },
         });
       })
       .catch(err => {
@@ -587,7 +615,7 @@ class PlanArea extends React.Component {
                     return (
                       <div key={id}>
                         {this.state.notifications.viz_loading && (
-                          <div style={{ margin: '200px' }}>
+                          <div style={{ marginTop: '30%', marginLeft: '45%' }}>
                             <Loading
                               description="Active loading indicator"
                               withOverlay={false}
@@ -648,35 +676,41 @@ class FeedbackArea extends React.Component {
   render() {
     return (
       <>
-        <Tile>{this.state.feedback}</Tile>
+        <Tile style={{ fontSize: 'small', lineHeight: 'initial' }}>
+          {this.state.feedback}
+        </Tile>
 
-        <StructuredListWrapper ariaLabel="Selected Landmarks">
-          <StructuredListHead>
-            <StructuredListRow head>
-              <StructuredListCell head>Selected Landmarks</StructuredListCell>
-            </StructuredListRow>
-          </StructuredListHead>
-          <StructuredListBody className="landmarks-list">
-            {this.state.selected_landmarks.map((item, i) => (
-              <StructuredListRow key={item}>
-                <StructuredListCell
-                  className="text-blue landmark-list-item"
-                  onClick={this.deselectLandmark.bind(this, item)}>
-                  {item}
-                </StructuredListCell>
+        {this.state.selected_landmarks.length +
+          this.state.unselected_landmarks.length >
+          0 && (
+          <StructuredListWrapper ariaLabel="Selected Landmarks">
+            <StructuredListHead>
+              <StructuredListRow head>
+                <StructuredListCell head>Selected Landmarks</StructuredListCell>
               </StructuredListRow>
-            ))}
-            {this.state.unselected_landmarks.map((item, i) => (
-              <StructuredListRow key={item}>
-                <StructuredListCell
-                  className="text-secondary landmark-list-item"
-                  onClick={this.selectLandmark.bind(this, item)}>
-                  {item}
-                </StructuredListCell>
-              </StructuredListRow>
-            ))}
-          </StructuredListBody>
-        </StructuredListWrapper>
+            </StructuredListHead>
+            <StructuredListBody className="landmarks-list">
+              {this.state.selected_landmarks.map((item, i) => (
+                <StructuredListRow key={item}>
+                  <StructuredListCell
+                    className="text-blue landmark-list-item"
+                    onClick={this.deselectLandmark.bind(this, item)}>
+                    {item}
+                  </StructuredListCell>
+                </StructuredListRow>
+              ))}
+              {this.state.unselected_landmarks.map((item, i) => (
+                <StructuredListRow key={item}>
+                  <StructuredListCell
+                    className="text-secondary landmark-list-item"
+                    onClick={this.selectLandmark.bind(this, item)}>
+                    {item}
+                  </StructuredListCell>
+                </StructuredListRow>
+              ))}
+            </StructuredListBody>
+          </StructuredListWrapper>
+        )}
       </>
     );
   }

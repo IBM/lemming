@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from schemas import PlanningTask, LemmingTask, Plan
+from schemas import PlanningTask, LemmingTask, Plan, Landmark
 from typing import Any, List
 
 import os
@@ -52,7 +52,16 @@ def import_domain() -> Any:
 
 @app.route("/get_landmarks", methods=["POST"])
 def get_landmarks() -> Any:
-    landmarks: Any = []
+    # UNDER CONSTRUCTION #
+    data = json.loads(open("./data/landmarks.json").read())
+    landmarks = list()
+
+    for item in data.get("landmarks", []):
+        if item.get("disjunctive", "False") == "True":
+            landmarks += [
+                Landmark(name=action).dict() for action in item.get("actions", [])
+            ]
+
     return jsonify(landmarks)
 
 

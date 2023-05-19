@@ -27,9 +27,5 @@ class LandmarkTypes(enum.Enum):
 
 class Landmark(BaseModel):
     kind: str = LandmarkTypes.ACTION.value
+    selected: Optional[bool]
     name: str
-
-
-class Selection(BaseModel):
-    name: str
-    status: Optional[bool]

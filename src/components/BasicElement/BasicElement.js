@@ -50,6 +50,7 @@ class PlanArea extends React.Component {
       domain: null,
       problem: null,
       plans: [],
+      graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
       selected_landmarks: ['aaaa', 'bbbbb', 'cccccc'],
       unselected_landmarks: ['xxxxxx', 'yyyyyyyyyy', 'zzzz'],
@@ -261,7 +262,10 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(666, data);
+        this.setState({
+          ...this.state,
+          graph: data,
+        });
       })
       .catch(err => {
         console.error(err);
@@ -346,6 +350,10 @@ class PlanArea extends React.Component {
         this.generateViz();
       }
     );
+  }
+
+  onEdgeClick(edge) {
+    console.log(edge);
   }
 
   render() {
@@ -587,9 +595,14 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading && (
-                          <Component key={id} props={this.state} />
-                        )}
+                        {!this.state.notifications.viz_loading &&
+                          this.state.graph && (
+                            <Component
+                              key={id}
+                              onEdgeClick={this.onEdgeClick.bind(this)}
+                              state={this.state}
+                            />
+                          )}
                       </div>
                     );
                   }

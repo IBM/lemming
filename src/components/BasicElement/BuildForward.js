@@ -10,12 +10,6 @@ class BuildForward extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {}
 
-  logViewChange = e => {
-    this.setState({
-      view: e.name,
-    });
-  };
-
   render() {
     return (
       <Grid>

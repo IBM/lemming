@@ -17,6 +17,16 @@ Read more about it [here]().
 
 ## Setting up locally
 
+### Server
+
+```bash
+user:~$ cd server/
+user:~$ pip install -r requirements.txt
+user:~$ python server.py
+```
+
+### Client
+
 ```bash
 user:~$ yarn
 user:~$ yarn start

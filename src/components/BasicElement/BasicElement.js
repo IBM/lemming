@@ -28,6 +28,7 @@ import {
   Tile,
   RadioButton,
   Loading,
+  Toggle,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -57,6 +58,7 @@ class PlanArea extends React.Component {
       selected_landmarks: [],
       unselected_landmarks: [],
       controls: {
+        commit_mode: false,
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
@@ -401,6 +403,22 @@ class PlanArea extends React.Component {
     console.log(edge);
   }
 
+  exportState(e) {}
+
+  toggleCommitMode(e) {
+    const commit_mode = this.state.controls.commit_mode;
+
+    this.setState({
+      ...this.state,
+      controls: {
+        ...this.state.controls,
+        commit_mode: !commit_mode,
+      },
+    });
+  }
+
+  commitChanges(e) {}
+
   render() {
     return (
       <Grid>
@@ -440,6 +458,41 @@ class PlanArea extends React.Component {
                   Plan
                 </Button>
               )}
+
+              {this.state.controls.commit_mode && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="tertiary"
+                  size="sm"
+                  onClick={this.commitChanges.bind(this)}>
+                  Commit
+                </Button>
+              )}
+
+              {this.state.plans.length > 0 && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="tertiary"
+                  size="sm"
+                  onClick={this.exportState.bind(this)}>
+                  Export
+                </Button>
+              )}
+
+              {this.state.plans.length > 0 &&
+                this.state.active_view === 'Select View' && (
+                  <div style={{ marginTop: '10px' }}>
+                    <Toggle
+                      aria-label="toggle commitm mode"
+                      id="toggle-commit-mode"
+                      labelText=""
+                      labelA="Commit Mode OFF"
+                      labelB="Commit Mode ON"
+                      toggled={this.state.controls.commit_mode}
+                      onClick={this.toggleCommitMode.bind(this)}
+                    />
+                  </div>
+                )}
 
               <Modal
                 passiveModal

@@ -104,7 +104,7 @@ class NL2LTLIntegration extends React.Component {
     return (
       <Grid>
         <Column lg={16} md={8} sm={4}>
-          <div style={{ marginTop: '10px' }}>
+          <div style={{ marginTop: '20px' }}>
             <TextInput
               helperText={
                 <span>
@@ -120,7 +120,7 @@ class NL2LTLIntegration extends React.Component {
               }
               id="nl2ltl"
               invalidText="A valid value is required."
-              labelText="Constrain the set of plans using LTL described in natural language."
+              labelText="Constrain the set of plans by describing LTL control rules in natural language."
               placeholder="Write your control rule in English"
               onKeyDown={this.handleKeyDown.bind(this)}
               onChange={this.onChange.bind(this)}

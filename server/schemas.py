@@ -29,3 +29,9 @@ class Landmark(BaseModel):
     kind: str = LandmarkTypes.ACTION.value
     selected: Optional[bool]
     name: str
+
+
+class LTLFormula(BaseModel):
+    formula: str
+    description: str
+    confidence: float

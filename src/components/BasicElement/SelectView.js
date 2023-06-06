@@ -49,7 +49,7 @@ const SelectView = props => {
         <div className="canvas-holder">
           <GraphCanvas
             ref={graphRef}
-            theme={{ ...lightTheme, canvas: { background: '#f4f4f4' } }}
+            theme={{ ...lightTheme, canvas: { background: 'white' } }}
             labelType="edges"
             edgeLabelPosition="inline"
             layoutType="hierarchicalTd"

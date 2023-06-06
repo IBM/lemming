@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from schemas import PlanningTask, LemmingTask, Plan, Landmark
+from schemas import PlanningTask, LemmingTask, Plan, Landmark, LTLFormula
 from typing import Any, List
 
 import os
@@ -122,10 +122,62 @@ def generate_landmarks_view() -> Any:
     return jsonify(viz)
 
 
+@app.route("/generate_nl2ltl_integration", methods=["POST"])
+def generate_nl2ltl_integration() -> Any:
+    # UNDER CONSTRUCTION #
+    dot_graph = networkx.nx_pydot.read_dot("./data/example.dot")
+    return json_graph.node_link_data(dot_graph)
+
+
+@app.route("/nl2ltl", methods=["POST"])
+def nl2ltl() -> Any:
+    # payload = json.loads(request.get_data().decode("utf-8"))
+    # utterance: str = payload["utterance"]
+
+    # CALL TO NL2LTL
+    ltl_formulas: List[LTLFormula] = [
+        LTLFormula(
+            formula="RespondedExistence Slack Gmail",
+            description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
+            confidence=0.4,
+        ),
+        LTLFormula(
+            formula="Response Slack Gmail",
+            description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
+            confidence=0.3,
+        ),
+        LTLFormula(
+            formula="ExistenceTwo Slack",
+            description="Slack will happen at least twice.",
+            confidence=0.2,
+        ),
+    ]
+
+    ltl_formulas = [formula.dict() for formula in ltl_formulas]
+    return jsonify(ltl_formulas)
+
+
+@app.route("/ltl_compile", methods=["POST"])
+def ltl_compile() -> Any:
+    payload = json.loads(request.get_data().decode("utf-8"))
+    # formula: str = payload["formula"]
+
+    domain: str = payload["domain"]
+    problem: str = payload["problem"]
+
+    plans = payload["plans"]
+    plans = [Plan(actions=item["actions"], cost=item["cost"]) for item in plans]
+
+    planning_task = PlanningTask(domain=domain, problem=problem)
+    lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
+    return jsonify(lemming_task.dict())
+
+
 @app.route("/new_selection", methods=["POST"])
 def new_selection() -> Any:
-    viz: Any = dict()
-    return jsonify(viz)
+    # UNDER CONSTRUCTION #
+    dot_graph = networkx.nx_pydot.read_dot("./data/example.dot")
+    return json_graph.node_link_data(dot_graph)
 
 
 if __name__ == "__main__":

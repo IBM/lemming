@@ -3,6 +3,7 @@ import { BuildForward } from './BuildForward';
 import { BuildBackward } from './BuildBackward';
 import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
+import { NL2LTLIntegration } from './NL2LTLIntegration';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
 import {
   Grid,
@@ -37,6 +38,7 @@ const components = {
   BuildBackward: BuildBackward,
   LandmarksView: LandmarksView,
   SelectView: SelectView,
+  NL2LTLIntegration: NL2LTLIntegration,
 };
 
 class PlanArea extends React.Component {
@@ -194,6 +196,21 @@ class PlanArea extends React.Component {
     );
   }
 
+  update_planner_payload(planner_payload) {
+    const planning_task = planner_payload['planning_task'];
+    const plans = planner_payload['plans'];
+
+    this.setState(
+      {
+        ...this.state,
+        domain: planning_task.domain,
+        problem: planning_task.problem,
+        plans: plans,
+      },
+      this.getPlans
+    );
+  }
+
   getPlans(e) {
     this.setState({
       ...this.state,
@@ -343,7 +360,7 @@ class PlanArea extends React.Component {
     var unselected_landmarks = this.state.unselected_landmarks;
 
     const index = unselected_landmarks.indexOf(landmark);
-    unselected_landmarks.splice(index, 1);
+    unselected_landmarks = unselected_landmarks.splice(index, 1);
 
     selected_landmarks.push(landmark);
 
@@ -364,7 +381,7 @@ class PlanArea extends React.Component {
     var unselected_landmarks = this.state.unselected_landmarks;
 
     const index = selected_landmarks.indexOf(landmark);
-    selected_landmarks.splice(index, 1);
+    selected_landmarks = selected_landmarks.splice(index, 1);
 
     unselected_landmarks.push(landmark);
 
@@ -629,6 +646,9 @@ class PlanArea extends React.Component {
                               key={id}
                               onEdgeClick={this.onEdgeClick.bind(this)}
                               state={this.state}
+                              update_planner_payload={this.update_planner_payload.bind(
+                                this
+                              )}
                             />
                           )}
                       </div>

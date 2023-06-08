@@ -2,6 +2,7 @@ from dataclasses import asdict
 from typing import List
 
 import unittest
+import os
 
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
@@ -13,6 +14,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     SelelctionInfo,
     PlannerResponseModel,
     Landmark,
+    PlanningTask,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plans_with_selection_info,
@@ -21,6 +23,9 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_split_by_actions,
     get_plan_disambiguator_output_filtered_by_selection_infos,
 )
+
+my_dir = os.path.dirname(__file__)
+rel_pddl_path = "../../data/pddl/{}.pddl"
 
 
 class TestPlanDisambiguatorHelper(unittest.TestCase):
@@ -32,26 +37,30 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         TestPlanDisambiguatorHelper.gripper_domain = read_str_from_file(
-            "./tests/data/pddl/gripper/domain.pddl"
+            os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
         TestPlanDisambiguatorHelper.gripper_problem = read_str_from_file(
-            "./tests/data/pddl/gripper/problem.pddl"
+            os.path.join(my_dir, rel_pddl_path.format("gripper/problem"))
         )
         TestPlanDisambiguatorHelper.gripper_landmarks = (
             get_landmarks_by_landmark_category(
-                TestPlanDisambiguatorHelper.gripper_domain,
-                TestPlanDisambiguatorHelper.gripper_problem,
-                LandmarkCategory.RWH,
+                PlanningTask(
+                    domain=TestPlanDisambiguatorHelper.gripper_domain,
+                    problem=TestPlanDisambiguatorHelper.gripper_problem,
+                ),
+                LandmarkCategory.RWH.value,
             )
         )
         TestPlanDisambiguatorHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
                     get_plan_topq(
-                        TestPlanDisambiguatorHelper.gripper_domain,
-                        TestPlanDisambiguatorHelper.gripper_problem,
-                        6,
-                        1.0,
+                        PlanningTask(
+                            domain=TestPlanDisambiguatorHelper.gripper_domain,
+                            problem=TestPlanDisambiguatorHelper.gripper_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
                     )
                 )
             )

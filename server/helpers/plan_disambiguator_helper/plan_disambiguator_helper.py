@@ -4,6 +4,7 @@ from networkx import Graph
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     SelelctionInfo,
+    PlanningTask,
     Plan,
     PlannerResponseModel,
     ChoiceInfo,
@@ -243,8 +244,7 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
     )
     choice_infos = get_split_by_actions(filtered_landmarks, selected_plans)
     dot_str = get_dot_graph_str(
-        domain=domain,
-        problem=problem,
+        PlanningTask(domain=domain, problem=problem),
         planning_results=PlannerResponseModel.get_planning_results(
             PlannerResponseModel(plans=selected_plans)
         ),

@@ -1,4 +1,6 @@
 import unittest
+import os
+
 from pydot import Dot, Edge, Node
 import networkx as nx
 from helpers.graph_helper.graph_helper import (
@@ -9,6 +11,9 @@ from helpers.graph_helper.graph_helper import (
     get_all_nodes_coming_from_node,
     get_nodes_to_exclude,
 )
+
+my_dir = os.path.dirname(__file__)
+rel_dot_path = "../../data/graph/{}.dot"
 
 
 class TestGraphHelper(unittest.TestCase):
@@ -42,7 +47,10 @@ class TestGraphHelper(unittest.TestCase):
         _ = nx.nx_pydot.from_pydot(A)  # return MultiGraph
 
     def test_read_dot_file(self) -> None:
-        _ = nx.nx_pydot.read_dot("./data/example.dot")
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("example")
+        )
+        _ = nx.nx_pydot.read_dot(abs_path_to_dot_file)
 
     def test_nx_basics(self) -> None:
         G = nx.Graph()
@@ -52,7 +60,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_graph_conversion(self) -> None:
         dot_str = ""
-        with open("./data/example.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         graph_dict = get_dict_from_graph(g)
@@ -60,7 +71,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_get_root_node_in_digraph(self) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         root = get_root_node_in_digraph(g)
@@ -68,7 +82,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_traversal(self) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         root = get_root_node_in_digraph(g)
@@ -79,7 +96,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_get_first_node_with_multiple_out_edges_forward_node2(self) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"pick ball2 rooma right": [0, 1, 5]}
@@ -103,7 +123,10 @@ class TestGraphHelper(unittest.TestCase):
         self,
     ) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
@@ -122,7 +145,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_get_all_nodes_coming_from_node(self) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         source_node = "node1"
@@ -131,7 +157,10 @@ class TestGraphHelper(unittest.TestCase):
 
     def test_get_nodes_to_exclude(self) -> None:
         dot_str = ""
-        with open("./tests/data/graph/sample.dot", "r") as f:
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         nodes_to_start = "node2"

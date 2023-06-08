@@ -2,6 +2,7 @@ from dataclasses import asdict
 from typing import List
 
 import unittest
+import os
 
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
@@ -9,13 +10,17 @@ from helpers.planner_helper.planner_helper import (
     get_plan_topq,
 )
 from helpers.planner_helper.planner_helper_data_types import (
-    LandmarkCategory,
+    PlanningTask,
     PlannerResponseModel,
+    LandmarkCategory,
     Landmark,
 )
 from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_forward_flow_output,
 )
+
+my_dir = os.path.dirname(__file__)
+rel_pddl_path = "../../data/pddl/{}.pddl"
 
 
 class TestBuildFlowHelper(unittest.TestCase):
@@ -27,26 +32,30 @@ class TestBuildFlowHelper(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         TestBuildFlowHelper.gripper_domain = read_str_from_file(
-            "./tests/data/pddl/gripper/domain.pddl"
+            os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
         TestBuildFlowHelper.gripper_problem = read_str_from_file(
-            "./tests/data/pddl/gripper/problem.pddl"
+            os.path.join(my_dir, rel_pddl_path.format("gripper/problem"))
         )
         TestBuildFlowHelper.gripper_landmarks = (
             get_landmarks_by_landmark_category(
-                TestBuildFlowHelper.gripper_domain,
-                TestBuildFlowHelper.gripper_problem,
-                LandmarkCategory.RWH,
+                PlanningTask(
+                    domain=TestBuildFlowHelper.gripper_domain,
+                    problem=TestBuildFlowHelper.gripper_problem,
+                ),
+                LandmarkCategory.RWH.value,
             )
         )
         TestBuildFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
                     get_plan_topq(
-                        TestBuildFlowHelper.gripper_domain,
-                        TestBuildFlowHelper.gripper_problem,
-                        6,
-                        1.0,
+                        PlanningTask(
+                            domain=TestBuildFlowHelper.gripper_domain,
+                            problem=TestBuildFlowHelper.gripper_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
                     )
                 )
             )

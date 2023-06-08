@@ -1,6 +1,15 @@
+# python
+**/bin
+**/pyvenv.cfg
+**/share
+**/found_plans
+**/producer-types.proto
+**/config.yml
+server/LICENSE
+
 temp/
 localstore/
-.vscode/
+# .vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -139,6 +148,7 @@ dmypy.json
 !.yarn/plugins
 !.yarn/releases
 
+*.vscode
 *.idea
 *.DS_Store
 

@@ -77,7 +77,6 @@ class NL2LTLIntegration extends React.Component {
       .then(res => res.json())
       .then(data => {
         this.update_planner_payload(data);
-
         this.setState({
           ...this.state,
           ...default_state,

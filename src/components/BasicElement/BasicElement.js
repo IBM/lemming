@@ -28,6 +28,7 @@ import {
   Tile,
   RadioButton,
   Loading,
+  NumberInput,
   Toggle,
 } from '@carbon/react';
 
@@ -62,6 +63,8 @@ class PlanArea extends React.Component {
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
+        num_plans: 2,
+        quality_bound: 1.0,
       },
       notifications: {
         import_select: false,
@@ -84,13 +87,12 @@ class PlanArea extends React.Component {
       () => {
         if (!this.state.selectedFile) return;
 
+        const data = new FormData();
+        data.append('file', this.state.selectedFile);
+
         fetch(link_to_server + '/file_upload', {
           method: 'POST',
-          body: this.state.selectedFile,
-          headers: {
-            'content-type': this.state.selectedFile.type,
-            'content-length': `${this.state.selectedFile.size}`,
-          },
+          body: data,
         })
           .then(res => res.json())
           .then(data => {
@@ -126,7 +128,10 @@ class PlanArea extends React.Component {
               modal_open: false,
             },
           },
-          this.generateViz
+          () => {
+            this.getLandmarks();
+            this.generateViz();
+          }
         );
       }
     }
@@ -141,13 +146,15 @@ class PlanArea extends React.Component {
           },
         });
       } else {
-        fetch(link_to_server + '/import_domain', {
-          method: 'POST',
-          body: JSON.stringify(
-            IMPORT_OPTIONS[this.state.controls.selected_domain]
-          ),
-          headers: { 'Content-Type': 'application/json' },
-        })
+        fetch(
+          link_to_server +
+            '/import_domain/' +
+            IMPORT_OPTIONS[this.state.controls.selected_domain].name,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
           .then(res => res.json())
           .then(data => {
             const planning_task = data['planning_task'];
@@ -162,7 +169,10 @@ class PlanArea extends React.Component {
                   modal_open: false,
                 },
               },
-              this.generateViz
+              () => {
+                this.getLandmarks();
+                this.generateViz();
+              }
             );
           })
           .catch(err => console.error(err));
@@ -177,25 +187,22 @@ class PlanArea extends React.Component {
   }
 
   changeTab(tabIndex) {
-    this.setState(
-      {
-        ...this.state,
-        domain: null,
-        problem: null,
-        plans: [],
-        controls: {
-          ...this.state.controls,
-          selected_domain: null,
-          upload_tab: tabIndex,
-        },
-        notifications: {
-          ...this.state.notifications,
-          import_select: false,
-          pddl_upload: false,
-        },
+    this.setState({
+      ...this.state,
+      domain: null,
+      problem: null,
+      plans: [],
+      controls: {
+        ...this.state.controls,
+        selected_domain: null,
+        upload_tab: tabIndex,
       },
-      this.generateViz
-    );
+      notifications: {
+        ...this.state.notifications,
+        import_select: false,
+        pddl_upload: false,
+      },
+    });
   }
 
   update_planner_payload(planner_payload) {
@@ -223,26 +230,41 @@ class PlanArea extends React.Component {
       },
     });
 
-    fetch(link_to_server + '/get_plans', {
+    const get_plans_endpoint = link_to_server + '/get_plans';
+    const payload = {
+      domain: this.state.domain,
+      problem: this.state.problem,
+      num_plans: this.state.controls.num_plans,
+      quality_bound: this.state.controls.quality_bound,
+    };
+
+    fetch(get_plans_endpoint, {
       method: 'POST',
-      body: JSON.stringify({
-        domain: this.state.domain,
-        problem: this.state.problem,
-      }),
-      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
       .then(res => res.json())
       .then(data => {
         this.setState(
           {
             ...this.state,
-            plans: data,
+            plans: data.plans,
             notifications: {
               ...this.state.notifications,
               viz_loading: false,
             },
           },
-          this.generateViz
+          () => {
+            const feedback = this.generateFeedback();
+            this.setState({
+              ...this.state,
+              feedback: feedback,
+            });
+
+            this.generateViz();
+          }
         );
       })
       .catch(err => {
@@ -259,7 +281,9 @@ class PlanArea extends React.Component {
       });
   }
 
-  generateViz() {
+  getLandmarks() {
+    if (!this.state.domain || !this.state.problem) return;
+
     const feedback = this.generateFeedback();
     if (feedback)
       this.setState({
@@ -271,43 +295,24 @@ class PlanArea extends React.Component {
         },
       });
 
-    if (!this.state.plans || !this.state.plans.length) return;
-
-    const landmarks_endpoint = link_to_server + '/get_landmarks';
+    const landmarks_endpoint = link_to_server + '/get_landmarks/rhw';
+    const payload = {
+      domain: this.state.domain,
+      problem: this.state.problem,
+    };
 
     fetch(landmarks_endpoint, {
       method: 'POST',
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(payload),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(res => res.json())
       .then(data => {
         this.setState({
           ...this.state,
-          unselected_landmarks: data.map((item, id) => {
-            return item.name;
-          }),
-        });
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
-    const viz_endpoint =
-      link_to_server +
-      '/generate_' +
-      this.state.active_view.toLowerCase().replace(/\s/g, '_');
-
-    fetch(viz_endpoint, {
-      method: 'POST',
-      body: JSON.stringify(this.state),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          ...this.state,
-          graph: data,
+          unselected_landmarks: data.landmarks
+            .filter((item, id) => item.first_achievers.length > 1)
+            .reduce((result, item) => result.concat(item.first_achievers), []),
           notifications: {
             ...this.state.notifications,
             viz_loading: false,
@@ -317,6 +322,34 @@ class PlanArea extends React.Component {
       .catch(err => {
         console.error(err);
       });
+  }
+
+  generateViz() {
+    if (!this.state.plans || this.state.plans.length === 0) return;
+    // const viz_endpoint =
+    //   link_to_server +
+    //   '/generate_' +
+    //   this.state.active_view.toLowerCase().replace(/\s/g, '_');
+
+    // fetch(viz_endpoint, {
+    //   method: 'POST',
+    //   body: JSON.stringify(this.state),
+    //   headers: { 'Content-Type': 'application/json' },
+    // })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     this.setState({
+    //       ...this.state,
+    //       graph: data,
+    //       notifications: {
+    //         ...this.state.notifications,
+    //         viz_loading: false,
+    //       },
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   });
   }
 
   selectImport(itemIndex) {
@@ -339,7 +372,7 @@ class PlanArea extends React.Component {
       feedback += `Have fun with the ${domain_name} domain!`;
     }
 
-    if (this.state.plans) {
+    if (this.state.plans.length > 0) {
       const max_cost = this.state.plans.reduce(
         (max_cost, item) => (item.cost > max_cost ? item.cost : max_cost),
         0
@@ -399,6 +432,27 @@ class PlanArea extends React.Component {
     );
   }
 
+  onNumPlansChange(e, any, value) {
+    const num_plans = value || any.value;
+    this.setState({
+      ...this.state,
+      controls: {
+        ...this.state.controls,
+        num_plans: num_plans,
+      },
+    });
+  }
+
+  onQualityBoundChange(e) {
+    this.setState({
+      ...this.state,
+      controls: {
+        ...this.state.controls,
+        quality_bound: e.target.value,
+      },
+    });
+  }
+
   onEdgeClick(edge) {
     console.log(edge);
   }
@@ -450,13 +504,48 @@ class PlanArea extends React.Component {
               </Button>
 
               {this.state.domain && this.state.problem && (
-                <Button
-                  style={{ marginLeft: '10px' }}
-                  kind="danger"
-                  size="sm"
-                  onClick={this.getPlans.bind(this)}>
-                  Plan
-                </Button>
+                <>
+                  <Button
+                    style={{ marginLeft: '10px' }}
+                    kind="danger"
+                    size="sm"
+                    onClick={this.getPlans.bind(this)}>
+                    Plan
+                  </Button>
+
+                  <div className="number-input">
+                    <NumberInput
+                      size="sm"
+                      hideLabel
+                      helperText="Number of plans"
+                      iconDescription="Number of plans"
+                      id="num_plans"
+                      invalidText="NaN / Too high."
+                      label=""
+                      max={20}
+                      min={1}
+                      step={1}
+                      value={this.state.controls.num_plans}
+                      onChange={this.onNumPlansChange.bind(this)}
+                    />
+                  </div>
+
+                  <div className="number-input">
+                    <NumberInput
+                      hideLabel
+                      hideSteppers
+                      size="sm"
+                      helperText="Quality Bound"
+                      iconDescription="Quality Bound"
+                      id="quality_bound"
+                      invalidText="Invalid input."
+                      label=""
+                      min={1}
+                      value={this.state.controls.quality_bound}
+                      onChange={this.onQualityBoundChange.bind(this)}
+                    />
+                  </div>
+                </>
               )}
 
               {this.state.controls.commit_mode && (
@@ -693,17 +782,16 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading &&
-                          this.state.graph && (
-                            <Component
-                              key={id}
-                              onEdgeClick={this.onEdgeClick.bind(this)}
-                              state={this.state}
-                              update_planner_payload={this.update_planner_payload.bind(
-                                this
-                              )}
-                            />
-                          )}
+                        {!this.state.notifications.viz_loading && (
+                          <Component
+                            key={id}
+                            onEdgeClick={this.onEdgeClick.bind(this)}
+                            state={this.state}
+                            update_planner_payload={this.update_planner_payload.bind(
+                              this
+                            )}
+                          />
+                        )}
                       </div>
                     );
                   }
@@ -756,10 +844,10 @@ class FeedbackArea extends React.Component {
         {this.state.selected_landmarks.length +
           this.state.unselected_landmarks.length >
           0 && (
-          <StructuredListWrapper ariaLabel="Selected Landmarks">
+          <StructuredListWrapper ariaLabel="Landmarks">
             <StructuredListHead>
               <StructuredListRow head>
-                <StructuredListCell head>Selected Landmarks</StructuredListCell>
+                <StructuredListCell head>Landmarks</StructuredListCell>
               </StructuredListRow>
             </StructuredListHead>
             <StructuredListBody className="landmarks-list">

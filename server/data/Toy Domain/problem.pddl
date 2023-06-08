@@ -1,0 +1,5 @@
+(define (problem toy-lemming-example)
+   (:domain toy-lemming)
+   (:objects)
+   (:init (start))
+   (:goal (and (end))))

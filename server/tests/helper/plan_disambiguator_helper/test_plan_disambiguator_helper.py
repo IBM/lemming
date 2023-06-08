@@ -97,7 +97,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
                 [selected_landmark_0],
             )
         )
-        self.assertEqual(len(filtered_landmarks), 4)
+        self.assertEqual(len(filtered_landmarks), 11)
 
     def test_get_plans_with_selection_infos(self) -> None:
         selected_landmark_0 = SelelctionInfo(
@@ -162,5 +162,5 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selected_plans), 3)
-        self.assertEqual(len(landmark_infos), 3)
+        self.assertEqual(len(landmark_infos), 7)
         self.assertEqual(g.name, "G")

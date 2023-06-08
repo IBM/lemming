@@ -40,7 +40,7 @@ def get_filtered_out_selection_infos_by_selection_infos(
     )
     filtered_landmarks: List[Landmark] = list()
     for landmark in landmarks:
-        if tuple(landmark.facts) in selected_facts or not landmark.disjunctive:
+        if tuple(landmark.facts) in selected_facts:
             continue
         filtered_first_achievers: Set[str] = set()
         for first_achiever in landmark.first_achievers:

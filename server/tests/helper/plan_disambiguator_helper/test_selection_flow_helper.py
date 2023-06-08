@@ -77,7 +77,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 3)
-        self.assertEqual(len(selection_flow_output.choice_infos), 3)
+        self.assertEqual(len(selection_flow_output.choice_infos), 7)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_landmarks_no_selection_info(

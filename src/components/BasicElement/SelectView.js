@@ -26,6 +26,9 @@ function generateEdges(state) {
 const SelectView = props => {
   const nodes = generateNodes(props.state);
   const edges = generateEdges(props.state);
+  const set_actives = props.state.choice_infos.map(
+    item => item.node_with_multiple_out_edges
+  );
   const graphRef = useRef(null);
 
   const onEdgeClick = edge => {
@@ -37,7 +40,7 @@ const SelectView = props => {
     nodes: nodes,
     edges: edges,
     type: 'multi',
-    actives: [],
+    actives: set_actives,
     pathSelectionType: 'out',
     focusOnSelect: false,
     onEdgeClick: onEdgeClick,

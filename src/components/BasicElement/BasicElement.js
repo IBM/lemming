@@ -305,20 +305,33 @@ class PlanArea extends React.Component {
       });
   }
 
-  generateViz() {
+  generateViz(selected_edge) {
     if (!this.state.plans || this.state.plans.length === 0) return;
+
     const viz_endpoint =
       link_to_server +
       '/generate_' +
       this.state.active_view.toLowerCase().replace(/\s/g, '_') +
       '/object';
 
+    var selection_infos = [];
+
+    if (selected_edge)
+      selection_infos = [
+        {
+          selected_first_achiever: selected_edge,
+          selected_plan_hashes: this.state.choice_infos
+            .map(item => item.action_name_plan_hash_map[selected_edge])
+            .reduce((hashes, item) => hashes.concat(item), []),
+        },
+      ];
+
     const payload = {
       domain: this.state.domain,
       problem: this.state.problem,
       plans: this.state.plans,
       landmarks: this.state.cached_landmarks,
-      selection_infos: [],
+      selection_infos: selection_infos,
     };
 
     fetch(viz_endpoint, {
@@ -328,15 +341,20 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(123, data);
-
         var choice_infos = data.choice_infos;
-        var unselected_landmarks = choice_infos.reduce(
-          (choices, item) =>
-            choices.concat(Object.keys(item.action_name_plan_hash_map)),
-          []
-        );
-        unselected_landmarks = new Set(unselected_landmarks);
+        var unselected_landmarks = [];
+
+        if (this.state.unselected_landmarks.size) {
+          unselected_landmarks = this.state.unselected_landmarks;
+        } else {
+          unselected_landmarks = choice_infos.reduce(
+            (choices, item) =>
+              choices.concat(Object.keys(item.action_name_plan_hash_map)),
+            []
+          );
+
+          unselected_landmarks = new Set(unselected_landmarks);
+        }
 
         this.setState({
           ...this.state,
@@ -396,10 +414,8 @@ class PlanArea extends React.Component {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    const index = unselected_landmarks.indexOf(landmark);
-    unselected_landmarks.splice(index, 1);
-
-    selected_landmarks.push(landmark);
+    selected_landmarks.add(landmark);
+    unselected_landmarks.delete(landmark);
 
     this.setState(
       {
@@ -408,7 +424,7 @@ class PlanArea extends React.Component {
         unselected_landmarks: unselected_landmarks,
       },
       () => {
-        this.generateViz();
+        // this.generateViz();
       }
     );
   }
@@ -417,10 +433,8 @@ class PlanArea extends React.Component {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    const index = selected_landmarks.indexOf(landmark);
-    selected_landmarks.splice(index, 1);
-
-    unselected_landmarks.push(landmark);
+    unselected_landmarks.add(landmark);
+    selected_landmarks.delete(landmark);
 
     this.setState(
       {
@@ -456,7 +470,10 @@ class PlanArea extends React.Component {
   }
 
   onEdgeClick(edge) {
-    console.log(edge);
+    const reg = /"(.*)"/g;
+    const label = reg.exec(edge.label)[1].trim();
+    this.generateViz(label);
+    this.selectLandmark(label);
   }
 
   render() {
@@ -812,7 +829,7 @@ class FeedbackArea extends React.Component {
               {Array.from(this.state.unselected_landmarks).map((item, i) => (
                 <StructuredListRow key={item}>
                   <StructuredListCell
-                    className="text-secondary landmark-list-item"
+                    className="text-silver landmark-list-item"
                     onClick={this.selectLandmark.bind(this, item)}>
                     {item}
                   </StructuredListCell>

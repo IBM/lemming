@@ -53,8 +53,10 @@ class PlanArea extends React.Component {
       plans: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
-      selected_landmarks: [],
-      unselected_landmarks: [],
+      cached_landmarks: [],
+      selected_landmarks: new Set(),
+      unselected_landmarks: new Set(),
+      choice_infos: [],
       controls: {
         selected_domain: null,
         modal_open: false,
@@ -291,9 +293,7 @@ class PlanArea extends React.Component {
       .then(data => {
         this.setState({
           ...this.state,
-          unselected_landmarks: data.landmarks
-            .filter((item, id) => item.first_achievers.length > 1)
-            .reduce((result, item) => result.concat(item.first_achievers), []),
+          cached_landmarks: data.landmarks,
           notifications: {
             ...this.state.notifications,
             viz_loading: false,
@@ -307,30 +307,51 @@ class PlanArea extends React.Component {
 
   generateViz() {
     if (!this.state.plans || this.state.plans.length === 0) return;
-    // const viz_endpoint =
-    //   link_to_server +
-    //   '/generate_' +
-    //   this.state.active_view.toLowerCase().replace(/\s/g, '_');
+    const viz_endpoint =
+      link_to_server +
+      '/generate_' +
+      this.state.active_view.toLowerCase().replace(/\s/g, '_') +
+      '/object';
 
-    // fetch(viz_endpoint, {
-    //   method: 'POST',
-    //   body: JSON.stringify(this.state),
-    //   headers: { 'Content-Type': 'application/json' },
-    // })
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     this.setState({
-    //       ...this.state,
-    //       graph: data,
-    //       notifications: {
-    //         ...this.state.notifications,
-    //         viz_loading: false,
-    //       },
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   });
+    const payload = {
+      domain: this.state.domain,
+      problem: this.state.problem,
+      plans: this.state.plans,
+      landmarks: this.state.cached_landmarks,
+      selection_infos: [],
+    };
+
+    fetch(viz_endpoint, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(123, data);
+
+        var choice_infos = data.choice_infos;
+        var unselected_landmarks = choice_infos.reduce(
+          (choices, item) =>
+            choices.concat(Object.keys(item.action_name_plan_hash_map)),
+          []
+        );
+        unselected_landmarks = new Set(unselected_landmarks);
+
+        this.setState({
+          ...this.state,
+          graph: data.networkx_graph,
+          choice_infos: choice_infos,
+          unselected_landmarks: unselected_landmarks,
+          notifications: {
+            ...this.state.notifications,
+            viz_loading: false,
+          },
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   selectImport(itemIndex) {
@@ -769,17 +790,17 @@ class FeedbackArea extends React.Component {
           {this.state.feedback}
         </Tile>
 
-        {this.state.selected_landmarks.length +
-          this.state.unselected_landmarks.length >
+        {this.state.selected_landmarks.size +
+          this.state.unselected_landmarks.size >
           0 && (
-          <StructuredListWrapper ariaLabel="Landmarks">
+          <StructuredListWrapper ariaLabel="Choices">
             <StructuredListHead>
               <StructuredListRow head>
-                <StructuredListCell head>Landmarks</StructuredListCell>
+                <StructuredListCell head>Choices</StructuredListCell>
               </StructuredListRow>
             </StructuredListHead>
             <StructuredListBody className="landmarks-list">
-              {this.state.selected_landmarks.map((item, i) => (
+              {Array.from(this.state.selected_landmarks).map((item, i) => (
                 <StructuredListRow key={item}>
                   <StructuredListCell
                     className="text-blue landmark-list-item"
@@ -788,7 +809,7 @@ class FeedbackArea extends React.Component {
                   </StructuredListCell>
                 </StructuredListRow>
               ))}
-              {this.state.unselected_landmarks.map((item, i) => (
+              {Array.from(this.state.unselected_landmarks).map((item, i) => (
                 <StructuredListRow key={item}>
                   <StructuredListCell
                     className="text-secondary landmark-list-item"

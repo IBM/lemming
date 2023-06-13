@@ -18,14 +18,13 @@ from helpers.planner_helper.planner_helper import (
 )
 from helpers.common_helper.file_helper import (
     read_str_from_upload_file,
-    convert_json_str_to_dict,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
 )
 from helpers.common_helper.static_data_helper import app_description
 from helpers.plan_disambiguator_helper.build_flow_helper import (
-    get_build_forward_flow_output,
+    get_build_flow_output,
 )
 
 app = FastAPI(
@@ -46,6 +45,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def handle_flow_output(
+    flow_output: PlanDisambiguatorOutput,
+) -> PlanDisambiguatorOutput:
+    if flow_output is None:
+        raise HTTPException(status_code=422, detail="Unprocessable Entity")
+    return flow_output
+
+
+def check_pddl_input(plan_disambiguator_input: PlanDisambiguatorInput) -> None:
+    if not PlanDisambiguatorInput.check_domain_problem(
+        plan_disambiguator_input
+    ):
+        raise HTTPException(
+            status_code=400, detail="Bad Request: domain or problem is empty"
+        )
 
 
 @app.get("/")
@@ -118,16 +134,11 @@ async def get_plans(planning_task: PlanningTask) -> PlannerResponseModel:
     return get_planner_response_model_with_hash(planning_result)
 
 
-@app.post("/generate_select_view/object")
+@app.post("/generate_select_view")
 def generate_select_view(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    if not PlanDisambiguatorInput.check_domain_problem(
-        plan_disambiguator_input
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
+    check_pddl_input(plan_disambiguator_input)
 
     flow_output = get_selection_flow_output(
         plan_disambiguator_input.selection_infos,
@@ -137,134 +148,40 @@ def generate_select_view(
         plan_disambiguator_input.plans,
     )
 
-    if flow_output is None:
-        raise HTTPException(status_code=422, detail="Unprocessable Entity")
-
-    return flow_output
+    return handle_flow_output(flow_output)
 
 
-@app.post("/generate_select_view_with_files/files")
-def generate_select_view_with_files(
-    domain_file: UploadFile,
-    problem_file: UploadFile,
-    plan_disambiguator_input_json_file: UploadFile,
-) -> PlanDisambiguatorOutput:
-    domain = read_str_from_upload_file(domain_file)
-    problem = read_str_from_upload_file(problem_file)
-
-    if (
-        domain is None
-        or problem is None
-        or len(domain) == 0
-        or len(problem) == 0
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
-    flow_input_json_str = read_str_from_upload_file(
-        plan_disambiguator_input_json_file
-    )
-
-    if flow_input_json_str is None or len(flow_input_json_str) == 0:
-        raise HTTPException(
-            status_code=400,
-            detail="Bad Request: selection_flow_input_json_file is empty",
-        )
-
-    flow_input = PlanDisambiguatorInput.parse_obj(
-        convert_json_str_to_dict(flow_input_json_str)
-    )
-    flow_output = get_selection_flow_output(
-        flow_input.selection_infos,
-        flow_input.landmarks,
-        domain,
-        problem,
-        flow_input.plans,
-    )
-
-    if flow_output is None:
-        raise HTTPException(status_code=422, detail="Unprocessable Entity")
-
-    return flow_output
-
-
-@app.post("/generate_build_forward/object")
+@app.post("/generate_build_forward")
 def generate_build_forward(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    if not PlanDisambiguatorInput.check_domain_problem(
-        plan_disambiguator_input
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
+    check_pddl_input(plan_disambiguator_input)
 
-    flow_output = get_build_forward_flow_output(
+    flow_output = get_build_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
         plan_disambiguator_input.problem,
         plan_disambiguator_input.plans,
+        True,
     )
 
-    if flow_output is None:
-        raise HTTPException(status_code=422, detail="Unprocessable Entity")
-
-    return flow_output
+    return handle_flow_output(flow_output)
 
 
-@app.post("/generate_build_forward_with_files/files")
-def generate_build_forward_with_files(
-    domain_file: UploadFile,
-    problem_file: UploadFile,
-    plan_disambiguator_input_json_file: UploadFile,
+@app.post("/generate_build_backward")
+def generate_build_backward(
+    plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    domain = read_str_from_upload_file(domain_file)
-    problem = read_str_from_upload_file(problem_file)
+    check_pddl_input(plan_disambiguator_input)
 
-    if (
-        domain is None
-        or problem is None
-        or len(domain) == 0
-        or len(problem) == 0
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
-    flow_input_json_str = read_str_from_upload_file(
-        plan_disambiguator_input_json_file
+    flow_output = get_build_flow_output(
+        plan_disambiguator_input.selection_infos,
+        plan_disambiguator_input.landmarks,
+        plan_disambiguator_input.domain,
+        plan_disambiguator_input.problem,
+        plan_disambiguator_input.plans,
+        False,
     )
 
-    if flow_input_json_str is None or len(flow_input_json_str) == 0:
-        raise HTTPException(
-            status_code=400,
-            detail="Bad Request: selection_flow_input_json_file is empty",
-        )
-
-    flow_input = PlanDisambiguatorInput.parse_obj(
-        convert_json_str_to_dict(flow_input_json_str)
-    )
-    flow_output = get_build_forward_flow_output(
-        flow_input.selection_infos,
-        flow_input.landmarks,
-        domain,
-        problem,
-        flow_input.plans,
-    )
-
-    if flow_output is None:
-        raise HTTPException(status_code=422, detail="Unprocessable Entity")
-
-    return flow_output
-
-
-# @app.route("/generate_build_backward", methods=["POST"])
-# def generate_build_backward() -> Any:
-#     viz: Any = None
-#     return jsonify(viz)
-
-
-# @app.route("/generate_landmarks_view", methods=["POST"])
-# def generate_landmarks_view() -> Any:
-#     viz: Any = None
-#     return jsonify(viz)
+    return handle_flow_output(flow_output)

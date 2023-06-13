@@ -22,6 +22,10 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plans_with_selection_infos,
     get_split_by_actions,
     get_plan_disambiguator_output_filtered_by_selection_infos,
+    get_plans_filetered_by_selected_plan_hashes,
+    get_plans_with_selection_info,
+    get_plan_idx_edge_dict,
+    get_edge_label_plan_hashes_dict,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -154,6 +158,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             landmark_infos,
             g,
             _,
+            node_plan_hashes_dict,
         ) = get_plan_disambiguator_output_filtered_by_selection_infos(
             [selected_landmark_0],
             TestPlanDisambiguatorHelper.gripper_landmarks,
@@ -164,3 +169,135 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(selected_plans), 3)
         self.assertEqual(len(landmark_infos), 7)
         self.assertEqual(g.name, "G")
+
+    def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(self):
+        selected_landmark = SelelctionInfo(selected_plan_hashes=[])
+        plans = get_plans_filetered_by_selected_plan_hashes(
+            selected_landmark,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 6)
+
+    def test_get_plans_filetered_by_selected_plan_hashes_none_plan_hash(self):
+        selected_landmark = SelelctionInfo(selected_plan_hashes=None)
+        plans = get_plans_filetered_by_selected_plan_hashes(
+            selected_landmark,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 6)
+
+    def test_get_plans_filetered_by_selected_plan_hashes_valid_plan_hash(self):
+        hashes = [
+            "6a81b2a65657b4444a989205b590c346",
+            "a30b377144530876cd5506f0df8a1f16",
+            "aaaaa",
+        ]
+        selected_landmark = SelelctionInfo(selected_plan_hashes=hashes)
+        plans = get_plans_filetered_by_selected_plan_hashes(
+            selected_landmark,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 2)
+
+    def test_get_plans_with_selection_info(self):
+        hashes = [
+            "6a81b2a65657b4444a989205b590c346",
+            "a30b377144530876cd5506f0df8a1f16",
+        ]
+        selected_landmark = SelelctionInfo(selected_plan_hashes=hashes)
+        plans = get_plans_with_selection_info(
+            selected_landmark,
+            TestPlanDisambiguatorHelper.gripper_landmarks,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 2)
+
+    def test_get_plans_with_selection_info(self):
+        selected_landmark = SelelctionInfo(
+            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
+            disjunctive=True,
+            selected_first_achiever="pick ball2 rooma right",
+        )
+        plans = get_plans_with_selection_info(
+            selected_landmark,
+            TestPlanDisambiguatorHelper.gripper_landmarks,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 3)
+
+    def test_get_plans_with_selection_infos(self):
+        selected_landmark_0 = SelelctionInfo(
+            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
+            disjunctive=True,
+            selected_first_achiever="pick ball2 rooma right",
+        )
+        hashes = [
+            "6a81b2a65657b4444a989205b590c346",
+            "a30b377144530876cd5506f0df8a1f16",
+        ]
+        selected_landmark_1 = SelelctionInfo(selected_plan_hashes=hashes)
+        plans = get_plans_with_selection_infos(
+            [selected_landmark_0, selected_landmark_1],
+            TestPlanDisambiguatorHelper.gripper_landmarks,
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(plans), 1)
+        self.assertEqual(plans[0].plan_hash, "6a81b2a65657b4444a989205b590c346")
+
+    def test_get_plan_idx_edge_dict_forward(self):
+        plan_idx_action_dict = get_plan_idx_edge_dict(
+            [("a", "b"), ("b", "c"), ("c", "d")],
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+            True,
+        )
+        self.assertEqual(
+            plan_idx_action_dict,
+            {
+                0: "drop ball2 roomb right",
+                1: "drop ball2 roomb right",
+                2: "drop ball1 roomb right",
+                3: "drop ball2 roomb left",
+                4: "drop ball3 roomb right",
+                5: "drop ball1 roomb right",
+            },
+        )
+
+    def test_get_plan_idx_edge_dict_backward(self):
+        plan_idx_action_dict = get_plan_idx_edge_dict(
+            [("a", "b"), ("b", "c"), ("c", "d")],
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+            False,
+        )
+        self.assertEqual(
+            plan_idx_action_dict,
+            {
+                0: "pick ball4 rooma left",
+                1: "pick ball3 rooma left",
+                2: "pick ball4 rooma left",
+                3: "pick ball4 rooma right",
+                4: "pick ball2 rooma left",
+                5: "pick ball4 rooma left",
+            },
+        )
+
+    def test_get_edge_label_plan_hashes_dict(self):
+        edge_label_plan_hash_dict = get_edge_label_plan_hashes_dict(
+            [("a", "b"), ("b", "c"), ("c", "d")],
+            TestPlanDisambiguatorHelper.planner_response_model.plans,
+            True,
+        )
+        self.assertEqual(
+            edge_label_plan_hash_dict,
+            {
+                "drop ball2 roomb right": [
+                    "6a81b2a65657b4444a989205b590c346",
+                    "9d49f737b4735da2a3b0d85e3be0bf67",
+                ],
+                "drop ball1 roomb right": [
+                    "08ef565ec364978b0295105f8ae52bce",
+                    "f7f6db06a380e59c52ab115b2d771988",
+                ],
+                "drop ball2 roomb left": ["a30b377144530876cd5506f0df8a1f16"],
+                "drop ball3 roomb right": ["80af1fcf0d421d8bfc7bf4751a6ee24c"],
+            },
+        )

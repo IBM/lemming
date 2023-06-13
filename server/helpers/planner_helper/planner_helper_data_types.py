@@ -114,3 +114,20 @@ class PlanningTask(BaseModel):
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
     plans: List[Plan]
+
+
+class NL2LTLRequest(BaseModel):
+    utterance: str
+
+
+class LTLFormula(BaseModel):
+    formula: str
+    description: str
+    confidence: float
+
+
+class LTL2PDDLRequest(BaseModel):
+    formula: LTLFormula
+    domain: str
+    problem: str
+    plans: List[Plan]

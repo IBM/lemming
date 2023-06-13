@@ -3,6 +3,7 @@ import { BuildForward } from './BuildForward';
 import { BuildBackward } from './BuildBackward';
 import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
+import { NL2LTLIntegration } from './NL2LTLIntegration';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
 import {
   Grid,
@@ -28,6 +29,7 @@ import {
   RadioButton,
   Loading,
   NumberInput,
+  Toggle,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -38,6 +40,7 @@ const components = {
   BuildBackward: BuildBackward,
   LandmarksView: LandmarksView,
   SelectView: SelectView,
+  NL2LTLIntegration: NL2LTLIntegration,
 };
 
 class PlanArea extends React.Component {
@@ -58,6 +61,7 @@ class PlanArea extends React.Component {
       unselected_landmarks: new Set(),
       choice_infos: [],
       controls: {
+        commit_mode: false,
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
@@ -201,6 +205,21 @@ class PlanArea extends React.Component {
         pddl_upload: false,
       },
     });
+  }
+
+  update_planner_payload(planner_payload) {
+    const planning_task = planner_payload['planning_task'];
+    const plans = planner_payload['plans'];
+
+    this.setState(
+      {
+        ...this.state,
+        domain: planning_task.domain,
+        problem: planning_task.problem,
+        plans: plans,
+      },
+      this.getPlans
+    );
   }
 
   getPlans(e) {
@@ -476,6 +495,22 @@ class PlanArea extends React.Component {
     this.selectLandmark(label);
   }
 
+  exportState(e) {}
+
+  toggleCommitMode(e) {
+    const commit_mode = this.state.controls.commit_mode;
+
+    this.setState({
+      ...this.state,
+      controls: {
+        ...this.state.controls,
+        commit_mode: !commit_mode,
+      },
+    });
+  }
+
+  commitChanges(e) {}
+
   render() {
     return (
       <Grid>
@@ -550,6 +585,41 @@ class PlanArea extends React.Component {
                   </div>
                 </>
               )}
+
+              {this.state.controls.commit_mode && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="tertiary"
+                  size="sm"
+                  onClick={this.commitChanges.bind(this)}>
+                  Commit
+                </Button>
+              )}
+
+              {this.state.plans.length > 0 && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="tertiary"
+                  size="sm"
+                  onClick={this.exportState.bind(this)}>
+                  Export
+                </Button>
+              )}
+
+              {this.state.plans.length > 0 &&
+                this.state.active_view === 'Select View' && (
+                  <div style={{ marginTop: '10px' }}>
+                    <Toggle
+                      aria-label="toggle commitm mode"
+                      id="toggle-commit-mode"
+                      labelText=""
+                      labelA="Commit Mode OFF"
+                      labelB="Commit Mode ON"
+                      toggled={this.state.controls.commit_mode}
+                      onClick={this.toggleCommitMode.bind(this)}
+                    />
+                  </div>
+                )}
 
               <Modal
                 passiveModal
@@ -750,14 +820,16 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading &&
-                          this.state.graph && (
-                            <Component
-                              key={id}
-                              onEdgeClick={this.onEdgeClick.bind(this)}
-                              state={this.state}
-                            />
-                          )}
+                        {!this.state.notifications.viz_loading && (
+                          <Component
+                            key={id}
+                            onEdgeClick={this.onEdgeClick.bind(this)}
+                            state={this.state}
+                            update_planner_payload={this.update_planner_payload.bind(
+                              this
+                            )}
+                          />
+                        )}
                       </div>
                     );
                   }

@@ -1,5 +1,6 @@
 import json
 
+from typing import List
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from helpers.planner_helper.planner_helper_data_types import (
@@ -10,6 +11,9 @@ from helpers.planner_helper.planner_helper_data_types import (
     LemmingTask,
     PlanningTask,
     Plan,
+    LTLFormula,
+    NL2LTLRequest,
+    LTL2PDDLRequest,
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
@@ -268,3 +272,38 @@ def generate_build_forward_with_files(
 # def generate_landmarks_view() -> Any:
 #     viz: Any = None
 #     return jsonify(viz)
+
+
+@app.post("/nl2ltl")
+def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+    _ = request
+
+    # TODO: Call to NL2LTL
+    ltl_formulas: List[LTLFormula] = [
+        LTLFormula(
+            formula="RespondedExistence Slack Gmail",
+            description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
+            confidence=0.4,
+        ),
+        LTLFormula(
+            formula="Response Slack Gmail",
+            description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
+            confidence=0.3,
+        ),
+        LTLFormula(
+            formula="ExistenceTwo Slack",
+            description="Slack will happen at least twice.",
+            confidence=0.2,
+        ),
+    ]
+
+    return ltl_formulas
+
+
+@app.post("/ltl_compile")
+def ltl_compile(request: LTL2PDDLRequest) -> LemmingTask:
+    planning_task = PlanningTask(domain=request.domain, problem=request.problem)
+    lemming_task = LemmingTask(planning_task=planning_task, plans=request.plans)
+
+    # TODO: Compile to new planning task
+    return lemming_task

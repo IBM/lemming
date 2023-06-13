@@ -330,8 +330,7 @@ class PlanArea extends React.Component {
     const viz_endpoint =
       link_to_server +
       '/generate_' +
-      this.state.active_view.toLowerCase().replace(/\s/g, '_') +
-      '/object';
+      this.state.active_view.toLowerCase().replace(/\s/g, '_');
 
     var selection_infos = [];
 
@@ -820,16 +819,17 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading && (
-                          <Component
-                            key={id}
-                            onEdgeClick={this.onEdgeClick.bind(this)}
-                            state={this.state}
-                            update_planner_payload={this.update_planner_payload.bind(
-                              this
-                            )}
-                          />
-                        )}
+                        {!this.state.notifications.viz_loading &&
+                          this.state.graph && (
+                            <Component
+                              key={id}
+                              onEdgeClick={this.onEdgeClick.bind(this)}
+                              state={this.state}
+                              update_planner_payload={this.update_planner_payload.bind(
+                                this
+                              )}
+                            />
+                          )}
                       </div>
                     );
                   }

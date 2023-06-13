@@ -191,6 +191,13 @@ def generate_build_backward(
     return handle_flow_output(flow_output)
 
 
+@app.post("/generate_nl2ltl_integration")
+def generate_nl2ltl_integration(
+    plan_disambiguator_input: PlanDisambiguatorInput,
+) -> PlanDisambiguatorOutput:
+    return generate_select_view(plan_disambiguator_input)
+
+
 @app.post("/nl2ltl")
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     _ = request

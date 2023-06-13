@@ -1,4 +1,5 @@
 import React from 'react';
+import { SelectView } from './SelectView';
 import {
   Grid,
   Column,
@@ -26,6 +27,7 @@ class NL2LTLIntegration extends React.Component {
     super(props);
     this.state = {
       ...default_state,
+      ...props.state,
       domain: props.state.domain,
       problem: props.state.problem,
       plans: props.state.plans,
@@ -61,6 +63,10 @@ class NL2LTLIntegration extends React.Component {
 
   update_planner_payload(planner_payload) {
     this.props.update_planner_payload(planner_payload);
+  }
+
+  onEdgeClick(edge) {
+    this.props.onEdgeClick(edge);
   }
 
   confirmFormula() {
@@ -126,6 +132,12 @@ class NL2LTLIntegration extends React.Component {
               value={this.state.text_input}
             />
           </div>
+
+          <SelectView
+            onEdgeClick={this.onEdgeClick.bind(this)}
+            state={this.state}
+            update_planner_payload={this.update_planner_payload.bind(this)}
+          />
 
           <Modal
             preventCloseOnClickOutside

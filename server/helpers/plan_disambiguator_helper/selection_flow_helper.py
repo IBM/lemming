@@ -12,7 +12,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
 )
 from helpers.graph_helper.graph_helper import (
-    get_first_node_with_multiple_out_edges_forward,
+    get_first_node_with_multiple_out_edges,
 )
 
 
@@ -29,10 +29,12 @@ def get_selection_flow_output(
         landmark_infos,
         g,
         _,
+        node_plan_hashes_dict,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
         selected_landmarks, landmarks, domain, problem, plans
     )
     networkx_graph = get_dict_from_graph(g)
+
     if (
         len(selected_plans) > 1 and len(landmark_infos) == 0
     ):  # no landmarks for disambiguating plans
@@ -41,15 +43,16 @@ def get_selection_flow_output(
             _,
             _,
             edges_traversed,
-        ) = get_first_node_with_multiple_out_edges_forward(g, dict())
+        ) = get_first_node_with_multiple_out_edges(g, dict(), True)
 
         return PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=[
                 get_choice_info_multiple_edges_without_landmark(
-                    node_with_multiple_out_edges=node_with_multiple_out_edges,
+                    node_with_multiple_edges=node_with_multiple_out_edges,
                     edges_traversed=edges_traversed,
                     plans=selected_plans,
+                    is_forward=True,
                 )
             ],
             networkx_graph=networkx_graph,
@@ -59,4 +62,5 @@ def get_selection_flow_output(
         plans=selected_plans,
         choice_infos=landmark_infos,
         networkx_graph=networkx_graph,
+        node_plan_hashes_dict=node_plan_hashes_dict,
     )

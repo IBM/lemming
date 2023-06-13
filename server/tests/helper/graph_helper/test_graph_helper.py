@@ -1,3 +1,5 @@
+from dataclasses import asdict
+from typing import List
 import unittest
 import os
 
@@ -7,16 +9,84 @@ from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
     get_dict_from_graph,
     get_root_node_in_digraph,
-    get_first_node_with_multiple_out_edges_forward,
+    get_end_goal_node_in_digraph,
+    get_first_node_with_multiple_out_edges,
     get_all_nodes_coming_from_node,
     get_nodes_to_exclude,
+    get_node_name_plan_hash_list,
+    get_graph_with_number_of_plans_label,
+    get_edge_label,
 )
+from helpers.planner_helper.planner_helper_data_types import (
+    Landmark,
+    LandmarkCategory,
+    PlannerResponseModel,
+    PlanningTask,
+)
+from helpers.common_helper.file_helper import read_str_from_file
+from helpers.planner_helper.planner_helper import (
+    get_landmarks_by_landmark_category,
+    get_plan_topq,
+)
+from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
+    get_plan_disambiguator_output_filtered_by_selection_infos,
+)
+
 
 my_dir = os.path.dirname(__file__)
 rel_dot_path = "../../data/graph/{}.dot"
+rel_pddl_path = "../../data/pddl/{}.pddl"
 
 
 class TestGraphHelper(unittest.TestCase):
+    gripper_domain: str
+    gripper_problem: str
+    gripper_landmarks: List[Landmark]
+    planner_response_model: PlannerResponseModel
+    test_graph: nx.Graph
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        TestGraphHelper.gripper_domain = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
+        )
+        TestGraphHelper.gripper_problem = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("gripper/problem"))
+        )
+        TestGraphHelper.gripper_landmarks = get_landmarks_by_landmark_category(
+            PlanningTask(
+                domain=TestGraphHelper.gripper_domain,
+                problem=TestGraphHelper.gripper_problem,
+            ),
+            LandmarkCategory.RWH.value,
+        )
+        TestGraphHelper.planner_response_model = PlannerResponseModel.parse_obj(
+            asdict(
+                get_plan_topq(
+                    PlanningTask(
+                        domain=TestGraphHelper.gripper_domain,
+                        problem=TestGraphHelper.gripper_problem,
+                        num_plans=6,
+                        quality_bound=1.0,
+                    )
+                )
+            )
+        )
+        TestGraphHelper.planner_response_model.set_plan_hashes()
+        (
+            _,
+            _,
+            TestGraphHelper.test_graph,
+            _,
+            _,
+        ) = get_plan_disambiguator_output_filtered_by_selection_infos(
+            [],
+            TestGraphHelper.gripper_landmarks,
+            TestGraphHelper.gripper_domain,
+            TestGraphHelper.gripper_problem,
+            TestGraphHelper.planner_response_model.plans,
+        )
+
     def test_convert_dot_str_to_networkx_graph(self) -> None:
         dot_string = """graph {
                     a -- b;
@@ -80,6 +150,17 @@ class TestGraphHelper(unittest.TestCase):
         root = get_root_node_in_digraph(g)
         self.assertEqual(root, "node0")
 
+    def test_get_end_goal_node_in_digraph(self) -> None:
+        dot_str = ""
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
+            dot_str = f.read()
+        g = convert_dot_str_to_networkx_graph(dot_str)
+        root = get_end_goal_node_in_digraph(g)
+        self.assertEqual(root, "node11")
+
     def test_traversal(self) -> None:
         dot_str = ""
         abs_path_to_dot_file = os.path.join(
@@ -94,7 +175,7 @@ class TestGraphHelper(unittest.TestCase):
         res = list(g.out_edges(res[0][1]))
         self.assertEqual(res, [("node1", "node16"), ("node1", "node2")])
 
-    def test_get_first_node_with_multiple_out_edges_forward_node2(self) -> None:
+    def test_get_first_node_with_multiple_out_edges_node2(self) -> None:
         dot_str = ""
         abs_path_to_dot_file = os.path.join(
             my_dir, rel_dot_path.format("sample")
@@ -108,8 +189,8 @@ class TestGraphHelper(unittest.TestCase):
             first_achiever,
             out_edges_first_node_with_first_achiever,
             edges_traversed,
-        ) = get_first_node_with_multiple_out_edges_forward(
-            g, first_achiever_plan_idx_dict
+        ) = get_first_node_with_multiple_out_edges(
+            g, first_achiever_plan_idx_dict, True
         )
         self.assertEqual(first_node_with_first_achiever, "node1")
         self.assertEqual(first_achiever, "pick ball2 rooma right")
@@ -130,8 +211,8 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
-        res = get_first_node_with_multiple_out_edges_forward(
-            g, first_achiever_plan_idx_dict
+        res = get_first_node_with_multiple_out_edges(
+            g, first_achiever_plan_idx_dict, True
         )
         self.assertEqual(
             res,
@@ -140,6 +221,30 @@ class TestGraphHelper(unittest.TestCase):
                 None,
                 [("node1", "node16"), ("node1", "node2")],
                 ["pick ball1 rooma left"],
+            ),
+        )
+
+    def test_get_first_node_with_multiple_out_edges_no_first_achiever_found_backward(
+        self,
+    ) -> None:
+        dot_str = ""
+        abs_path_to_dot_file = os.path.join(
+            my_dir, rel_dot_path.format("sample")
+        )
+        with open(abs_path_to_dot_file, "r") as f:
+            dot_str = f.read()
+        g = convert_dot_str_to_networkx_graph(dot_str)
+        first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
+        res = get_first_node_with_multiple_out_edges(
+            g, first_achiever_plan_idx_dict, False
+        )
+        self.assertEqual(
+            res,
+            (
+                "node11",
+                None,
+                [("node15", "node11"), ("node10", "node11")],
+                [],
             ),
         )
 
@@ -152,7 +257,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         source_node = "node1"
-        nodes = get_all_nodes_coming_from_node(g, source_node, {"node19"})
+        nodes = get_all_nodes_coming_from_node(g, source_node, {"node19"}, True)
         self.assertEqual(len(nodes), 17)
 
     def test_get_nodes_to_exclude(self) -> None:
@@ -164,5 +269,29 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         nodes_to_start = "node2"
-        nodes_to_exclude = get_nodes_to_exclude(g, {nodes_to_start})
+        nodes_to_exclude = get_nodes_to_exclude(g, {nodes_to_start}, True)
         self.assertEqual(len(nodes_to_exclude), 13)
+
+    def test_get_node_name_plan_hash_list(self):
+        res = get_node_name_plan_hash_list(
+            TestGraphHelper.test_graph,
+            TestGraphHelper.planner_response_model.plans,
+            True,
+        )
+        self.assertEqual(len(res), 40)
+        self.assertEqual(res["node31"][0], "80af1fcf0d421d8bfc7bf4751a6ee24c")
+
+    def test_get_graph_with_number_of_plans_label(self):
+        node = "node0"
+        value = "abcdedfshads"
+        g = get_graph_with_number_of_plans_label(
+            TestGraphHelper.test_graph, {node: [value]}
+        )
+        num_plans = g.nodes[node]["num_plans"]
+        self.assertEqual(num_plans, 1)
+
+    def test_get_edge_label(self):
+        edge_label = get_edge_label(
+            TestGraphHelper.test_graph, ("node38", "node39")
+        )
+        self.assertEqual(edge_label, 'drop ball4 roomb left')

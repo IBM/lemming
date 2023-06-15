@@ -56,6 +56,7 @@ class ChoiceInfo(BaseModel):
     action_name_plan_idx_map: Optional[Dict[str, List[int]]] = None
     action_name_plan_hash_map: Optional[Dict[str, List[str]]] = None
     node_with_multiple_out_edges: Optional[str] = None
+    is_available_for_choice: bool = True
 
 
 class PlanDisambiguatorInput(BaseModel):

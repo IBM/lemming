@@ -352,3 +352,26 @@ def get_first_achiever_out_edge_dict(
             )
         )
     return first_achiever_edge_dict
+
+
+def append_landmarks_not_avialable_for_choice(
+    landmarks: List[Landmark], choice_infos: List[ChoiceInfo]
+) -> List[ChoiceInfo]:
+    choice_infos_with_not_available_landmarks: List[ChoiceInfo] = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos)
+    )
+    facts_set: Set[Tuple] = set()
+    for choice_info in choice_infos:
+        if choice_info.landmark is not None:
+            facts_set.add(tuple(choice_info.landmark.facts))
+
+    for landmark in landmarks:
+        if tuple(landmark.facts) not in facts_set:
+            choice_infos_with_not_available_landmarks.append(
+                ChoiceInfo(
+                    landmark=landmark.copy(deep=True),
+                    is_available_for_choice=False,
+                )
+            )
+
+    return choice_infos_with_not_available_landmarks

@@ -15,6 +15,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     Landmark,
     PlanningTask,
+    ChoiceInfo,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plans_with_selection_info,
@@ -26,6 +27,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plans_with_selection_info,
     get_plan_idx_edge_dict,
     get_edge_label_plan_hashes_dict,
+    append_landmarks_not_avialable_for_choice,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -301,3 +303,14 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
                 "drop ball3 roomb right": ["80af1fcf0d421d8bfc7bf4751a6ee24c"],
             },
         )
+
+    def test_append_landmarks_not_avialable_for_choice(self):
+        landmark = Landmark(facts=["b"])
+        landmarks = [Landmark(facts=["a"]), landmark]
+        choice_infos = [ChoiceInfo(landmark=landmark)]
+        new_choice_infos = append_landmarks_not_avialable_for_choice(
+            landmarks, choice_infos
+        )
+        self.assertEqual(len(new_choice_infos), 2)
+        self.assertTrue(new_choice_infos[0].is_available_for_choice)
+        self.assertFalse(new_choice_infos[1].is_available_for_choice)

@@ -57,6 +57,7 @@ class PlanArea extends React.Component {
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
       cached_landmarks: [],
+      remaining_plans: [],
       selected_landmarks: new Set(),
       unselected_landmarks: new Set(),
       choice_infos: [],
@@ -65,8 +66,8 @@ class PlanArea extends React.Component {
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
-        num_plans: 2,
-        quality_bound: 1.0,
+        num_plans: 10,
+        quality_bound: 1.2,
       },
       notifications: {
         import_select: false,
@@ -98,8 +99,14 @@ class PlanArea extends React.Component {
         })
           .then(res => res.json())
           .then(data => {
-            if (this.state.selectedFileType === 'plans')
+            if (this.state.selectedFileType === 'plans') {
               data = JSON.parse(data);
+            } else {
+              this.setState({
+                ...this.state,
+                plans: [],
+              });
+            }
 
             this.setState({
               ...this.state,
@@ -125,6 +132,11 @@ class PlanArea extends React.Component {
         this.setState(
           {
             ...this.state,
+            graph: null,
+            cached_landmarks: [],
+            selected_landmarks: new Set(),
+            unselected_landmarks: new Set(),
+            choice_infos: [],
             controls: {
               ...this.state.controls,
               modal_open: false,
@@ -166,6 +178,11 @@ class PlanArea extends React.Component {
                 domain: planning_task['domain'],
                 problem: planning_task['problem'],
                 plans: data['plans'],
+                graph: null,
+                cached_landmarks: [],
+                selected_landmarks: new Set(),
+                unselected_landmarks: new Set(),
+                choice_infos: [],
                 controls: {
                   ...this.state.controls,
                   modal_open: false,
@@ -376,6 +393,7 @@ class PlanArea extends React.Component {
 
         this.setState({
           ...this.state,
+          remaining_plans: data.plans,
           graph: data.networkx_graph,
           choice_infos: choice_infos,
           unselected_landmarks: unselected_landmarks,
@@ -494,8 +512,6 @@ class PlanArea extends React.Component {
     this.selectLandmark(label);
   }
 
-  exportState(e) {}
-
   toggleCommitMode(e) {
     const commit_mode = this.state.controls.commit_mode;
 
@@ -600,7 +616,10 @@ class PlanArea extends React.Component {
                   style={{ marginLeft: '10px' }}
                   kind="tertiary"
                   size="sm"
-                  onClick={this.exportState.bind(this)}>
+                  href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                    JSON.stringify(this.state.remaining_plans, 0, 4)
+                  )}`}
+                  download={'plans.json'}>
                   Export
                 </Button>
               )}

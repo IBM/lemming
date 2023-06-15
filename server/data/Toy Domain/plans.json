@@ -1,0 +1,56 @@
+[
+    {
+        "actions": [
+            "a",
+            "b_alt",
+            "buffer",
+            "c",
+            "d",
+            "e",
+            "goal"
+        ],
+        "cost": 7,
+        "plan_hash": "a7c1751ede3793f3b93d852a1d2dc1f5"
+    },
+    {
+        "actions": [
+            "a",
+            "b_main",
+            "buffer",
+            "c",
+            "d",
+            "e",
+            "goal"
+        ],
+        "cost": 7,
+        "plan_hash": "911d63019a4afc040e05e0cbb704736b"
+    },
+    {
+        "actions": [
+            "a",
+            "b_alt",
+            "buffer",
+            "c",
+            "d",
+            "f",
+            "buffer",
+            "goal"
+        ],
+        "cost": 8,
+        "plan_hash": "5ff5ea83b641f893fb50f7f807582f39"
+    },
+    {
+        "actions": [
+            "a",
+            "b_main",
+            "buffer",
+            "c",
+            "d",
+            "f",
+            "buffer",
+            "goal"
+        ],
+        "cost": 8,
+        "plan_hash": "48c15d2926e48b356897fd864d97f3d8"
+    }
+]

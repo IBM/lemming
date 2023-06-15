@@ -88,9 +88,7 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         plans = json.load(open(f"./data/{domain_name}/plans.json"))
-        plans = [
-            Plan(actions=item["actions"], cost=item["cost"]) for item in plans
-        ]
+        plans = [Plan.parse_obj(item) for item in plans]
 
     except Exception as e:
         print(e)

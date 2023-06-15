@@ -4,6 +4,7 @@ import { BuildBackward } from './BuildBackward';
 import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
 import { NL2LTLIntegration } from './NL2LTLIntegration';
+import { generateStateDescription, parseEdgeName } from '../../components/Info';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
 import {
   Grid,
@@ -56,6 +57,7 @@ class PlanArea extends React.Component {
       plans: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
+      hover_text: '',
       cached_landmarks: [],
       remaining_plans: [],
       selected_landmarks: new Set(),
@@ -341,7 +343,7 @@ class PlanArea extends React.Component {
       });
   }
 
-  generateViz(selected_edge) {
+  generateViz() {
     if (!this.state.plans || this.state.plans.length === 0) return;
 
     const viz_endpoint =
@@ -349,17 +351,17 @@ class PlanArea extends React.Component {
       '/generate_' +
       this.state.active_view.toLowerCase().replace(/\s/g, '_');
 
-    var selection_infos = [];
-
-    if (selected_edge)
-      selection_infos = [
-        {
-          selected_first_achiever: selected_edge,
+    const selection_infos = Array.from(this.state.selected_landmarks).map(
+      (item, i) => {
+        return {
+          selected_first_achiever: item,
           selected_plan_hashes: this.state.choice_infos
-            .map(item => item.action_name_plan_hash_map[selected_edge])
+            .filter(choice => item in choice.action_name_plan_hash_map)
+            .map(choice => choice.action_name_plan_hash_map[item])
             .reduce((hashes, item) => hashes.concat(item), []),
-        },
-      ];
+        };
+      }
+    );
 
     const payload = {
       domain: this.state.domain,
@@ -460,7 +462,7 @@ class PlanArea extends React.Component {
         unselected_landmarks: unselected_landmarks,
       },
       () => {
-        // this.generateViz();
+        this.generateViz();
       }
     );
   }
@@ -505,10 +507,15 @@ class PlanArea extends React.Component {
     });
   }
 
+  onNodeClick(node) {
+    this.setState({
+      ...this.state,
+      hover_text: generateStateDescription(node.data.description),
+    });
+  }
+
   onEdgeClick(edge) {
-    const reg = /"(.*)"/g;
-    const label = reg.exec(edge.label)[1].trim();
-    this.generateViz(label);
+    const label = parseEdgeName(edge.label);
     this.selectLandmark(label);
   }
 
@@ -840,14 +847,24 @@ class PlanArea extends React.Component {
 
                         {!this.state.notifications.viz_loading &&
                           this.state.graph && (
-                            <Component
-                              key={id}
-                              onEdgeClick={this.onEdgeClick.bind(this)}
-                              state={this.state}
-                              update_planner_payload={this.update_planner_payload.bind(
-                                this
-                              )}
-                            />
+                            <>
+                              <Tile className="hover-zone">
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: `${this.state.hover_text}`,
+                                  }}
+                                />
+                              </Tile>
+                              <Component
+                                key={id}
+                                onEdgeClick={this.onEdgeClick.bind(this)}
+                                onNodeClick={this.onNodeClick.bind(this)}
+                                state={this.state}
+                                update_planner_payload={this.update_planner_payload.bind(
+                                  this
+                                )}
+                              />
+                            </>
                           )}
                       </div>
                     );

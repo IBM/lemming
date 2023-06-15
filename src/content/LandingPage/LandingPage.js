@@ -25,22 +25,19 @@ const LandingPage = props => (
   <>
     <Grid>
       <Column lg={4} md={4} sm={4}>
-        <Grid>
-          <Column lg={1} md={1} sm={1}>
-            <img
-              alt="A Giant Lemming"
-              src={generateURL('shared', 'lemming', 'png')}
-              className="logo"
-              width="100%"
-            />
-          </Column>
-          <Column lg={3} md={3} sm={3}>
-            <h5>
-              <span className="text-blue">{config.metadata.name}</span>:{' '}
-              {config.metadata.title_text}
-            </h5>
-          </Column>
-        </Grid>
+        <img
+          alt="A Giant Lemming"
+          src={generateURL('shared', 'lemming', 'png')}
+          className="logo"
+          width="25%"
+        />
+
+        <br />
+        <br />
+        <h4>
+          <span className="text-blue">{config.metadata.name}</span>
+        </h4>
+        <h3>{config.metadata.title_text}</h3>
 
         <br />
         <p style={{ fontSize: 'small' }}>{config.metadata.info_text}</p>

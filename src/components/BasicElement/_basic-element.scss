@@ -71,3 +71,16 @@
 .text-silver {
   color: silver;
 }
+
+.hover-zone {
+  margin-top: 20px;
+  position: fixed;
+  z-index: 999;
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.025);
+}
+
+.node-pop > div {
+  max-height: 80px;
+  overflow-y: scroll;
+}

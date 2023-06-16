@@ -29,6 +29,7 @@ import {
   RadioButton,
   Loading,
   NumberInput,
+  Tag,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -41,6 +42,13 @@ const components = {
   SelectView: SelectView,
   NL2LTLIntegration: NL2LTLIntegration,
 };
+
+function getPlanHashesFromChoice(item, choice_infos) {
+  return choice_infos
+    .filter(choice => item in choice.action_name_plan_hash_map)
+    .map(choice => choice.action_name_plan_hash_map[item])
+    .reduce((hashes, item) => hashes.concat(item), []);
+}
 
 class PlanArea extends React.Component {
   constructor(props) {
@@ -352,10 +360,10 @@ class PlanArea extends React.Component {
       (item, i) => {
         return {
           selected_first_achiever: item,
-          selected_plan_hashes: this.state.choice_infos
-            .filter(choice => item in choice.action_name_plan_hash_map)
-            .map(choice => choice.action_name_plan_hash_map[item])
-            .reduce((hashes, item) => hashes.concat(item), []),
+          selected_plan_hashes: getPlanHashesFromChoice(
+            item,
+            this.state.choice_infos
+          ),
         };
       }
     );
@@ -858,6 +866,12 @@ class FeedbackArea extends React.Component {
     this.props.deselectLandmarks([landmark]);
   }
 
+  getNumPlans(item) {
+    // const plan_hashes = getPlanHashesFromChoice(item, this.state.choice_infos)
+    // return plan_hashes.length;
+    return 0;
+  }
+
   render() {
     return (
       <>
@@ -881,6 +895,14 @@ class FeedbackArea extends React.Component {
                     className="text-blue landmark-list-item"
                     onClick={this.deselectLandmark.bind(this, item)}>
                     {item}
+                    <Tag
+                      className="count-tag"
+                      size="sm"
+                      type="cool-gray"
+                      title={this.getNumPlans(item)}>
+                      {' '}
+                      {this.getNumPlans(item)}{' '}
+                    </Tag>
                   </StructuredListCell>
                 </StructuredListRow>
               ))}
@@ -890,6 +912,14 @@ class FeedbackArea extends React.Component {
                     className="text-silver landmark-list-item"
                     onClick={this.selectLandmark.bind(this, item)}>
                     {item}
+                    <Tag
+                      className="count-tag"
+                      size="sm"
+                      type="cool-gray"
+                      title={this.getNumPlans(item)}>
+                      {' '}
+                      {this.getNumPlans(item)}{' '}
+                    </Tag>
                   </StructuredListCell>
                 </StructuredListRow>
               ))}

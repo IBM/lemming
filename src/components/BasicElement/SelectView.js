@@ -3,10 +3,14 @@ import { generateDescription, parseEdgeName } from '../../components/Info';
 import { GraphCanvas, lightTheme } from 'reagraph';
 import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
 
+function rawNodeTransform(raw_node) {
+  return { ...raw_node, label: '', description: raw_node.label, data: {description: raw_node.label}}
+}
+
 function generateNodes(state) {
   if (!state.graph || !state.graph.nodes) return [];
   return state.graph.nodes.map((item, id) => {
-    return { ...item, label: '', description: item.label };
+    return rawNodeTransform(item);
   });
 }
 
@@ -63,7 +67,11 @@ const SelectView = props => {
   const commitChanges = e => {};
 
   const onFocus = e => {
-    ref.current?.centerGraph([getBasisNode(props.state)]);
+    const basis_node = getBasisNode(props.state);
+    const raw_graph_node = props.state.graph.nodes.filter(item => item.id === basis_node)[0];
+
+    setFeedbackText(generateDescription(rawNodeTransform(raw_graph_node)));
+    ref.current?.centerGraph([basis_node]);
     ref.current?.zoomIn();
   };
 

@@ -4,7 +4,12 @@ import { GraphCanvas, lightTheme } from 'reagraph';
 import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
 
 function rawNodeTransform(raw_node) {
-  return { ...raw_node, label: '', description: raw_node.label, data: {description: raw_node.label}}
+  return {
+    ...raw_node,
+    label: '',
+    description: raw_node.label,
+    data: { description: raw_node.label },
+  };
 }
 
 function generateNodes(state) {
@@ -56,19 +61,44 @@ const SelectView = props => {
   const actives = getActiveNodes(props.state);
 
   const ref = useRef(null);
+  const [commits] = useState(new Set());
+
   const [commit_mode, setCommitMode] = useState(false);
   const [feedback_text, setFeedbackText] = useState(init_feedback);
 
-  const onEdgeClick = edge => {
-    const label = parseEdgeName(edge.label);
-    props.onEdgeClick(label);
+  const setCommits = edge => {
+    if (commits.has(edge)) {
+      commits.delete(edge);
+    } else {
+      commits.add(edge);
+    }
+
+    const commit_msg =
+      'Selected edges: <strong>' +
+      Array.from(commits).join(', ') +
+      "</strong>. Don't forget to commit!";
+    setFeedbackText(commit_msg);
   };
 
-  const commitChanges = e => {};
+  const onEdgeClick = edge => {
+    const label = parseEdgeName(edge.label);
+
+    if (commit_mode) {
+      setCommits(label);
+    } else {
+      props.onEdgeClick(label);
+    }
+  };
+
+  const commitChanges = e => {
+    props.commitChanges(commits);
+  };
 
   const onFocus = e => {
     const basis_node = getBasisNode(props.state);
-    const raw_graph_node = props.state.graph.nodes.filter(item => item.id === basis_node)[0];
+    const raw_graph_node = props.state.graph.nodes.filter(
+      item => item.id === basis_node
+    )[0];
 
     setFeedbackText(generateDescription(rawNodeTransform(raw_graph_node)));
     ref.current?.centerGraph([basis_node]);

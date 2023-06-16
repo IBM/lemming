@@ -447,12 +447,14 @@ class PlanArea extends React.Component {
     return feedback;
   }
 
-  selectLandmark(landmark) {
+  selectLandmarks(landmarks) {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    selected_landmarks.add(landmark);
-    unselected_landmarks.delete(landmark);
+    for (var i = 0; i < landmarks.length; i++) {
+      selected_landmarks.add(landmarks[i]);
+      unselected_landmarks.delete(landmarks[i]);
+    }
 
     this.setState(
       {
@@ -466,12 +468,14 @@ class PlanArea extends React.Component {
     );
   }
 
-  deselectLandmark(landmark) {
+  deselectLandmarks(landmarks) {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    unselected_landmarks.add(landmark);
-    selected_landmarks.delete(landmark);
+    for (var i = 0; i < landmarks.length; i++) {
+      unselected_landmarks.add(landmarks[i]);
+      selected_landmarks.delete(landmarks[i]);
+    }
 
     this.setState(
       {
@@ -507,10 +511,12 @@ class PlanArea extends React.Component {
   }
 
   onEdgeClick(edge) {
-    this.selectLandmark(edge);
+    this.selectLandmarks([edge]);
   }
 
-  commitChanges(e) {}
+  commitChanges(commits) {
+    this.selectLandmarks(Array.from(commits));
+  }
 
   render() {
     return (
@@ -823,8 +829,8 @@ class PlanArea extends React.Component {
         <Column lg={4} md={2} sm={1}>
           <FeedbackArea
             state={this.state}
-            selectLandmark={this.selectLandmark.bind(this)}
-            deselectLandmark={this.deselectLandmark.bind(this)}
+            selectLandmarks={this.selectLandmarks.bind(this)}
+            deselectLandmarks={this.deselectLandmarks.bind(this)}
           />
         </Column>
       </Grid>
@@ -845,11 +851,11 @@ class FeedbackArea extends React.Component {
   }
 
   selectLandmark(landmark) {
-    this.props.selectLandmark(landmark);
+    this.props.selectLandmarks([landmark]);
   }
 
   deselectLandmark(landmark) {
-    this.props.deselectLandmark(landmark);
+    this.props.deselectLandmarks([landmark]);
   }
 
   render() {

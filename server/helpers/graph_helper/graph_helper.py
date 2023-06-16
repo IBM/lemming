@@ -1,10 +1,11 @@
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
+
 import pydot
-from networkx import Graph, nx_pydot, set_node_attributes
-from networkx.readwrite import json_graph
 from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import Plan
+from networkx import Graph, nx_pydot, set_node_attributes
+from networkx.readwrite import json_graph
 
 
 def convert_dot_str_to_networkx_graph(dot_str: str) -> Graph:

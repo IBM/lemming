@@ -1,37 +1,22 @@
+import os
+import unittest
 from dataclasses import asdict
 from typing import List
-import unittest
-import os
 
-from pydot import Dot, Edge, Node
 import networkx as nx
-from helpers.graph_helper.graph_helper import (
-    convert_dot_str_to_networkx_graph,
-    get_dict_from_graph,
-    get_root_node_in_digraph,
-    get_end_goal_node_in_digraph,
-    get_first_node_with_multiple_out_edges,
-    get_all_nodes_coming_from_node,
-    get_nodes_to_exclude,
-    get_node_name_plan_hash_list,
-    get_graph_with_number_of_plans_label,
-    get_edge_label,
-)
-from helpers.planner_helper.planner_helper_data_types import (
-    Landmark,
-    LandmarkCategory,
-    PlannerResponseModel,
-    PlanningTask,
-)
 from helpers.common_helper.file_helper import read_str_from_file
+from helpers.graph_helper.graph_helper import (
+  convert_dot_str_to_networkx_graph, get_all_nodes_coming_from_node,
+  get_dict_from_graph, get_edge_label, get_end_goal_node_in_digraph,
+  get_first_node_with_multiple_out_edges, get_graph_with_number_of_plans_label,
+  get_node_name_plan_hash_list, get_nodes_to_exclude, get_root_node_in_digraph)
+from helpers.plan_disambiguator_helper.plan_disambiguator_helper import \
+  get_plan_disambiguator_output_filtered_by_selection_infos
 from helpers.planner_helper.planner_helper import (
-    get_landmarks_by_landmark_category,
-    get_plan_topq,
-)
-from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
-    get_plan_disambiguator_output_filtered_by_selection_infos,
-)
-
+  get_landmarks_by_landmark_category, get_plan_topq)
+from helpers.planner_helper.planner_helper_data_types import (
+  Landmark, LandmarkCategory, PlannerResponseModel, PlanningTask)
+from pydot import Dot, Edge, Node
 
 my_dir = os.path.dirname(__file__)
 rel_dot_path = "../../data/graph/{}.dot"
@@ -294,4 +279,4 @@ class TestGraphHelper(unittest.TestCase):
         edge_label = get_edge_label(
             TestGraphHelper.test_graph, ("node38", "node39")
         )
-        self.assertEqual(edge_label, 'drop ball4 roomb left')
+        self.assertEqual(edge_label, "drop ball4 roomb left")

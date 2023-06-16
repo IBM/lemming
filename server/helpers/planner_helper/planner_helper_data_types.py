@@ -1,10 +1,14 @@
 from __future__ import annotations
+
 from enum import Enum
-from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, validator
+from typing import Any, Dict, List, Optional
+
 from dacite import from_dict
-from watson_ai_planning.data_model.planning_types import PlanningResult
 from helpers.common_helper.hash_helper import get_list_hash
+from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula
+from pydantic import BaseModel, validator
+from pylogics.syntax.base import Formula
+from watson_ai_planning.data_model.planning_types import PlanningResult
 
 
 class Plan(BaseModel):
@@ -118,18 +122,13 @@ class LemmingTask(BaseModel):
     plans: List[Plan]
 
 
-class NL2LTLRequest(BaseModel):
-    utterance: str
-
-
-class LTLFormula(BaseModel):
-    formula: str
-    description: str
-    confidence: float
-
-
 class LTL2PDDLRequest(BaseModel):
     formula: LTLFormula
     domain: str
     problem: str
     plans: List[Plan]
+
+
+class ToolCompiler(Enum):
+    LF2F = "lf2f"
+    P4P = "p4p"

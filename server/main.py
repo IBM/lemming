@@ -1,35 +1,31 @@
 import json
-
+from pathlib import Path
 from typing import List
-from fastapi import FastAPI, HTTPException, UploadFile, File
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from helpers.planner_helper.planner_helper_data_types import (
-    LandmarksResponseModel,
-    PlannerResponseModel,
-    PlanDisambiguatorOutput,
-    PlanDisambiguatorInput,
-    LemmingTask,
-    PlanningTask,
-    Plan,
-    LTLFormula,
-    NL2LTLRequest,
-    LTL2PDDLRequest,
-)
-from helpers.planner_helper.planner_helper import (
-    get_landmarks_by_landmark_category,
-    get_plan_topq,
-    get_planner_response_model_with_hash,
-)
-from helpers.common_helper.file_helper import (
-    read_str_from_upload_file,
-)
-from helpers.plan_disambiguator_helper.selection_flow_helper import (
-    get_selection_flow_output,
-)
+from helpers.common_helper.file_helper import read_str_from_upload_file
 from helpers.common_helper.static_data_helper import app_description
-from helpers.plan_disambiguator_helper.build_flow_helper import (
-    get_build_flow_output,
-)
+from helpers.nl2plan_helper.ltl2plan_helper import (compile_instance,
+                                                    get_goal_formula)
+from helpers.nl2plan_helper.manage_formulas import \
+  get_formulas_from_matched_formulas
+from helpers.nl2plan_helper.nl2ltl_helper import NL2LTLRequest, prompt_builder
+from helpers.plan_disambiguator_helper.build_flow_helper import \
+  get_build_flow_output
+from helpers.plan_disambiguator_helper.selection_flow_helper import \
+  get_selection_flow_output
+from helpers.planner_helper.planner_helper import (
+  get_landmarks_by_landmark_category, get_plan_topq,
+  get_planner_response_model_with_hash)
+from helpers.planner_helper.planner_helper_data_types import (
+  LandmarksResponseModel, LemmingTask, LTL2PDDLRequest, LTLFormula, Plan,
+  PlanDisambiguatorInput, PlanDisambiguatorOutput, PlannerResponseModel,
+  PlanningTask, ToolCompiler)
+from nl2ltl import translate
+from nl2ltl.engines.gpt.core import GPTEngine, Models
+from pddl.parser.domain import DomainParser
+from pddl.parser.problem import ProblemParser
 
 app = FastAPI(
     title="Lemming",
@@ -198,34 +194,40 @@ def generate_nl2ltl_integration(
 
 @app.post("/nl2ltl")
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
-    _ = request
 
-    # TODO: Call to NL2LTL
-    ltl_formulas: List[LTLFormula] = [
-        LTLFormula(
-            formula="RespondedExistence Slack Gmail",
-            description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
-            confidence=0.4,
-        ),
-        LTLFormula(
-            formula="Response Slack Gmail",
-            description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
-            confidence=0.3,
-        ),
-        LTLFormula(
-            formula="ExistenceTwo Slack",
-            description="Slack will happen at least twice.",
-            confidence=0.2,
-        ),
-    ]
+    custom_prompt = prompt_builder()
 
+    engine = GPTEngine(model=Models.DAVINCI3.value, prompt=custom_prompt)
+    utterance = request.utterance
+
+    matched_formulas = translate(utterance, engine)
+    ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
+        matched_formulas
+    )
     return ltl_formulas
 
 
-@app.post("/ltl_compile")
-def ltl_compile(request: LTL2PDDLRequest) -> LemmingTask:
-    planning_task = PlanningTask(domain=request.domain, problem=request.problem)
+@app.post("/ltl_compile/{tool}")
+def ltl_compile(request: LTL2PDDLRequest, tool: ToolCompiler) -> LemmingTask:
+
+    domain_parser = DomainParser()
+    problem_parser = ProblemParser()
+
+    domain = domain_parser(Path(request.domain).read_text(encoding="utf-8"))
+    problem = problem_parser(Path(request.problem).read_text(encoding="utf-8"))
+
+    goal = get_goal_formula(request.formula, tool)
+
+    compiled_domain, compiled_problem = compile_instance(
+        domain, problem, goal, tool
+    )
+
+    planning_task = PlanningTask(
+        domain=compiled_domain, problem=compiled_problem
+    )
+
+    # TODO get plans
+
     lemming_task = LemmingTask(planning_task=planning_task, plans=request.plans)
 
-    # TODO: Compile to new planning task
     return lemming_task

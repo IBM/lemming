@@ -1,20 +1,14 @@
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
-from networkx import Graph
-from helpers.planner_helper.planner_helper_data_types import (
-    Landmark,
-    SelelctionInfo,
-    PlanningTask,
-    Plan,
-    PlannerResponseModel,
-    ChoiceInfo,
-)
-from helpers.planner_helper.planner_helper import get_dot_graph_str
+
 from helpers.graph_helper.graph_helper import (
-    convert_dot_str_to_networkx_graph,
-    get_node_name_plan_hash_list,
-    get_graph_with_number_of_plans_label,
-)
+  convert_dot_str_to_networkx_graph, get_graph_with_number_of_plans_label,
+  get_node_name_plan_hash_list)
+from helpers.planner_helper.planner_helper import get_dot_graph_str
+from helpers.planner_helper.planner_helper_data_types import (
+  ChoiceInfo, Landmark, Plan, PlannerResponseModel, PlanningTask,
+  SelelctionInfo)
+from networkx import Graph
 
 
 def get_filtered_out_selection_infos_by_selection_infos(

@@ -1,16 +1,11 @@
-import unittest
 import os
+import unittest
 
 from helpers.common_helper.file_helper import read_str_from_file
-from helpers.planner_helper.planner_helper_data_types import (
-    LandmarkCategory,
-    PlanningTask,
-)
 from helpers.planner_helper.planner_helper import (
-    get_plan_topq,
-    get_landmarks_by_landmark_category,
-    get_dot_graph_str,
-)
+  get_dot_graph_str, get_landmarks_by_landmark_category, get_plan_topq)
+from helpers.planner_helper.planner_helper_data_types import (LandmarkCategory,
+                                                              PlanningTask)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../../data/pddl/{}.pddl"

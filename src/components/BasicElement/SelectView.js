@@ -1,7 +1,7 @@
-import React from 'react';
-import { generateDescription } from '../../components/Info';
+import React, { useRef, useState } from 'react';
+import { generateDescription, parseEdgeName } from '../../components/Info';
 import { GraphCanvas, lightTheme } from 'reagraph';
-import { Grid, Column, Button } from '@carbon/react';
+import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
 
 function generateNodes(state) {
   if (!state.graph || !state.graph.nodes) return [];
@@ -24,69 +24,139 @@ function generateEdges(state) {
   return edges;
 }
 
+function getBasisNode(state) {
+  return state.choice_infos
+    .filter(item => item.is_available_for_choice)
+    .map(item => item.node_with_multiple_out_edges)[0];
+}
+
+function getActiveNodes(state) {
+  if (!state.graph || !state.graph.nodes) return [];
+
+  const basis_node = getBasisNode(state);
+
+  var active_nodes = state.graph.links
+    .filter(item => item.source === basis_node)
+    .map(item => item.target);
+  active_nodes.push(basis_node);
+
+  return active_nodes;
+}
+
+const init_feedback =
+  "Right click on the nodes and edges to find what's in them. Click on an edge to enforce all plans with that action. Use commit mode to commit multiple selections together.";
+
 const SelectView = props => {
   const nodes = generateNodes(props.state);
   const edges = generateEdges(props.state);
-  const actives = props.state.choice_infos.map(
-    item => item.node_with_multiple_out_edges
-  );
+  const actives = getActiveNodes(props.state);
+
+  const ref = useRef(null);
+  const [commit_mode, setCommitMode] = useState(false);
+  const [feedback_text, setFeedbackText] = useState(init_feedback);
 
   const onEdgeClick = edge => {
-    props.onEdgeClick(edge);
+    const label = parseEdgeName(edge.label);
+    props.onEdgeClick(label);
   };
 
-  const onNodeClick = node => {
-    props.onNodeClick(node);
+  const commitChanges = e => {};
+
+  const onFocus = e => {
+    ref.current?.centerGraph([getBasisNode(props.state)]);
+    ref.current?.zoomIn();
   };
 
   return (
     <Grid>
       <Column lg={16} md={8} sm={4}>
-        <div className="canvas-holder">
-          <GraphCanvas
-            theme={{ ...lightTheme, canvas: { background: 'white' } }}
-            labelType="edges"
-            edgeLabelPosition="inline"
-            layoutType="hierarchicalTd"
-            nodes={nodes}
-            edges={edges}
-            actives={actives}
-            onNodeClick={node => onNodeClick(node)}
-            onEdgeClick={edge => onEdgeClick(edge)}
-            contextMenu={({ data, additional, onClose }) => (
+        {nodes.length > 0 && (
+          <div className="hover-zone">
+            <Toggle
+              aria-label="toggle commitm mode"
+              id="toggle-commit-mode"
+              size="sm"
+              labelText=""
+              labelA="Commit Mode OFF"
+              labelB="Commit Mode ON"
+              toggled={commit_mode}
+              onClick={() => setCommitMode(!commit_mode)}
+            />
+            <br />
+            <br />
+
+            <Tile className="hover-zone-tile">
               <div
-                className="node-pop"
-                style={{
-                  background: 'white',
-                  width: 250,
-                  height: 150,
-                  border: 'solid 1px #0d62fe',
-                  borderRadius: 2,
-                  padding: 10,
-                  textAlign: 'left',
-                  marginTop: '25px',
-                  fontSize: 'smaller',
-                  lineHeight: 'normal',
-                }}>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: generateDescription(data),
-                  }}
-                />
-                <br />
-                <br />
-                <div style={{ position: 'absolute', bottom: 10, left: 10 }}>
-                  <Button size="sm" kind="tertiary" onClick={onClose}>
-                    Close
-                  </Button>
-                </div>
-              </div>
+                dangerouslySetInnerHTML={{
+                  __html: feedback_text,
+                }}
+              />
+            </Tile>
+            <br />
+            <Button kind="tertiary" size="sm" onClick={onFocus}>
+              Focus
+            </Button>
+
+            {commit_mode && (
+              <Button
+                style={{ marginLeft: '10px' }}
+                kind="tertiary"
+                size="sm"
+                onClick={commitChanges}>
+                Commit
+              </Button>
             )}
-          />
+          </div>
+        )}
+
+        <div className="canvas-holder">
+          {nodes.length > 0 && (
+            <GraphCanvas
+              ref={ref}
+              theme={{ ...lightTheme, canvas: { background: 'white' } }}
+              labelType="edges"
+              edgeLabelPosition="inline"
+              layoutType="hierarchicalTd"
+              nodes={nodes}
+              edges={edges}
+              actives={actives}
+              onNodeClick={node => setFeedbackText(generateDescription(node))}
+              onEdgeClick={edge => onEdgeClick(edge)}
+              contextMenu={({ data, additional, onClose }) => (
+                <div
+                  className="node-pop"
+                  style={{
+                    background: 'white',
+                    width: 250,
+                    height: 150,
+                    border: 'solid 1px #0d62fe',
+                    borderRadius: 2,
+                    padding: 10,
+                    textAlign: 'left',
+                    marginTop: '25px',
+                    fontSize: 'smaller',
+                    lineHeight: 'normal',
+                  }}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: generateDescription(data),
+                    }}
+                  />
+                  <br />
+                  <br />
+                  <div style={{ position: 'absolute', bottom: 10, left: 10 }}>
+                    <Button size="sm" kind="tertiary" onClick={onClose}>
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              )}
+            />
+          )}
         </div>
       </Column>
     </Grid>
   );
 };
 
-export { SelectView };
+export { SelectView, getBasisNode, getActiveNodes };

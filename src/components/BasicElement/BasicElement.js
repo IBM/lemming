@@ -4,7 +4,6 @@ import { BuildBackward } from './BuildBackward';
 import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
 import { NL2LTLIntegration } from './NL2LTLIntegration';
-import { generateStateDescription, parseEdgeName } from '../../components/Info';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
 import {
   Grid,
@@ -30,7 +29,6 @@ import {
   RadioButton,
   Loading,
   NumberInput,
-  Toggle,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -57,14 +55,12 @@ class PlanArea extends React.Component {
       plans: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
-      hover_text: '',
       cached_landmarks: [],
       remaining_plans: [],
       selected_landmarks: new Set(),
       unselected_landmarks: new Set(),
       choice_infos: [],
       controls: {
-        commit_mode: false,
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
@@ -329,6 +325,7 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         this.setState({
           ...this.state,
           cached_landmarks: data.landmarks,
@@ -378,6 +375,8 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
+        console.log(123, data);
+
         var choice_infos = data.choice_infos;
         var unselected_landmarks = [];
 
@@ -507,28 +506,8 @@ class PlanArea extends React.Component {
     });
   }
 
-  onNodeClick(node) {
-    this.setState({
-      ...this.state,
-      hover_text: generateStateDescription(node.data.description),
-    });
-  }
-
   onEdgeClick(edge) {
-    const label = parseEdgeName(edge.label);
-    this.selectLandmark(label);
-  }
-
-  toggleCommitMode(e) {
-    const commit_mode = this.state.controls.commit_mode;
-
-    this.setState({
-      ...this.state,
-      controls: {
-        ...this.state.controls,
-        commit_mode: !commit_mode,
-      },
-    });
+    this.selectLandmark(edge);
   }
 
   commitChanges(e) {}
@@ -608,16 +587,6 @@ class PlanArea extends React.Component {
                 </>
               )}
 
-              {this.state.controls.commit_mode && (
-                <Button
-                  style={{ marginLeft: '10px' }}
-                  kind="tertiary"
-                  size="sm"
-                  onClick={this.commitChanges.bind(this)}>
-                  Commit
-                </Button>
-              )}
-
               {this.state.plans.length > 0 && (
                 <Button
                   style={{ marginLeft: '10px' }}
@@ -630,21 +599,6 @@ class PlanArea extends React.Component {
                   Export
                 </Button>
               )}
-
-              {this.state.plans.length > 0 &&
-                this.state.active_view === 'Select View' && (
-                  <div style={{ marginTop: '10px' }}>
-                    <Toggle
-                      aria-label="toggle commitm mode"
-                      id="toggle-commit-mode"
-                      labelText=""
-                      labelA="Commit Mode OFF"
-                      labelB="Commit Mode ON"
-                      toggled={this.state.controls.commit_mode}
-                      onClick={this.toggleCommitMode.bind(this)}
-                    />
-                  </div>
-                )}
 
               <Modal
                 passiveModal
@@ -845,27 +799,17 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading &&
-                          this.state.graph && (
-                            <>
-                              <Tile className="hover-zone">
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: `${this.state.hover_text}`,
-                                  }}
-                                />
-                              </Tile>
-                              <Component
-                                key={id}
-                                onEdgeClick={this.onEdgeClick.bind(this)}
-                                onNodeClick={this.onNodeClick.bind(this)}
-                                state={this.state}
-                                update_planner_payload={this.update_planner_payload.bind(
-                                  this
-                                )}
-                              />
-                            </>
-                          )}
+                        {!this.state.notifications.viz_loading && (
+                          <Component
+                            key={id}
+                            onEdgeClick={this.onEdgeClick.bind(this)}
+                            commitChanges={this.commitChanges.bind(this)}
+                            state={this.state}
+                            update_planner_payload={this.update_planner_payload.bind(
+                              this
+                            )}
+                          />
+                        )}
                       </div>
                     );
                   }

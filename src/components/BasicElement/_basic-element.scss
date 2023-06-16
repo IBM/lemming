@@ -77,7 +77,10 @@
   position: fixed;
   z-index: 999;
   width: 250px;
-  background-color: rgba(0, 0, 0, 0.025);
+}
+
+.hover-zone-tile {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .node-pop > div {

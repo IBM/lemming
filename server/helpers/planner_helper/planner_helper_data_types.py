@@ -130,13 +130,14 @@ class NL2LTLRequest(BaseModel):
 
 
 class LTLFormula(BaseModel):
+    user_prompt: str
     formula: str
     description: str
     confidence: float
 
 
 class LTL2PDDLRequest(BaseModel):
-    formula: LTLFormula
+    formulas: List[LTLFormula]
+    plans: List[Plan]
     domain: str
     problem: str
-    plans: List[Plan]

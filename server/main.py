@@ -214,16 +214,19 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     # TODO: Call to NL2LTL
     ltl_formulas: List[LTLFormula] = [
         LTLFormula(
+            user_prompt=request.utterance,
             formula="RespondedExistence Slack Gmail",
             description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
             confidence=0.4,
         ),
         LTLFormula(
+            user_prompt=request.utterance,
             formula="Response Slack Gmail",
             description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
             confidence=0.3,
         ),
         LTLFormula(
+            user_prompt=request.utterance,
             formula="ExistenceTwo Slack",
             description="Slack will happen at least twice.",
             confidence=0.2,

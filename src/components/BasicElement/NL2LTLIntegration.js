@@ -64,30 +64,36 @@ class NL2LTLIntegration extends React.Component {
     }
   }
 
-  update_planner_payload(planner_payload, user_prompt) {
-    this.props.update_planner_payload(planner_payload, user_prompt);
+  update_planner_payload(planner_payload, new_formula) {
+    this.props.update_planner_payload(planner_payload, new_formula);
   }
 
   onEdgeClick(edge) {}
 
   confirmFormula() {
+    const new_formula = this.state.ltl_formulas[this.state.selected_formula];
+    var cached_formulas = this.state.cached_formulas;
+    cached_formulas.push(new_formula);
+
     fetch(link_to_server + '/ltl_compile', {
       method: 'POST',
       body: JSON.stringify({
-        formula: this.state.ltl_formulas[this.state.selected_formula],
         domain: this.state.domain,
         problem: this.state.problem,
         plans: this.state.plans,
+        formulas: cached_formulas,
       }),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(res => res.json())
       .then(data => {
-        this.update_planner_payload(data, this.state.text_input);
-        this.setState({
-          ...this.state,
-          ...default_state,
-        });
+        this.setState(
+          {
+            ...this.state,
+            ...default_state,
+          },
+          () => this.update_planner_payload(data, new_formula)
+        );
       })
       .catch(err => console.error(err));
   }

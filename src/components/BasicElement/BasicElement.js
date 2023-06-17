@@ -62,7 +62,7 @@ class PlanArea extends React.Component {
       problem: null,
       plans: [],
       nl_prompts: [],
-      user_prompts: new Set(),
+      cached_formulas: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
       cached_landmarks: [],
@@ -234,12 +234,14 @@ class PlanArea extends React.Component {
     });
   }
 
-  update_planner_payload(planner_payload, user_prompt) {
+  update_planner_payload(planner_payload, new_formula) {
     const planning_task = planner_payload['planning_task'];
     const plans = planner_payload['plans'];
-    const user_prompts = this.state.user_prompts;
 
-    user_prompts.add(user_prompt);
+    var cached_formulas = this.state.cached_formulas;
+
+    if (cached_formulas.indexOf(new_formula) === -1)
+      cached_formulas.push(new_formula);
 
     this.setState(
       {
@@ -247,9 +249,11 @@ class PlanArea extends React.Component {
         domain: planning_task.domain,
         problem: planning_task.problem,
         plans: plans,
-        user_prompts: user_prompts,
+        cached_formulas: cached_formulas,
       },
-      this.getPlans
+      () => {
+        this.generateViz();
+      }
     );
   }
 
@@ -539,14 +543,16 @@ class PlanArea extends React.Component {
     );
   }
 
-  deleteUserPrompt(prompt) {
-    var user_prompts = this.state.user_prompts;
-    user_prompts.delete(prompt);
+  deleteUserPrompt(formula) {
+    var cached_formulas = this.state.cached_formulas;
+    const index = cached_formulas.indexOf(formula);
+
+    if (index > -1) cached_formulas.splice(index, 1);
 
     this.setState(
       {
         ...this.state,
-        user_prompts: user_prompts,
+        cached_formulas: cached_formulas,
         turn: this.state.turn + 1,
       },
       () => {
@@ -995,7 +1001,7 @@ class FeedbackArea extends React.Component {
             )}
 
           {this.state.active_view === 'NL2LTL Integration' &&
-            this.state.user_prompts.size > 0 && (
+            this.state.cached_formulas.length > 0 && (
               <>
                 <StructuredListHead>
                   <StructuredListRow head>
@@ -1003,12 +1009,12 @@ class FeedbackArea extends React.Component {
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody className="landmarks-list">
-                  {Array.from(this.state.user_prompts).map((item, i) => (
+                  {this.state.cached_formulas.map((item, i) => (
                     <StructuredListRow key={item}>
                       <StructuredListCell
                         className="text-blue landmark-list-item"
                         onClick={this.deleteUserPrompt.bind(this, item)}>
-                        {item}
+                        {item.user_prompt}
                       </StructuredListCell>
                     </StructuredListRow>
                   ))}

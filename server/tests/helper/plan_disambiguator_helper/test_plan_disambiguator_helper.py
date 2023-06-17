@@ -5,17 +5,28 @@ from typing import List
 
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
-  append_landmarks_not_avialable_for_choice, get_edge_label_plan_hashes_dict,
-  get_filtered_out_selection_infos_by_selection_infos,
-  get_plan_disambiguator_output_filtered_by_selection_infos,
-  get_plan_idx_edge_dict, get_plans_filetered_by_selected_plan_hashes,
-  get_plans_with_selection_info, get_plans_with_selection_infos,
-  get_split_by_actions)
+    append_landmarks_not_available_for_choice,
+    get_edge_label_plan_hashes_dict,
+    get_filtered_out_selection_infos_by_selection_infos,
+    get_plan_disambiguator_output_filtered_by_selection_infos,
+    get_plan_idx_edge_dict,
+    get_plans_filetered_by_selected_plan_hashes,
+    get_plans_with_selection_info,
+    get_plans_with_selection_infos,
+    get_split_by_actions,
+)
 from helpers.planner_helper.planner_helper import (
-  get_landmarks_by_landmark_category, get_plan_topq)
+    get_landmarks_by_landmark_category,
+    get_plan_topq,
+)
 from helpers.planner_helper.planner_helper_data_types import (
-  ChoiceInfo, Landmark, LandmarkCategory, PlannerResponseModel, PlanningTask,
-  SelelctionInfo)
+    ChoiceInfo,
+    Landmark,
+    LandmarkCategory,
+    PlannerResponseModel,
+    PlanningTask,
+    SelelctionInfo,
+)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../../data/pddl/{}.pddl"
@@ -159,7 +170,9 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(landmark_infos), 7)
         self.assertEqual(g.name, "G")
 
-    def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(self):
+    def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(
+        self,
+    ) -> None:
         selected_landmark = SelelctionInfo(selected_plan_hashes=[])
         plans = get_plans_filetered_by_selected_plan_hashes(
             selected_landmark,
@@ -167,7 +180,9 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 6)
 
-    def test_get_plans_filetered_by_selected_plan_hashes_none_plan_hash(self):
+    def test_get_plans_filetered_by_selected_plan_hashes_none_plan_hash(
+        self,
+    ) -> None:
         selected_landmark = SelelctionInfo(selected_plan_hashes=None)
         plans = get_plans_filetered_by_selected_plan_hashes(
             selected_landmark,
@@ -175,7 +190,9 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 6)
 
-    def test_get_plans_filetered_by_selected_plan_hashes_valid_plan_hash(self):
+    def test_get_plans_filetered_by_selected_plan_hashes_valid_plan_hash(
+        self,
+    ) -> None:
         hashes = [
             "6a81b2a65657b4444a989205b590c346",
             "a30b377144530876cd5506f0df8a1f16",
@@ -188,7 +205,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 2)
 
-    def test_get_plans_with_selection_info(self):
+    def test_get_plans_with_selection_info_1(self) -> None:
         hashes = [
             "6a81b2a65657b4444a989205b590c346",
             "a30b377144530876cd5506f0df8a1f16",
@@ -201,7 +218,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 2)
 
-    def test_get_plans_with_selection_info(self):
+    def test_get_plans_with_selection_info_2(self) -> None:
         selected_landmark = SelelctionInfo(
             facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
             disjunctive=True,
@@ -214,7 +231,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 3)
 
-    def test_get_plans_with_selection_infos(self):
+    def test_get_plans_with_selection_infos_1(self) -> None:
         selected_landmark_0 = SelelctionInfo(
             facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
             disjunctive=True,
@@ -233,7 +250,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(plans), 1)
         self.assertEqual(plans[0].plan_hash, "6a81b2a65657b4444a989205b590c346")
 
-    def test_get_plan_idx_edge_dict_forward(self):
+    def test_get_plan_idx_edge_dict_forward(self) -> None:
         plan_idx_action_dict = get_plan_idx_edge_dict(
             [("a", "b"), ("b", "c"), ("c", "d")],
             TestPlanDisambiguatorHelper.planner_response_model.plans,
@@ -251,7 +268,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             },
         )
 
-    def test_get_plan_idx_edge_dict_backward(self):
+    def test_get_plan_idx_edge_dict_backward(self) -> None:
         plan_idx_action_dict = get_plan_idx_edge_dict(
             [("a", "b"), ("b", "c"), ("c", "d")],
             TestPlanDisambiguatorHelper.planner_response_model.plans,
@@ -269,7 +286,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             },
         )
 
-    def test_get_edge_label_plan_hashes_dict(self):
+    def test_get_edge_label_plan_hashes_dict(self) -> None:
         edge_label_plan_hash_dict = get_edge_label_plan_hashes_dict(
             [("a", "b"), ("b", "c"), ("c", "d")],
             TestPlanDisambiguatorHelper.planner_response_model.plans,
@@ -291,11 +308,11 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             },
         )
 
-    def test_append_landmarks_not_avialable_for_choice(self):
+    def test_append_landmarks_not_available_for_choice(self) -> None:
         landmark = Landmark(facts=["b"])
         landmarks = [Landmark(facts=["a"]), landmark]
         choice_infos = [ChoiceInfo(landmark=landmark)]
-        new_choice_infos = append_landmarks_not_avialable_for_choice(
+        new_choice_infos = append_landmarks_not_available_for_choice(
             landmarks, choice_infos
         )
         self.assertEqual(len(new_choice_infos), 2)

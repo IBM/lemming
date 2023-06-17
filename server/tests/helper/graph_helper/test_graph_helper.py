@@ -6,16 +6,30 @@ from typing import List
 import networkx as nx
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.graph_helper.graph_helper import (
-  convert_dot_str_to_networkx_graph, get_all_nodes_coming_from_node,
-  get_dict_from_graph, get_edge_label, get_end_goal_node_in_digraph,
-  get_first_node_with_multiple_out_edges, get_graph_with_number_of_plans_label,
-  get_node_name_plan_hash_list, get_nodes_to_exclude, get_root_node_in_digraph)
-from helpers.plan_disambiguator_helper.plan_disambiguator_helper import \
-  get_plan_disambiguator_output_filtered_by_selection_infos
+    convert_dot_str_to_networkx_graph,
+    get_all_nodes_coming_from_node,
+    get_dict_from_graph,
+    get_edge_label,
+    get_end_goal_node_in_digraph,
+    get_first_node_with_multiple_out_edges,
+    get_graph_with_number_of_plans_label,
+    get_node_name_plan_hash_list,
+    get_nodes_to_exclude,
+    get_root_node_in_digraph,
+)
+from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
+    get_plan_disambiguator_output_filtered_by_selection_infos,
+)
 from helpers.planner_helper.planner_helper import (
-  get_landmarks_by_landmark_category, get_plan_topq)
+    get_landmarks_by_landmark_category,
+    get_plan_topq,
+)
 from helpers.planner_helper.planner_helper_data_types import (
-  Landmark, LandmarkCategory, PlannerResponseModel, PlanningTask)
+    Landmark,
+    LandmarkCategory,
+    PlannerResponseModel,
+    PlanningTask,
+)
 from pydot import Dot, Edge, Node
 
 my_dir = os.path.dirname(__file__)
@@ -257,7 +271,7 @@ class TestGraphHelper(unittest.TestCase):
         nodes_to_exclude = get_nodes_to_exclude(g, {nodes_to_start}, True)
         self.assertEqual(len(nodes_to_exclude), 13)
 
-    def test_get_node_name_plan_hash_list(self):
+    def test_get_node_name_plan_hash_list(self) -> None:
         res = get_node_name_plan_hash_list(
             TestGraphHelper.test_graph,
             TestGraphHelper.planner_response_model.plans,
@@ -266,7 +280,7 @@ class TestGraphHelper(unittest.TestCase):
         self.assertEqual(len(res), 40)
         self.assertEqual(res["node31"][0], "80af1fcf0d421d8bfc7bf4751a6ee24c")
 
-    def test_get_graph_with_number_of_plans_label(self):
+    def test_get_graph_with_number_of_plans_label(self) -> None:
         node = "node0"
         value = "abcdedfshads"
         g = get_graph_with_number_of_plans_label(
@@ -275,7 +289,7 @@ class TestGraphHelper(unittest.TestCase):
         num_plans = g.nodes[node]["num_plans"]
         self.assertEqual(num_plans, 1)
 
-    def test_get_edge_label(self):
+    def test_get_edge_label(self) -> None:
         edge_label = get_edge_label(
             TestGraphHelper.test_graph, ("node38", "node39")
         )

@@ -2,12 +2,19 @@ from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from helpers.graph_helper.graph_helper import (
-  convert_dot_str_to_networkx_graph, get_graph_with_number_of_plans_label,
-  get_node_name_plan_hash_list)
+    convert_dot_str_to_networkx_graph,
+    get_graph_with_number_of_plans_label,
+    get_node_name_plan_hash_list,
+)
 from helpers.planner_helper.planner_helper import get_dot_graph_str
 from helpers.planner_helper.planner_helper_data_types import (
-  ChoiceInfo, Landmark, Plan, PlannerResponseModel, PlanningTask,
-  SelelctionInfo)
+    ChoiceInfo,
+    Landmark,
+    Plan,
+    PlannerResponseModel,
+    PlanningTask,
+    SelelctionInfo,
+)
 from networkx import Graph
 
 
@@ -348,13 +355,13 @@ def get_first_achiever_out_edge_dict(
     return first_achiever_edge_dict
 
 
-def append_landmarks_not_avialable_for_choice(
+def append_landmarks_not_available_for_choice(
     landmarks: List[Landmark], choice_infos: List[ChoiceInfo]
 ) -> List[ChoiceInfo]:
     choice_infos_with_not_available_landmarks: List[ChoiceInfo] = list(
         map(lambda choice_info: choice_info.copy(deep=True), choice_infos)
     )
-    facts_set: Set[Tuple] = set()
+    facts_set: Set[Tuple[Any, ...]] = set()
     for choice_info in choice_infos:
         if choice_info.landmark is not None:
             facts_set.add(tuple(choice_info.landmark.facts))

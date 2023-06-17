@@ -6,22 +6,37 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from helpers.common_helper.file_helper import read_str_from_upload_file
 from helpers.common_helper.static_data_helper import app_description
-from helpers.nl2plan_helper.ltl2plan_helper import (compile_instance,
-                                                    get_goal_formula)
-from helpers.nl2plan_helper.manage_formulas import \
-  get_formulas_from_matched_formulas
+from helpers.nl2plan_helper.ltl2plan_helper import (
+    compile_instance,
+    get_goal_formula,
+)
+from helpers.nl2plan_helper.manage_formulas import (
+    get_formulas_from_matched_formulas,
+)
 from helpers.nl2plan_helper.nl2ltl_helper import NL2LTLRequest, prompt_builder
-from helpers.plan_disambiguator_helper.build_flow_helper import \
-  get_build_flow_output
-from helpers.plan_disambiguator_helper.selection_flow_helper import \
-  get_selection_flow_output
+from helpers.plan_disambiguator_helper.build_flow_helper import (
+    get_build_flow_output,
+)
+from helpers.plan_disambiguator_helper.selection_flow_helper import (
+    get_selection_flow_output,
+)
 from helpers.planner_helper.planner_helper import (
-  get_landmarks_by_landmark_category, get_plan_topq,
-  get_planner_response_model_with_hash)
+    get_landmarks_by_landmark_category,
+    get_plan_topq,
+    get_planner_response_model_with_hash,
+)
 from helpers.planner_helper.planner_helper_data_types import (
-  LandmarksResponseModel, LemmingTask, LTL2PDDLRequest, LTLFormula, Plan,
-  PlanDisambiguatorInput, PlanDisambiguatorOutput, PlannerResponseModel,
-  PlanningTask, ToolCompiler)
+    LandmarksResponseModel,
+    LemmingTask,
+    LTL2PDDLRequest,
+    LTLFormula,
+    Plan,
+    PlanDisambiguatorInput,
+    PlanDisambiguatorOutput,
+    PlannerResponseModel,
+    PlanningTask,
+    ToolCompiler,
+)
 from nl2ltl import translate
 from nl2ltl.engines.gpt.core import GPTEngine, Models
 from pddl.parser.domain import DomainParser
@@ -194,7 +209,6 @@ def generate_nl2ltl_integration(
 
 @app.post("/nl2ltl")
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
-
     custom_prompt = prompt_builder()
 
     engine = GPTEngine(model=Models.DAVINCI3.value, prompt=custom_prompt)
@@ -209,7 +223,6 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 
 @app.post("/ltl_compile/{tool}")
 def ltl_compile(request: LTL2PDDLRequest, tool: ToolCompiler) -> LemmingTask:
-
     domain_parser = DomainParser()
     problem_parser = ProblemParser()
 

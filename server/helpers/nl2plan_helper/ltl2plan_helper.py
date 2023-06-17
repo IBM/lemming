@@ -1,7 +1,9 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
-from helpers.planner_helper.planner_helper_data_types import (LTLFormula,
-                                                              ToolCompiler)
+from helpers.planner_helper.planner_helper_data_types import (
+    LTLFormula,
+    ToolCompiler,
+)
 from pddl.core import Domain, Problem
 from pddl.logic import Predicate
 from plan4past.compiler import Compiler
@@ -14,7 +16,7 @@ def compile_instance(
     problem: Problem,
     formula: Formula,
     tool: ToolCompiler,
-    mapping: Dict[Atomic, Predicate] = None,
+    mapping: Optional[Dict[Atomic, Predicate]] = None,
 ) -> Tuple[Domain, Problem]:
     """Compile the PDDL domain and problem files and the LTL/PPLTL goal formula."""
     compiled_domain, compiled_problem = Domain("empty"), Problem("empty")

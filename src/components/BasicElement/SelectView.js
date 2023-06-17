@@ -116,7 +116,7 @@ const SelectView = props => {
   return (
     <Grid>
       <Column lg={16} md={8} sm={4}>
-        {nodes.length > 0 && (
+        {nodes.length > 0 && !props.no_feedback && (
           <div className="hover-zone">
             <Toggle
               aria-label="toggle commitm mode"

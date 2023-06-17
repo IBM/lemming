@@ -64,13 +64,11 @@ class NL2LTLIntegration extends React.Component {
     }
   }
 
-  update_planner_payload(planner_payload) {
-    this.props.update_planner_payload(planner_payload);
+  update_planner_payload(planner_payload, user_prompt) {
+    this.props.update_planner_payload(planner_payload, user_prompt);
   }
 
-  onEdgeClick(edge) {
-    this.props.onEdgeClick(edge);
-  }
+  onEdgeClick(edge) {}
 
   confirmFormula() {
     fetch(link_to_server + '/ltl_compile', {
@@ -85,7 +83,7 @@ class NL2LTLIntegration extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        this.update_planner_payload(data);
+        this.update_planner_payload(data, this.state.text_input);
         this.setState({
           ...this.state,
           ...default_state,
@@ -199,7 +197,11 @@ class NL2LTLIntegration extends React.Component {
               renderSuggestion={this.renderSuggestion.bind(this)}
             />
 
-            <SelectView state={this.state} />
+            <SelectView
+              state={this.state}
+              onEdgeClick={this.onEdgeClick.bind(this)}
+              no_feedback={true}
+            />
           </div>
 
           <Modal

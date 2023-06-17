@@ -1,5 +1,6 @@
 import React from 'react';
 import { SelectView } from './SelectView';
+import { stringSimilarity } from 'string-similarity-js';
 import Autosuggest from 'react-autosuggest';
 import {
   Grid,
@@ -128,8 +129,19 @@ class NL2LTLIntegration extends React.Component {
 
   getSuggestions(value) {
     const inputValue = value.trim().toLowerCase();
-    const result = inputValue.length === 0 ? [] : this.state.cached_suggestions;
-    return result;
+    var matched_objects = this.state.cached_suggestions.map(item => {
+      return {
+        value: item,
+        match: stringSimilarity(item.toLowerCase(), inputValue),
+      };
+    });
+
+    matched_objects.sort((a, b) => b.match - a.match);
+    matched_objects = matched_objects.slice(0, 10);
+
+    return inputValue.length === 0
+      ? this.state.cached_suggestions
+      : matched_objects.map(item => item.value);
   }
 
   getSuggestionValue = suggestion => suggestion;

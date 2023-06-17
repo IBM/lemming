@@ -82,6 +82,7 @@ class PlanArea extends React.Component {
         no_plans_error: false,
         viz_loading: false,
       },
+      turn: 0,
     };
   }
 
@@ -335,7 +336,6 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         this.setState({
           ...this.state,
           cached_landmarks: data.landmarks,
@@ -385,12 +385,48 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(123, data);
+        // HOPEFUL PAYLOAD //
+        const choice_infos = [
+          {
+            landmark: null,
+            max_num_plans: null,
+            action_name_plan_idx_map: null,
+            action_name_plan_hash_map: {
+              b_alt: [
+                'a7c1751ede3793f3b93d852a1d2dc1f5',
+                '5ff5ea83b641f893fb50f7f807582f39',
+              ],
+              b_main: [
+                '911d63019a4afc040e05e0cbb704736b',
+                '48c15d2926e48b356897fd864d97f3d8',
+              ],
+            },
+            node_with_multiple_out_edges: 'node1',
+            is_available_for_choice: this.state.turn === 0,
+          },
+          {
+            landmark: null,
+            max_num_plans: null,
+            action_name_plan_idx_map: null,
+            action_name_plan_hash_map: {
+              e: [
+                'a7c1751ede3793f3b93d852a1d2dc1f5',
+                '911d63019a4afc040e05e0cbb704736b',
+              ],
+              f: [
+                '5ff5ea83b641f893fb50f7f807582f39',
+                '48c15d2926e48b356897fd864d97f3d8',
+              ],
+            },
+            node_with_multiple_out_edges: 'node5',
+            is_available_for_choice: this.state.turn === 1,
+          },
+        ];
 
-        var choice_infos = data.choice_infos;
+        // const choice_infos = data.choice_infos;
         var unselected_landmarks = [];
 
-        if (this.state.unselected_landmarks.size) {
+        if (this.state.turn > 0) {
           unselected_landmarks = this.state.unselected_landmarks;
         } else {
           unselected_landmarks = choice_infos.reduce(
@@ -471,6 +507,7 @@ class PlanArea extends React.Component {
         ...this.state,
         selected_landmarks: selected_landmarks,
         unselected_landmarks: unselected_landmarks,
+        turn: this.state.turn + 1,
       },
       () => {
         this.generateViz();
@@ -492,6 +529,7 @@ class PlanArea extends React.Component {
         ...this.state,
         selected_landmarks: selected_landmarks,
         unselected_landmarks: unselected_landmarks,
+        turn: this.state.turn + 1,
       },
       () => {
         this.generateViz();
@@ -870,9 +908,8 @@ class FeedbackArea extends React.Component {
   }
 
   getNumPlans(item) {
-    // const plan_hashes = getPlanHashesFromChoice(item, this.state.choice_infos)
-    // return plan_hashes.length;
-    return 0;
+    const plan_hashes = getPlanHashesFromChoice(item, this.state.choice_infos);
+    return plan_hashes.length;
   }
 
   render() {

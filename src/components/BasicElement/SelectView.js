@@ -34,9 +34,11 @@ function generateEdges(state) {
 }
 
 function getBasisNode(state) {
-  return state.choice_infos
+  const transform = state.choice_infos
     .filter(item => item.is_available_for_choice)
-    .map(item => item.node_with_multiple_out_edges)[0];
+    .map(item => item.node_with_multiple_out_edges);
+
+  return transform.length === 0 ? null : transform[0];
 }
 
 function getActiveNodes(state) {
@@ -44,12 +46,15 @@ function getActiveNodes(state) {
 
   const basis_node = getBasisNode(state);
 
-  var active_nodes = state.graph.links
-    .filter(item => item.source === basis_node)
-    .map(item => item.target);
-  active_nodes.push(basis_node);
-
-  return active_nodes;
+  if (basis_node) {
+    var active_nodes = state.graph.links
+      .filter(item => item.source === basis_node)
+      .map(item => item.target);
+    active_nodes.push(basis_node);
+    return active_nodes;
+  } else {
+    return [];
+  }
 }
 
 const init_feedback =
@@ -96,13 +101,16 @@ const SelectView = props => {
 
   const onFocus = e => {
     const basis_node = getBasisNode(props.state);
-    const raw_graph_node = props.state.graph.nodes.filter(
-      item => item.id === basis_node
-    )[0];
 
-    setFeedbackText(generateDescription(rawNodeTransform(raw_graph_node)));
-    ref.current?.centerGraph([basis_node]);
-    ref.current?.zoomIn();
+    if (basis_node) {
+      const raw_graph_node = props.state.graph.nodes.filter(
+        item => item.id === basis_node
+      )[0];
+
+      setFeedbackText(generateDescription(rawNodeTransform(raw_graph_node)));
+      ref.current?.centerGraph([basis_node]);
+      ref.current?.zoomIn();
+    }
   };
 
   return (

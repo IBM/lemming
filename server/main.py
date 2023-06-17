@@ -14,6 +14,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
     NL2LTLRequest,
     LTL2PDDLRequest,
+    Translation,
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
@@ -94,7 +95,17 @@ def import_domain(domain_name: str) -> LemmingTask:
         print(e)
         plans = []
 
-    new_lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
+    try:
+        prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
+        nl_prompts = [Translation.parse_obj(item) for item in prompt]
+
+    except Exception as e:
+        print(e)
+        nl_prompts = []
+
+    new_lemming_task = LemmingTask(
+        planning_task=planning_task, plans=plans, nl_prompts=nl_prompts
+    )
     return new_lemming_task
 
 

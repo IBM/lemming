@@ -1464,6 +1464,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.18.3":
+  version: 7.22.5
+  resolution: "@babel/runtime@npm:7.22.5"
+  dependencies:
+    regenerator-runtime: ^0.13.11
+  checksum: 12a50b7de2531beef38840d17af50c55a094253697600cee255311222390c68eed704829308d4fd305e1b3dfbce113272e428e9d9d45b1730e0fede997eaceb1
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7, @babel/template@npm:^7.3.3":
   version: 7.20.7
   resolution: "@babel/template@npm:7.20.7"
@@ -1511,81 +1520,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@carbon/colors@npm:^11.14.0":
-  version: 11.14.0
-  resolution: "@carbon/colors@npm:11.14.0"
-  checksum: 35aa802a5f044af5f0654bf0cd757b42b84425d149ae724fab3daa507a5244e67fe4a1fdc18bb50d1fbc838580b5c4904e77f46f6e5b5bf4a24ee2fc3e58da77
+"@carbon/colors@npm:^11.16.0":
+  version: 11.16.0
+  resolution: "@carbon/colors@npm:11.16.0"
+  checksum: 13615d59cdfed8d2b951fcd2844a537c67239d6d60892d717207d0f723df30aa8452b2cc0f7f7083e558a713dfd103c02fe5087e22ffe408b8d194a2c34a5bb7
   languageName: node
   linkType: hard
 
-"@carbon/feature-flags@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@carbon/feature-flags@npm:0.13.0"
-  checksum: 4bdb63997a7cde3ca8dcf15bed5d209c4bfa1447c26de7dbaf593e170807d97c78a09a294dad9e9bf083e9b11d7207cf38f6d52e471b5cdc2236ea3058ec5457
+"@carbon/feature-flags@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@carbon/feature-flags@npm:0.15.0"
+  checksum: 211827fec11ec29140ef783a025cc3b466c4f94bab7ca9a0f5eb0a84332919ca58f7a885813d4cdf441c9be0e998bc493a819c3c7124da1f24771ce65ab2c42c
   languageName: node
   linkType: hard
 
-"@carbon/feature-flags@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@carbon/feature-flags@npm:0.7.0"
-  checksum: f16348fa78939e160efcbae3c4ec4ca8511593a9354457c0ed55c586c76cffd4a71c9b4d98cd5b372701a3ef965f1b6741e02939b3d0454490786ce26d8a9137
-  languageName: node
-  linkType: hard
-
-"@carbon/grid@npm:^11.13.0":
-  version: 11.13.0
-  resolution: "@carbon/grid@npm:11.13.0"
+"@carbon/grid@npm:^11.15.0":
+  version: 11.15.0
+  resolution: "@carbon/grid@npm:11.15.0"
   dependencies:
-    "@carbon/layout": ^11.13.0
-  checksum: 413accb54ef10bb7df46b6fa9e278fa6b90736edab21a1cf3ff040651629964bbc67466fecad0e46de0dfd07432a4ff2b4b3d6b416dff25ea40878149b12a96b
+    "@carbon/layout": ^11.15.0
+  checksum: 6c799d2f8ed63d5c63b9d80d98326c2d4cb16e1bfc5b587994d135635f501a08bcd0957f4a1f912932448c880f29a566c12b24b0834f28295946c65b329948fc
   languageName: node
   linkType: hard
 
-"@carbon/icon-helpers@npm:^10.39.0":
-  version: 10.39.0
-  resolution: "@carbon/icon-helpers@npm:10.39.0"
-  checksum: b99ed8f595045ca1d6cb41181dfc731e79aa8bc372af4613728d6edc15421ac8d692dc5947c2e56a6fc039c43ae5771e7228edefac6d157f22f99f354e650940
+"@carbon/icon-helpers@npm:^10.41.0":
+  version: 10.41.0
+  resolution: "@carbon/icon-helpers@npm:10.41.0"
+  checksum: 0997b5db05aa3bb7cf1154b2446870bc4bea157199736b0ca1c85ba0c638f894466ebb7a0083a8e42420933a87939c7d4343025b0e8b8645dd0b0b5782a4a0a5
   languageName: node
   linkType: hard
 
-"@carbon/icons-react@npm:^11.1.0":
-  version: 11.19.0
-  resolution: "@carbon/icons-react@npm:11.19.0"
+"@carbon/icons-react@npm:^11.21.0":
+  version: 11.21.0
+  resolution: "@carbon/icons-react@npm:11.21.0"
   dependencies:
-    "@carbon/icon-helpers": ^10.39.0
+    "@carbon/icon-helpers": ^10.41.0
     "@carbon/telemetry": 0.1.0
     prop-types: ^15.7.2
   peerDependencies:
     react: ">=16"
-  checksum: 5d8ccda738d6f62dc530eb2836fc65959e76728ac644f94bf7c2ea7e9b2b80fd0b214586d61fb745f385b9ee5db0bb176d8d79c9281967c7b34217ae7f3afb3c
+  checksum: b2e518062a3f0caa8c31d71b0a5e2b54b40e728c14afb1054c33e1d08d76a01ac8f910c624e621805b4f5bd8c16d1e7bbc49c79f8ab7dd63360d162c2fb89338
   languageName: node
   linkType: hard
 
-"@carbon/layout@npm:^11.1.0, @carbon/layout@npm:^11.13.0":
-  version: 11.13.0
-  resolution: "@carbon/layout@npm:11.13.0"
-  checksum: 76b1a42ab44ffc6ef778b6811f30310db860d24189dd59635a5aa12836631f76b09f2ee0d5e5d97fb7dd3030dce252bcdc3f04e9b5e1717e45de6294944522a1
+"@carbon/layout@npm:^11.15.0":
+  version: 11.15.0
+  resolution: "@carbon/layout@npm:11.15.0"
+  checksum: a2aeb6710820a2a4a7ede670259ae1532921e169f9fe17db25e983c14610333d59bd35b7acdf44d65d6e30e750da067a45f79997dcc5feedb909f5cfc0f33bb3
   languageName: node
   linkType: hard
 
-"@carbon/motion@npm:^11.10.0":
-  version: 11.10.0
-  resolution: "@carbon/motion@npm:11.10.0"
-  checksum: c6e93dfd9253a669f7b9c9657a208af39971efe0f31977a8ad6883e6706ca88e7d901a6d3dd96d4217d995d12f63d605ff3a797bc4c0f6e3abc555649213d110
+"@carbon/motion@npm:^11.12.0":
+  version: 11.12.0
+  resolution: "@carbon/motion@npm:11.12.0"
+  checksum: 6cda794f6da51d21a89ac7083df04bcbaa9e623155fdda934aa3df908dd290adc65f02ee0808e6943eace4eafe204bd65a6decbcf1958c0c6a3735f53be97723
   languageName: node
   linkType: hard
 
-"@carbon/react@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@carbon/react@npm:1.1.0"
+"@carbon/react@npm:^1.31.3":
+  version: 1.31.3
+  resolution: "@carbon/react@npm:1.31.3"
   dependencies:
-    "@babel/runtime": ^7.16.7
-    "@carbon/feature-flags": ^0.7.0
-    "@carbon/icons-react": ^11.1.0
-    "@carbon/layout": ^11.1.0
-    "@carbon/styles": ^1.1.0
+    "@babel/runtime": ^7.18.3
+    "@carbon/feature-flags": ^0.15.0
+    "@carbon/icons-react": ^11.21.0
+    "@carbon/layout": ^11.15.0
+    "@carbon/styles": ^1.31.2
     "@carbon/telemetry": 0.1.0
-    classnames: 2.3.1
+    classnames: 2.3.2
     copy-to-clipboard: ^3.3.1
     downshift: 5.2.1
     flatpickr: 4.6.9
@@ -1596,33 +1598,33 @@ __metadata:
     lodash.omit: ^4.5.0
     lodash.throttle: ^4.1.1
     prop-types: ^15.7.2
-    react-is: ^17.0.2
+    react-is: ^18.2.0
     use-resize-observer: ^6.0.0
     wicg-inert: ^3.1.1
     window-or-global: ^1.0.1
   peerDependencies:
-    react: ^16.8.6 || ^17.0.1
-    react-dom: ^16.8.6 || ^17.0.1
+    react: ^16.8.6 || ^17.0.1 || ^18.2.0
+    react-dom: ^16.8.6 || ^17.0.1 || ^18.2.0
     sass: ^1.33.0
-  checksum: 0004c853a51f74c1ef888dbcbd0c847c8e625e4256c77b63fabacf8d87cacdcd4ec7a595ee58f3394de5b0f9d4a71a5a3fbd2a7ddcb6aa22cd1f773043c25481
+  checksum: 917de14346c7710ac31e46a093d4286df5e760c024e2a5f8eea251666b848e67a186370b31676cbbfc8b6632396b842f6b916a93fd3097004faee971216a9e29
   languageName: node
   linkType: hard
 
-"@carbon/styles@npm:^1.1.0":
-  version: 1.29.0
-  resolution: "@carbon/styles@npm:1.29.0"
+"@carbon/styles@npm:^1.31.2":
+  version: 1.31.2
+  resolution: "@carbon/styles@npm:1.31.2"
   dependencies:
-    "@carbon/colors": ^11.14.0
-    "@carbon/feature-flags": ^0.13.0
-    "@carbon/grid": ^11.13.0
-    "@carbon/layout": ^11.13.0
-    "@carbon/motion": ^11.10.0
-    "@carbon/themes": ^11.18.0
-    "@carbon/type": ^11.17.0
+    "@carbon/colors": ^11.16.0
+    "@carbon/feature-flags": ^0.15.0
+    "@carbon/grid": ^11.15.0
+    "@carbon/layout": ^11.15.0
+    "@carbon/motion": ^11.12.0
+    "@carbon/themes": ^11.20.0
+    "@carbon/type": ^11.19.0
     "@ibm/plex": 6.0.0-next.6
   peerDependencies:
     sass: ^1.33.0
-  checksum: e2d9586fbdafca78ceba022bba88adc0e9815334b056f001f576e6a639885fbb5e9bd91e91fe9de552feb5cab785f1da57909e960d65b970f4db6feae8db6d6f
+  checksum: 65d32a0ebf386c4cfe629feace065dd2c225a6460b2d0108fefe981bcf1a4a2b40256bfafdae88eec932cdceb0645b5f774d2b1d7f71123f44108e7c25f56681
   languageName: node
   linkType: hard
 
@@ -1635,25 +1637,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@carbon/themes@npm:^11.18.0":
-  version: 11.18.0
-  resolution: "@carbon/themes@npm:11.18.0"
+"@carbon/themes@npm:^11.20.0":
+  version: 11.20.0
+  resolution: "@carbon/themes@npm:11.20.0"
   dependencies:
-    "@carbon/colors": ^11.14.0
-    "@carbon/layout": ^11.13.0
-    "@carbon/type": ^11.17.0
+    "@carbon/colors": ^11.16.0
+    "@carbon/layout": ^11.15.0
+    "@carbon/type": ^11.19.0
     color: ^4.0.0
-  checksum: 3b2f8431887c8981ae792f58621f20ff7af66957d4cd2e10687991a9e39e3d9395e35d788791ea1cf17f01c0aa3db2ff8bf92583e9f6278a3b5a40e98265d6d6
+  checksum: 515b90b13082d12f1e4bb8a3af9302593107ebdcc99cce2fc2db9b9f40590fa3332a21478906b9af5bff9ebc103e2b0308b9d1cc41ce9d1e83a29d22463ba2de
   languageName: node
   linkType: hard
 
-"@carbon/type@npm:^11.17.0":
-  version: 11.17.0
-  resolution: "@carbon/type@npm:11.17.0"
+"@carbon/type@npm:^11.19.0":
+  version: 11.19.0
+  resolution: "@carbon/type@npm:11.19.0"
   dependencies:
-    "@carbon/grid": ^11.13.0
-    "@carbon/layout": ^11.13.0
-  checksum: 025a4426888b05346e5e3eab24ab1bba714558afabb60f0714bc876992df9441839f0695411d8c663edc374a86a62940a691560c30aaf713179b0372c064b905
+    "@carbon/grid": ^11.15.0
+    "@carbon/layout": ^11.15.0
+  checksum: 8bd9e9d0745466fa54f00d2b128fcd0eb340b12e7d24bd7834ef2ee5b87c4314d222008b8478fe982129902a780d7de3de5b9cc0d81c0b6f5fbc8d6a4d8d2d33
   languageName: node
   linkType: hard
 
@@ -3767,13 +3769,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "Lemming@workspace:."
   dependencies:
-    "@carbon/react": 1.1.0
+    "@carbon/react": ^1.31.3
     "@commitlint/cli": ^7.5.2
     "@commitlint/config-conventional": ^7.5.0
     husky: ^1.3.1
     lint-staged: ^8.1.5
     prettier: ^1.17.0
     react: ^18.1.0
+    react-autosuggest: ^10.0.2
     react-device-detect: 2.1.2
     react-dom: ^18.1.0
     react-github-btn: 1.2.1
@@ -3781,6 +3784,7 @@ __metadata:
     react-scripts: ^5.0.1
     reagraph: 4.8.2
     sass: ^1.51.0
+    string-similarity-js: ^2.1.4
   languageName: unknown
   linkType: soft
 
@@ -5104,14 +5108,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:2.3.1":
-  version: 2.3.1
-  resolution: "classnames@npm:2.3.1"
-  checksum: 14db8889d56c267a591f08b0834989fe542d47fac659af5a539e110cc4266694e8de86e4e3bbd271157dbd831361310a8293e0167141e80b0f03a0f175c80960
-  languageName: node
-  linkType: hard
-
-"classnames@npm:^2.3.1":
+"classnames@npm:2.3.2, classnames@npm:^2.3.1":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
@@ -6758,6 +6755,13 @@ __metadata:
     is-date-object: ^1.0.1
     is-symbol: ^1.0.2
   checksum: 4ead6671a2c1402619bdd77f3503991232ca15e17e46222b0a41a5d81aebc8740a77822f5b3c965008e631153e9ef0580540007744521e72de8e33599fca2eed
+  languageName: node
+  linkType: hard
+
+"es6-promise@npm:^4.2.8":
+  version: 4.2.8
+  resolution: "es6-promise@npm:4.2.8"
+  checksum: 95614a88873611cb9165a85d36afa7268af5c03a378b35ca7bda9508e1d4f1f6f19a788d4bc755b3fd37c8ebba40782018e02034564ff24c9d6fa37e959ad57d
   languageName: node
   linkType: hard
 
@@ -11353,6 +11357,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"object-assign@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "object-assign@npm:3.0.0"
+  checksum: 56c66a77318aea95b11bd16a65c313e98786cea1db673a7fdd3bc92aced671b35f62a9819ad9cf7846921c773818329636cda5cd1b7c4fa0ce9908440e091dac
+  languageName: node
+  linkType: hard
+
 "object-assign@npm:^4.0.1, object-assign@npm:^4.1.0, object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
@@ -13061,6 +13072,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-autosuggest@npm:^10.0.2":
+  version: 10.1.0
+  resolution: "react-autosuggest@npm:10.1.0"
+  dependencies:
+    es6-promise: ^4.2.8
+    prop-types: ^15.7.2
+    react-themeable: ^1.1.0
+    section-iterator: ^2.0.0
+    shallow-equal: ^1.2.1
+  peerDependencies:
+    react: ">=16.3.0"
+  checksum: 3526b02bb1938374c2a0d108a03666eae24cddd8bef7686e7f6271bb4c25ad34f8b09e84d1cc2e9206aff577a742c1f8481964e75442a9e080326676ad71f8ae
+  languageName: node
+  linkType: hard
+
 "react-composer@npm:^5.0.3":
   version: 5.0.3
   resolution: "react-composer@npm:5.0.3"
@@ -13151,14 +13177,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^17.0.1, react-is@npm:^17.0.2":
+"react-is@npm:^17.0.1":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
   languageName: node
   linkType: hard
 
-"react-is@npm:^18.0.0":
+"react-is@npm:^18.0.0, react-is@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: e72d0ba81b5922759e4aff17e0252bd29988f9642ed817f56b25a3e217e13eea8a7f2322af99a06edb779da12d5d636e9fda473d620df9a3da0df2a74141d53e
@@ -13291,6 +13317,15 @@ __metadata:
   bin:
     react-scripts: bin/react-scripts.js
   checksum: 92afa2f245c7092ccc97d5609dc7a2130616262e34da7f15072d9442e2d2e1d4909a91022abd1faac1336eb17c5525a10d9bd43e1ae374c7ec941ca20addca68
+  languageName: node
+  linkType: hard
+
+"react-themeable@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "react-themeable@npm:1.1.0"
+  dependencies:
+    object-assign: ^3.0.0
+  checksum: 80d8fa67d15f3136ae8054bfbecc2f1a396b7cda4f10380e13e8f344b07543a55adfb5aca0cf741071e406d8115ff3ea8e361476a086ba5ad55a1feb9cb9ae7a
   languageName: node
   linkType: hard
 
@@ -14057,6 +14092,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"section-iterator@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "section-iterator@npm:2.0.0"
+  checksum: d11ae54205baf1ccea5f847b3b5cd9394128ac1051b4ac236d145c9b386e5dd274371a63991e575e20373bacd1c287bfe6159ddf366cb21f30b123e185e6bc7d
+  languageName: node
+  linkType: hard
+
 "select-hose@npm:^2.0.0":
   version: 2.0.0
   resolution: "select-hose@npm:2.0.0"
@@ -14214,6 +14256,13 @@ __metadata:
   version: 1.2.0
   resolution: "setprototypeof@npm:1.2.0"
   checksum: be18cbbf70e7d8097c97f713a2e76edf84e87299b40d085c6bf8b65314e994cc15e2e317727342fa6996e38e1f52c59720b53fe621e2eb593a6847bf0356db89
+  languageName: node
+  linkType: hard
+
+"shallow-equal@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "shallow-equal@npm:1.2.1"
+  checksum: 4f1645cc516e7754c4438db687e1da439a5f29a7dba2ba90c5f88e5708aeb17bc4355ba45cad805b0e95dc898e37d8bf6d77d854919c7512f89939986cff8cd1
   languageName: node
   linkType: hard
 
@@ -14694,6 +14743,13 @@ __metadata:
   version: 3.0.1
   resolution: "string-natural-compare@npm:3.0.1"
   checksum: 65910d9995074086e769a68728395effbba9b7186be5b4c16a7fad4f4ef50cae95ca16e3e9086e019cbb636ae8daac9c7b8fe91b5f21865c5c0f26e3c0725406
+  languageName: node
+  linkType: hard
+
+"string-similarity-js@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "string-similarity-js@npm:2.1.4"
+  checksum: d041dde12110f66083655de2b4a4b7b7cd4420c2f39677d6969d683d599966c4b71b45a3f5a0d6fcde1b3a009f79e32c49ddecfd877e87d8daf0b6350b5a6adf
   languageName: node
   linkType: hard
 

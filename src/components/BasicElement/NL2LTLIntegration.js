@@ -1,5 +1,6 @@
 import React from 'react';
 import { SelectView } from './SelectView';
+import Autosuggest from 'react-autosuggest';
 import {
   Grid,
   Column,
@@ -11,6 +12,7 @@ import {
   StructuredListRow,
   StructuredListCell,
   RadioButton,
+  ContainedListItem,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -25,23 +27,23 @@ const default_state = {
 class NL2LTLIntegration extends React.Component {
   constructor(props) {
     super(props);
+
+    const suggestions = props.state.nl_prompts
+      .map(item => item.paraphrases.concat([item.utterance]))
+      .reduce((options, item) => options.concat(item), []);
+
     this.state = {
       ...default_state,
       ...props.state,
       domain: props.state.domain,
       problem: props.state.problem,
       plans: props.state.plans,
+      cached_suggestions: suggestions,
+      suggestions: [],
     };
   }
 
   componentDidUpdate(prevProps, prevState) {}
-
-  onChange(e) {
-    this.setState({
-      ...this.state,
-      text_input: e.target.value,
-    });
-  }
 
   handleKeyDown(e) {
     if (e.key === 'Enter') {
@@ -105,39 +107,88 @@ class NL2LTLIntegration extends React.Component {
     });
   }
 
+  onSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: this.getSuggestions(value),
+    });
+  };
+
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: [],
+    });
+  };
+
+  onChange(event, { newValue }) {
+    this.setState({
+      ...this.state,
+      text_input: newValue.toString(),
+    });
+  }
+
+  getSuggestions(value) {
+    const inputValue = value.trim().toLowerCase();
+    const result = inputValue.length === 0 ? [] : this.state.cached_suggestions;
+    return result;
+  }
+
+  getSuggestionValue = suggestion => suggestion;
+
+  renderSuggestion = suggestion => (
+    <ContainedListItem className="suggested-option">
+      {suggestion}
+    </ContainedListItem>
+  );
+
+  renderInputComponent = inputProps => (
+    <TextInput
+      {...inputProps}
+      id="nl2ltl"
+      invalidText="A valid value is required."
+      labelText={
+        <span>
+          Constrain the set of plans by describing LTL control rules in natural
+          language. Learn more about NL2LTL{' '}
+          <a
+            href="https://github.com/IBM/nl2ltl"
+            target="_blank"
+            rel="noreferrer">
+            here
+          </a>
+          .
+        </span>
+      }
+      placeholder="Write your control rule in English"
+      onKeyDown={this.handleKeyDown.bind(this)}
+    />
+  );
+
   render() {
+    const inputProps = {
+      value: this.state.text_input,
+      onChange: this.onChange.bind(this),
+    };
+
     return (
       <Grid>
         <Column lg={16} md={8} sm={4}>
           <div style={{ marginTop: '20px' }}>
-            <TextInput
-              helperText={
-                <span>
-                  Learn more about NL2LTL{' '}
-                  <a
-                    href="https://github.com/IBM/nl2ltl"
-                    target="_blank"
-                    rel="noreferrer">
-                    here
-                  </a>
-                  .
-                </span>
-              }
-              id="nl2ltl"
-              invalidText="A valid value is required."
-              labelText="Constrain the set of plans by describing LTL control rules in natural language."
-              placeholder="Write your control rule in English"
-              onKeyDown={this.handleKeyDown.bind(this)}
-              onChange={this.onChange.bind(this)}
-              value={this.state.text_input}
+            <Autosuggest
+              suggestions={this.state.suggestions}
+              onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(
+                this
+              )}
+              onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(
+                this
+              )}
+              getSuggestionValue={this.getSuggestionValue.bind(this)}
+              inputProps={inputProps}
+              renderInputComponent={this.renderInputComponent.bind(this)}
+              renderSuggestion={this.renderSuggestion.bind(this)}
             />
-          </div>
 
-          <SelectView
-            onEdgeClick={this.onEdgeClick.bind(this)}
-            state={this.state}
-            update_planner_payload={this.update_planner_payload.bind(this)}
-          />
+            <SelectView state={this.state} />
+          </div>
 
           <Modal
             preventCloseOnClickOutside

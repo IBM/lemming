@@ -113,9 +113,16 @@ class PlanningTask(BaseModel):
     quality_bound: float = 1.0
 
 
+class Translation(BaseModel):
+    utterance: str
+    paraphrases: List[str]
+    declare: List[str]
+
+
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
-    plans: List[Plan]
+    plans: List[Plan] = []
+    nl_prompts: List[Translation] = []
 
 
 class NL2LTLRequest(BaseModel):

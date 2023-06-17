@@ -61,6 +61,7 @@ class PlanArea extends React.Component {
       domain: null,
       problem: null,
       plans: [],
+      nl_prompts: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
       cached_landmarks: [],
@@ -184,6 +185,7 @@ class PlanArea extends React.Component {
                 domain: planning_task['domain'],
                 problem: planning_task['problem'],
                 plans: data['plans'],
+                nl_prompts: data['nl_prompts'],
                 graph: null,
                 cached_landmarks: [],
                 selected_landmarks: new Set(),
@@ -813,17 +815,18 @@ class PlanArea extends React.Component {
                           </div>
                         )}
 
-                        {!this.state.notifications.viz_loading && (
-                          <Component
-                            key={id}
-                            onEdgeClick={this.onEdgeClick.bind(this)}
-                            commitChanges={this.commitChanges.bind(this)}
-                            state={this.state}
-                            update_planner_payload={this.update_planner_payload.bind(
-                              this
-                            )}
-                          />
-                        )}
+                        {!this.state.notifications.viz_loading &&
+                          this.state.graph && (
+                            <Component
+                              key={id}
+                              onEdgeClick={this.onEdgeClick.bind(this)}
+                              commitChanges={this.commitChanges.bind(this)}
+                              state={this.state}
+                              update_planner_payload={this.update_planner_payload.bind(
+                                this
+                              )}
+                            />
+                          )}
                       </div>
                     );
                   }
@@ -899,7 +902,7 @@ class FeedbackArea extends React.Component {
                       className="count-tag"
                       size="sm"
                       type="cool-gray"
-                      title={this.getNumPlans(item)}>
+                      title={this.getNumPlans(item).toString()}>
                       {' '}
                       {this.getNumPlans(item)}{' '}
                     </Tag>
@@ -916,7 +919,7 @@ class FeedbackArea extends React.Component {
                       className="count-tag"
                       size="sm"
                       type="cool-gray"
-                      title={this.getNumPlans(item)}>
+                      title={this.getNumPlans(item).toString()}>
                       {' '}
                       {this.getNumPlans(item)}{' '}
                     </Tag>

@@ -18,14 +18,16 @@
     "deploy": "rm -rf ./build && yarn build && cf push -f manifest.yml"
   },
   "dependencies": {
-    "@carbon/react": "1.1.0",
+    "@carbon/react": "^1.31.3",
     "react": "^18.1.0",
+    "react-autosuggest": "^10.0.2",
     "react-device-detect": "2.1.2",
     "react-dom": "^18.1.0",
     "react-router-dom": "^5.0.0",
     "react-scripts": "^5.0.1",
     "reagraph": "4.8.2",
-    "sass": "^1.51.0"
+    "sass": "^1.51.0",
+    "string-similarity-js": "^2.1.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",

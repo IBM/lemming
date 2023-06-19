@@ -6,6 +6,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from helpers.common_helper.file_helper import read_str_from_upload_file
 from helpers.common_helper.static_data_helper import app_description
+from helpers.nl2plan_helper.utils import temporary_directory
 from helpers.nl2plan_helper.ltl2plan_helper import (
     compile_instance,
     get_goal_formula,
@@ -222,9 +223,14 @@ def generate_nl2ltl_integration(
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     custom_prompt = prompt_builder()
 
-    engine = GPTEngine(model=Models.DAVINCI3.value, prompt=custom_prompt)
-    utterance = request.utterance
+    with temporary_directory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "tmp.json"
+        tmp_file = tmp_file.resolve()
+        tmp_file.write_text(custom_prompt, encoding="utf-8")
 
+        engine = GPTEngine(model=Models.DAVINCI3.value, prompt=tmp_file)
+
+    utterance = request.utterance
     matched_formulas = translate(utterance, engine)
     ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
         utterance, matched_formulas

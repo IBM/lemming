@@ -5,9 +5,8 @@ from typing import Any, Dict, List, Optional
 
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
-from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula
+from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, Translation
 from pydantic import BaseModel, validator
-from pylogics.syntax.base import Formula
 from watson_ai_planning.data_model.planning_types import PlanningResult
 
 
@@ -119,14 +118,15 @@ class PlanningTask(BaseModel):
 
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
-    plans: List[Plan]
+    plans: List[Plan] = []
+    nl_prompts: List[Translation] = []
 
 
 class LTL2PDDLRequest(BaseModel):
-    formula: LTLFormula
+    formulas: List[LTLFormula]
+    plans: List[Plan]
     domain: str
     problem: str
-    plans: List[Plan]
 
 
 class ToolCompiler(Enum):

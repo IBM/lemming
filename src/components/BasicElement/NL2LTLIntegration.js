@@ -1,5 +1,7 @@
 import React from 'react';
 import { SelectView } from './SelectView';
+import { stringSimilarity } from 'string-similarity-js';
+import Autosuggest from 'react-autosuggest';
 import {
   Grid,
   Column,
@@ -11,6 +13,7 @@ import {
   StructuredListRow,
   StructuredListCell,
   RadioButton,
+  ContainedListItem,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -25,23 +28,23 @@ const default_state = {
 class NL2LTLIntegration extends React.Component {
   constructor(props) {
     super(props);
+
+    const suggestions = props.state.nl_prompts
+      .map(item => item.paraphrases.concat([item.utterance]))
+      .reduce((options, item) => options.concat(item), []);
+
     this.state = {
       ...default_state,
       ...props.state,
       domain: props.state.domain,
       problem: props.state.problem,
       plans: props.state.plans,
+      cached_suggestions: suggestions,
+      suggestions: [],
     };
   }
 
   componentDidUpdate(prevProps, prevState) {}
-
-  onChange(e) {
-    this.setState({
-      ...this.state,
-      text_input: e.target.value,
-    });
-  }
 
   handleKeyDown(e) {
     if (e.key === 'Enter') {
@@ -61,32 +64,36 @@ class NL2LTLIntegration extends React.Component {
     }
   }
 
-  update_planner_payload(planner_payload) {
-    this.props.update_planner_payload(planner_payload);
+  update_planner_payload(planner_payload, new_formula) {
+    this.props.update_planner_payload(planner_payload, new_formula);
   }
 
-  onEdgeClick(edge) {
-    this.props.onEdgeClick(edge);
-  }
+  onEdgeClick(edge) {}
 
   confirmFormula() {
+    const new_formula = this.state.ltl_formulas[this.state.selected_formula];
+    var cached_formulas = this.state.cached_formulas;
+    cached_formulas.push(new_formula);
+
     fetch(link_to_server + '/ltl_compile', {
       method: 'POST',
       body: JSON.stringify({
-        formula: this.state.ltl_formulas[this.state.selected_formula],
         domain: this.state.domain,
         problem: this.state.problem,
         plans: this.state.plans,
+        formulas: cached_formulas,
       }),
       headers: { 'Content-Type': 'application/json' },
     })
       .then(res => res.json())
       .then(data => {
-        this.update_planner_payload(data);
-        this.setState({
-          ...this.state,
-          ...default_state,
-        });
+        this.setState(
+          {
+            ...this.state,
+            ...default_state,
+          },
+          () => this.update_planner_payload(data, new_formula)
+        );
       })
       .catch(err => console.error(err));
   }
@@ -105,39 +112,103 @@ class NL2LTLIntegration extends React.Component {
     });
   }
 
+  onSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: this.getSuggestions(value),
+    });
+  };
+
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: [],
+    });
+  };
+
+  onChange(event, { newValue }) {
+    this.setState({
+      ...this.state,
+      text_input: newValue.toString(),
+    });
+  }
+
+  getSuggestions(value) {
+    const inputValue = value.trim().toLowerCase();
+    var matched_objects = this.state.cached_suggestions.map(item => {
+      return {
+        value: item,
+        match: stringSimilarity(item.toLowerCase(), inputValue),
+      };
+    });
+
+    matched_objects.sort((a, b) => b.match - a.match);
+    matched_objects = matched_objects.slice(0, 10);
+
+    return inputValue.length === 0
+      ? this.state.cached_suggestions
+      : matched_objects.map(item => item.value);
+  }
+
+  getSuggestionValue = suggestion => suggestion;
+
+  renderSuggestion = suggestion => (
+    <ContainedListItem className="suggested-option">
+      {suggestion}
+    </ContainedListItem>
+  );
+
+  renderInputComponent = inputProps => (
+    <TextInput
+      {...inputProps}
+      id="nl2ltl"
+      invalidText="A valid value is required."
+      labelText={
+        <span>
+          Constrain the set of plans by describing LTL control rules in natural
+          language. Learn more about NL2LTL{' '}
+          <a
+            href="https://github.com/IBM/nl2ltl"
+            target="_blank"
+            rel="noreferrer">
+            here
+          </a>
+          .
+        </span>
+      }
+      placeholder="Write your control rule in English"
+      onKeyDown={this.handleKeyDown.bind(this)}
+    />
+  );
+
   render() {
+    const inputProps = {
+      value: this.state.text_input,
+      onChange: this.onChange.bind(this),
+    };
+
     return (
       <Grid>
         <Column lg={16} md={8} sm={4}>
           <div style={{ marginTop: '20px' }}>
-            <TextInput
-              helperText={
-                <span>
-                  Learn more about NL2LTL{' '}
-                  <a
-                    href="https://github.com/IBM/nl2ltl"
-                    target="_blank"
-                    rel="noreferrer">
-                    here
-                  </a>
-                  .
-                </span>
-              }
-              id="nl2ltl"
-              invalidText="A valid value is required."
-              labelText="Constrain the set of plans by describing LTL control rules in natural language."
-              placeholder="Write your control rule in English"
-              onKeyDown={this.handleKeyDown.bind(this)}
-              onChange={this.onChange.bind(this)}
-              value={this.state.text_input}
+            <Autosuggest
+              suggestions={this.state.suggestions}
+              onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(
+                this
+              )}
+              onSuggestionsClearRequested={this.onSuggestionsClearRequested.bind(
+                this
+              )}
+              getSuggestionValue={this.getSuggestionValue.bind(this)}
+              inputProps={inputProps}
+              renderInputComponent={this.renderInputComponent.bind(this)}
+              renderSuggestion={this.renderSuggestion.bind(this)}
+            />
+
+            <SelectView
+              state={this.state}
+              onEdgeClick={this.onEdgeClick.bind(this)}
+              no_feedback={true}
             />
           </div>
-
-          <SelectView
-            onEdgeClick={this.onEdgeClick.bind(this)}
-            state={this.state}
-            update_planner_payload={this.update_planner_payload.bind(this)}
-          />
 
           <Modal
             preventCloseOnClickOutside

@@ -91,3 +91,12 @@
 .count-tag {
   float: right;
 }
+
+.suggested-option {
+  padding: 5px;
+}
+
+.suggested-option:hover {
+  cursor: pointer;
+  background-color: #f4f4f4;
+}

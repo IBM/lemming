@@ -5,7 +5,7 @@ from pylogics.syntax.base import Formula
 
 
 def get_formulas_from_matched_formulas(
-    matched_formulas: Dict[Formula, float]
+    utterance: str, matched_formulas: Dict[Formula, float]
 ) -> List[LTLFormula]:
     """
     Make the NL2LTL output consumable for Lemming.
@@ -17,6 +17,7 @@ def get_formulas_from_matched_formulas(
     for formula, confidence in matched_formulas.items():
         formulas.append(
             LTLFormula(
+                user_prompt=utterance,
                 formula_name=formula,
                 formula_ltl=formula.to_ltl(),
                 formula_ppltl=formula.to_ppltl(),

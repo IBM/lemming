@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 from helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
@@ -7,7 +7,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 from pddl.core import Domain, Problem
 from pddl.logic import Predicate
 from plan4past.compiler import Compiler
-from pylogics.syntax.base import Formula
+from pylogics.syntax.base import Formula, And
 from pylogics.syntax.pltl import Atomic
 
 
@@ -25,14 +25,14 @@ def compile_instance(
         compiler.compile()
         compiled_domain, compiled_problem = compiler.result
     else:
-        assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
         # TODO: add compilation for LF2F
+        assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
     return compiled_domain, compiled_problem
 
 
-def get_goal_formula(formula: LTLFormula, tool: ToolCompiler) -> Formula:
-    """Get the goal formula from the NL2LTL output."""
+def get_goal_formula(formulas: List[LTLFormula], tool: ToolCompiler) -> Formula:
+    """Get the goal formula from the list of formulas."""
     if tool == ToolCompiler.P4P:
-        return formula.formula_ppltl
-    else:
-        return formula.formula_ltl
+        return And(*[formula.formula_ppltl for formula in formulas])
+    assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
+    return And()

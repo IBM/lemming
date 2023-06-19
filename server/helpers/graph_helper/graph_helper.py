@@ -185,7 +185,7 @@ def get_node_name_plan_hash_list(
                 if is_forward
                 else list(g.in_edges(node))
             )
-            plan_hashes_for_node: set[str] = set()
+            plan_hashes_for_node: Set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
                 for plan in plans:

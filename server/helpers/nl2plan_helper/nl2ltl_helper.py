@@ -1,14 +1,9 @@
 from __future__ import annotations
 
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import List
 
-from dacite import from_dict
-from helpers.common_helper.hash_helper import get_list_hash
-from helpers.planner_helper.planner_helper_data_types import Plan
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from pylogics.syntax.base import Formula
-from watson_ai_planning.data_model.planning_types import PlanningResult
 
 
 class NL2LTLRequest(BaseModel):
@@ -16,6 +11,7 @@ class NL2LTLRequest(BaseModel):
 
 
 class LTLFormula(BaseModel):
+    user_prompt = (str,)
     formula_name: str
     formula_ltl: Formula
     formula_ppltl: Formula
@@ -36,5 +32,5 @@ class Translation(BaseModel):
     declare: str
 
 
-def prompt_builder():
-    pass
+def prompt_builder() -> str:
+    return str()

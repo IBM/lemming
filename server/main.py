@@ -36,6 +36,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     PlanningTask,
     ToolCompiler,
+    Translation,
 )
 from nl2ltl import translate
 from nl2ltl.engines.gpt.core import GPTEngine, Models
@@ -105,7 +106,17 @@ def import_domain(domain_name: str) -> LemmingTask:
         print(e)
         plans = []
 
-    new_lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
+    try:
+        prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
+        nl_prompts = [Translation.parse_obj(item) for item in prompt]
+
+    except Exception as e:
+        print(e)
+        nl_prompts = []
+
+    new_lemming_task = LemmingTask(
+        planning_task=planning_task, plans=plans, nl_prompts=nl_prompts
+    )
     return new_lemming_task
 
 
@@ -216,7 +227,7 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 
     matched_formulas = translate(utterance, engine)
     ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
-        matched_formulas
+        utterance, matched_formulas
     )
     return ltl_formulas
 
@@ -229,7 +240,7 @@ def ltl_compile(request: LTL2PDDLRequest, tool: ToolCompiler) -> LemmingTask:
     domain = domain_parser(Path(request.domain).read_text(encoding="utf-8"))
     problem = problem_parser(Path(request.problem).read_text(encoding="utf-8"))
 
-    goal = get_goal_formula(request.formula, tool)
+    goal = get_goal_formula(request.formulas, tool)
 
     compiled_domain, compiled_problem = compile_instance(
         domain, problem, goal, tool

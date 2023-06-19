@@ -11,12 +11,15 @@ class NL2LTLRequest(BaseModel):
 
 
 class LTLFormula(BaseModel):
-    user_prompt = (str,)
-    formula_name: str
-    formula_ltl: Formula
-    formula_ppltl: Formula
-    description: str
-    confidence: float
+    user_prompt = str
+    formula_name = str
+    formula_ltl = Formula
+    formula_ppltl = Formula
+    description = str
+    confidence = float
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class Prompt(BaseModel):

@@ -219,8 +219,30 @@ def generate_nl2ltl_integration(
     return generate_select_view(plan_disambiguator_input)
 
 
-@app.post("/nl2ltl")
+@app.post("/nl2ltl", response_model=None)
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+    # TODO: Remove this after the backend is ready
+    # Uncomment this to test the UI
+    # ltl_formulas: List[LTLFormula] = [
+    #     LTLFormula(
+    #         user_prompt=request.utterance,
+    #         formula="RespondedExistence Slack Gmail",
+    #         description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
+    #         confidence=0.4,
+    #     ),
+    #     LTLFormula(
+    #         user_prompt=request.utterance,
+    #         formula="Response Slack Gmail",
+    #         description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
+    #         confidence=0.3,
+    #     ),
+    #     LTLFormula(
+    #         user_prompt=request.utterance,
+    #         formula="ExistenceTwo Slack",
+    #         description="Slack will happen at least twice.",
+    #         confidence=0.2,
+    #     ),
+    # ]
     custom_prompt = prompt_builder()
 
     with temporary_directory() as tmp_dir:

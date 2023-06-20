@@ -16,6 +16,10 @@
       "Finish E before D",
       "Finish D after E"
     ],
+    "symbols": [
+      "has_done_E",
+      "has_done_D"
+    ],
     "declare": [
       "Response has_done_E has_done_D",
       "ChainResponse has_done_E has_done_D",
@@ -29,6 +33,9 @@
       "Prefer using B_alt",
       "Use B_alt",
       "Get B_alt before the end"
+    ],
+    "symbols": [
+      "has_done_B_alt"
     ],
     "declare": [
       "Existence has_done_B_alt"
@@ -44,6 +51,9 @@
       "Avoid B",
       "Avoid B_main"
     ],
+    "symbols": [
+      "has_done_B_main"
+    ],
     "declare": [
       "Absence has_done_B_main"
     ]
@@ -56,6 +66,9 @@
       "Do G eventually",
       "Do G at some point",
       "Execute G before the end"
+    ],
+    "symbols": [
+      "has_done_G"
     ],
     "declare": [
       "Existence has_done_G"
@@ -70,6 +83,10 @@
       "Make sure B_main is done before E",
       "When you do E, B_main should be done already",
       "Complete B_main before E"
+    ],
+    "symbols": [
+      "has_done_B_main",
+      "has_done_E"
     ],
     "declare": [
       "Response has_done_B_main has_done_E",

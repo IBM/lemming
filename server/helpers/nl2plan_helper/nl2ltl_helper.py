@@ -61,8 +61,8 @@ def _parse_prompt_data(prompt_path: Path) -> LLMPrompt:
     return prompt
 
 
-def prompt_builder(prompt_path: Path) -> str:
-    """Builds a prompt from a given path."""
+def prompt_builder(prompt_path: Path) -> Json:
+    """Builds a Json prompt from a given path."""
     header = (
         "Translate natural language sentences into patterns.\n\nALLOWED_PATTERN_NAMES: Existence, ExistenceTwo, "
         "Response, ChainResponse, RespondedExistence\n"
@@ -79,4 +79,4 @@ def prompt_builder(prompt_path: Path) -> str:
             body += f"\nNL: {example.utterance}\n"
             body += f"PATTERN: {example.declare[0]}\n"
             body += f"SYMBOLS: {', '.join(example.symbols)}\n\n"
-    return header + body
+    return json.dumps({"prompt": header + body})

@@ -246,7 +246,7 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 
     # TODO: we currently use only the Toy Domain
     custom_prompt = prompt_builder(
-        prompt_path=Path("data/Toy Domain/prompt.json")
+        prompt_path=Path(r"data/Toy Domain/prompt.json").resolve()
     )
 
     with temporary_directory() as tmp_dir:

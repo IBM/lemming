@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
 import pydot
-from networkx import Graph, nx_pydot, set_node_attributes
+from networkx import Graph, nx_pydot, set_node_attributes, set_edge_attributes
 from networkx.readwrite import json_graph
 from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
@@ -181,9 +181,9 @@ def get_graph_upto_nodes(
     return remove_nodes_from_graph(g, nodes_to_exclude)
 
 
-def get_node_name_plan_hash_list(
+def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
-) -> Dict[str, List[str]]:
+) -> Tuple[Dict[str, List[str]], Dict[Tuple[Any, Any], List[str]]]:
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
@@ -192,6 +192,7 @@ def get_node_name_plan_hash_list(
 
     start_nodes = get_root_node_in_digraph(g, is_forward)
     node_list_plan_hash_dict: Dict[str, List[str]] = dict()
+    edge_list_plan_hash_dict: Dict[Tuple[Any, Any], List[str]] = dict()
     queue: List[Any] = list()
     queue.extend(start_nodes)
     depth = 0
@@ -210,16 +211,22 @@ def get_node_name_plan_hash_list(
                     if depth < len(plan.actions):
                         if edge_label in plan.actions[depth]:
                             plan_hashes_for_node.add(plan.plan_hash[:])
+                            if edge not in edge_list_plan_hash_dict:
+                                edge_list_plan_hash_dict[edge] = list()
+                            edge_list_plan_hash_dict[edge].append(
+                                plan.plan_hash[:]
+                            )
                 target_node = edge[1] if is_forward else edge[0]
                 new_queue.append(target_node)
             node_list_plan_hash_dict[node] = list(plan_hashes_for_node)
         depth += 1
         queue = new_queue
-    return node_list_plan_hash_dict
+    return node_list_plan_hash_dict, edge_list_plan_hash_dict
 
 
 def get_graph_with_number_of_plans_label(
-    g: Graph, node_list_plan_hash_dict: Dict[str, List[str]]
+    g: Graph,
+    node_list_plan_hash_dict: Dict[str, List[str]],
 ) -> Graph:
     """
     returns a deep copy of a graph with "num_plans" attribute
@@ -227,9 +234,14 @@ def get_graph_with_number_of_plans_label(
     graph_with_new_attributes = g.copy()
     if len(g.nodes) == 0:
         return graph_with_new_attributes
-    attributes: Dict[str, Dict[str, int]] = {
-        node: {"num_plans": len(plan_hashes)}
+    node_attributes: Dict[str, Dict[str, Any]] = {
+        node: {
+            "num_plans": len(plan_hashes),
+            "plan_hashes": deepcopy(plan_hashes),
+        }
         for node, plan_hashes in node_list_plan_hash_dict.items()
     }
-    set_node_attributes(graph_with_new_attributes, attributes)
+
+    set_node_attributes(graph_with_new_attributes, node_attributes)
+
     return graph_with_new_attributes

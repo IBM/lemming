@@ -13,7 +13,6 @@ from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
     get_all_nodes_coming_from_node,
     get_nodes_to_exclude,
-    get_node_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
     get_edge_label,
 )

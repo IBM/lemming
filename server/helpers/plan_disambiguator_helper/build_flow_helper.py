@@ -35,6 +35,7 @@ def get_build_flow_output(
         g,
         _,
         node_plan_hashes_dict,
+        edge_plan_hash_dict,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
         selection_infos, landmarks, domain, problem, plans
     )
@@ -58,6 +59,7 @@ def get_build_flow_output(
             choice_infos=[],
             networkx_graph=networkx_graph,
             node_plan_hashes_dict=node_plan_hashes_dict,
+            edge_plan_hashes_dict=edge_plan_hash_dict,
         )
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
@@ -96,4 +98,5 @@ def get_build_flow_output(
         networkx_graph=networkx_graph,
         first_achiever_edge_dict=first_achiever_edge_dict,
         node_plan_hashes_dict=node_plan_hashes_dict,
+        edge_plan_hashes_dict=edge_plan_hash_dict,
     )

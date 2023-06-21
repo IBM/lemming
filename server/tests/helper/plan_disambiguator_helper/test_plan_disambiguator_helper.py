@@ -128,6 +128,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             g,
             _,
             node_plan_hashes_dict,
+            edge_plan_hash_dict,
         ) = get_plan_disambiguator_output_filtered_by_selection_infos(
             [selected_landmark_0],
             TestPlanDisambiguatorHelper.gripper_landmarks,

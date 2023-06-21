@@ -31,6 +31,7 @@ def get_selection_flow_output(
         g,
         _,
         node_plan_hashes_dict,
+        edge_plan_hash_dict,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
         selection_infos, landmarks, domain, problem, plans
     )
@@ -57,6 +58,8 @@ def get_selection_flow_output(
                 ),
             ),
             networkx_graph=networkx_graph,
+            node_plan_hashes_dict=node_plan_hashes_dict,
+            edge_plan_hashes_dict=edge_plan_hash_dict,
         )
 
     return PlanDisambiguatorOutput(
@@ -66,4 +69,5 @@ def get_selection_flow_output(
         ),
         networkx_graph=networkx_graph,
         node_plan_hashes_dict=node_plan_hashes_dict,
+        edge_plan_hashes_dict=edge_plan_hash_dict,
     )

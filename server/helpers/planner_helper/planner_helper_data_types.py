@@ -1,6 +1,6 @@
 from __future__ import annotations
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from pydantic import BaseModel, validator
 from dacite import from_dict
 from watson_ai_planning.data_model.planning_types import PlanningResult
@@ -104,7 +104,7 @@ class PlanDisambiguatorOutput(BaseModel):
     networkx_graph: Dict[str, Any] = {}
     first_achiever_edge_dict: Optional[Dict[str, Any]] = None
     node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
-    # edge_plan_hashes_dict
+    edge_plan_hashes_dict: Optional[Dict[Tuple[str, str], List[str]]] = None
 
 
 class PlanningTask(BaseModel):

@@ -12,7 +12,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 from helpers.planner_helper.planner_helper import get_dot_graph_str
 from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
-    get_node_name_plan_hash_list,
+    get_node_edge_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
 )
 
@@ -253,19 +253,19 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
     domain: str,
     problem: str,
     plans: List[Plan],
-) -> Tuple[List[Plan], List[ChoiceInfo], Graph, str, Dict[str, List[str]]]:
+) -> Tuple[
+    List[Plan],
+    List[ChoiceInfo],
+    Graph,
+    str,
+    Dict[str, List[str]],
+    Dict[Tuple[str, str], List[str]],
+]:
     """
     returns 1) filtered plans, 2) filtered and sorted landmarks,
     landmarks information, 3) a graph, 4) a graph in dot string
     """
     selected_plans = get_plans_with_selection_infos(selection_infos, plans)
-    # filtered_landmarks = get_filtered_out_selection_infos_by_selection_infos(
-    #     landmarks, selection_infos
-    # )
-    # filtered_landmarks = get_filtered_landmark_by_selected_plans(
-    #     landmarks, selected_plans
-    # )
-
     dot_str = get_dot_graph_str(
         PlanningTask(domain=domain, problem=problem),
         planning_results=PlannerResponseModel.get_planning_results(
@@ -273,9 +273,10 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         ),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
-    node_plan_hashes_dict = get_node_name_plan_hash_list(
-        g, selected_plans, True
-    )
+    (
+        node_plan_hashes_dict,
+        edge_plan_hash_dict,
+    ) = get_node_edge_name_plan_hash_list(g, selected_plans, True)
     g = get_graph_with_number_of_plans_label(g, node_plan_hashes_dict)
     choices = get_split_by_actions(landmarks, selected_plans)
     return (
@@ -284,6 +285,7 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         g,
         dot_str,
         node_plan_hashes_dict,
+        edge_plan_hash_dict,
     )
 
 

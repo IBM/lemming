@@ -20,8 +20,6 @@ class Landmark(BaseModel):
 
 
 class SelelctionInfo(BaseModel):
-    # facts: Optional[List[str]] = []
-    # disjunctive: Optional[bool] = False
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
 

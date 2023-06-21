@@ -65,9 +65,11 @@ class TestSelectionFlowHelper(unittest.TestCase):
 
     def test_get_selection_flow_output_no_selected_landmarks(self) -> None:
         selected_landmark_0 = SelelctionInfo(
-            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
-            disjunctive=True,
             selected_first_achiever="pick ball2 rooma right",
+            selected_plan_hashes=[
+                "9d49f737b4735da2a3b0d85e3be0bf67",
+                "08ef565ec364978b0295105f8ae52bce",
+            ],
         )
         selection_flow_output = get_selection_flow_output(
             [selected_landmark_0],
@@ -76,8 +78,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
         )
-        self.assertEqual(len(selection_flow_output.plans), 3)
-        self.assertEqual(len(selection_flow_output.choice_infos), 14)
+        self.assertEqual(len(selection_flow_output.plans), 2)
+        self.assertEqual(len(selection_flow_output.choice_infos), 12)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_landmarks_no_selection_info(

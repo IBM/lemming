@@ -147,8 +147,8 @@ class TestGraphHelper(unittest.TestCase):
         with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
-        root = get_root_node_in_digraph(g)
-        self.assertEqual(root, "node0")
+        root = get_root_node_in_digraph(g, True)
+        self.assertEqual(root[0], "node0")
 
     def test_get_end_goal_node_in_digraph(self) -> None:
         dot_str = ""
@@ -169,7 +169,7 @@ class TestGraphHelper(unittest.TestCase):
         with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
-        root = get_root_node_in_digraph(g)
+        root = get_root_node_in_digraph(g, True)
         res = list(g.out_edges(root))
         self.assertEqual(res, [("node0", "node1")])
         res = list(g.out_edges(res[0][1]))
@@ -184,21 +184,22 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"pick ball2 rooma right": [0, 1, 5]}
-        (
-            first_node_with_first_achiever,
-            first_achiever,
-            out_edges_first_node_with_first_achiever,
-            edges_traversed,
-        ) = get_first_node_with_multiple_out_edges(
+        # (
+        #     first_node_with_first_achiever,
+        #     first_achiever,
+        #     out_edges_first_node_with_first_achiever,
+        #     edges_traversed,
+        # )
+
+        nodes = get_first_node_with_multiple_out_edges(
             g, first_achiever_plan_idx_dict, True
         )
-        self.assertEqual(first_node_with_first_achiever, "node1")
-        self.assertEqual(first_achiever, "pick ball2 rooma right")
+        self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
-            out_edges_first_node_with_first_achiever,
+            nodes[0][1],
             [("node1", "node16"), ("node1", "node2")],
         )
-        self.assertEqual(edges_traversed, ["pick ball1 rooma left"])
+        self.assertEqual(nodes[0][2], ["pick ball1 rooma left"])
 
     def test_get_first_node_with_multiple_out_edges_no_first_achiever_found(
         self,
@@ -216,12 +217,13 @@ class TestGraphHelper(unittest.TestCase):
         )
         self.assertEqual(
             res,
-            (
-                "node1",
-                None,
-                [("node1", "node16"), ("node1", "node2")],
-                ["pick ball1 rooma left"],
-            ),
+            [
+                (
+                    "node1",
+                    [("node1", "node16"), ("node1", "node2")],
+                    ["pick ball1 rooma left"],
+                )
+            ],
         )
 
     def test_get_first_node_with_multiple_out_edges_no_first_achiever_found_backward(
@@ -240,12 +242,13 @@ class TestGraphHelper(unittest.TestCase):
         )
         self.assertEqual(
             res,
-            (
-                "node11",
-                None,
-                [("node15", "node11"), ("node10", "node11")],
-                [],
-            ),
+            [
+                (
+                    "node11",
+                    [("node15", "node11"), ("node10", "node11")],
+                    [],
+                )
+            ],
         )
 
     def test_get_all_nodes_coming_from_node(self) -> None:

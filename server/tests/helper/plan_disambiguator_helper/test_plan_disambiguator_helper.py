@@ -18,13 +18,11 @@ from helpers.planner_helper.planner_helper_data_types import (
     ChoiceInfo,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
-    get_plans_with_selection_info,
-    get_filtered_out_selection_infos_by_selection_infos,
+    # get_filtered_out_selection_infos_by_selection_infos,
     get_plans_with_selection_infos,
     get_split_by_actions,
     get_plan_disambiguator_output_filtered_by_selection_infos,
     get_plans_filetered_by_selected_plan_hashes,
-    get_plans_with_selection_info,
     get_plan_idx_edge_dict,
     get_edge_label_plan_hashes_dict,
     append_landmarks_not_avialable_for_choice,
@@ -73,52 +71,18 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         TestPlanDisambiguatorHelper.planner_response_model.set_plan_hashes()
 
-    def test_get_plans_with_selection_info(self) -> None:
-        selected_landmark = SelelctionInfo(
-            facts=["Atom at(ball1, roomb)"],
-            disjunctive=False,
-            selected_first_achiever="drop ball1 roomb left",
-        )
-        selected_plans = get_plans_with_selection_info(
-            selected_landmark,
-            TestPlanDisambiguatorHelper.gripper_landmarks,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        # before selection
-        self.assertEqual(
-            len(TestPlanDisambiguatorHelper.planner_response_model.plans), 6
-        )
-        # after selection
-        self.assertEqual(len(selected_plans), 3)
-
-    def test_get_filtered_out_selection_infos_by_selection_infos(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
-            facts=["Atom at(ball1, roomb)"],
-            disjunctive=False,
-            selected_first_achiever="drop ball1 roomb left",
-        )
-        filtered_landmarks = (
-            get_filtered_out_selection_infos_by_selection_infos(
-                TestPlanDisambiguatorHelper.gripper_landmarks,
-                [selected_landmark_0],
-            )
-        )
-        self.assertEqual(len(filtered_landmarks), 11)
-
     def test_get_plans_with_selection_infos(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
-            facts=["Atom at(ball1, roomb)"],
-            disjunctive=False,
-            selected_first_achiever="drop ball1 roomb left",
+        selection_info_0 = SelelctionInfo(
+            selected_plan_hashes=[
+                "6a81b2a65657b4444a989205b590c346",
+                "9d49f737b4735da2a3b0d85e3be0bf67",
+            ],
         )
-        selected_landmark_1 = SelelctionInfo(
-            facts=["Atom at(ball3, roomb)"],
-            disjunctive=False,
-            selected_first_achiever="drop ball3 roomb right",
+        selection_info_1 = SelelctionInfo(
+            selected_plan_hashes=["9d49f737b4735da2a3b0d85e3be0bf67"],
         )
         selected_plans = get_plans_with_selection_infos(
-            [selected_landmark_0, selected_landmark_1],
-            TestPlanDisambiguatorHelper.gripper_landmarks,
+            [selection_info_0, selection_info_1],
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
         # before selection
@@ -126,23 +90,27 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             len(TestPlanDisambiguatorHelper.planner_response_model.plans), 6
         )
         # after selection
-        self.assertEqual(len(selected_plans), 2)
+        self.assertEqual(len(selected_plans), 1)
 
     def test_get_split_by_actions(self) -> None:
         expected_dict_0 = {
             "drop ball1 roomb left": [0, 1, 4],
             "drop ball1 roomb right": [2, 3, 5],
         }
-        expected_dict_1 = {"move roomb rooma": [0, 1, 2, 3, 4, 5]}
+        expected_dict_1 = {
+            "pick ball4 rooma left": [0, 2, 5],
+            "pick ball4 rooma right": [1, 3, 4],
+        }
         landmark_infos = get_split_by_actions(
             TestPlanDisambiguatorHelper.gripper_landmarks,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
+        self.assertEqual(len(landmark_infos), 8)
         self.assertEqual(landmark_infos[0].max_num_plans, 3)
         self.assertEqual(
             landmark_infos[0].action_name_plan_idx_map, expected_dict_0
         )
-        self.assertEqual(landmark_infos[-1].max_num_plans, 6)
+        self.assertEqual(landmark_infos[-1].max_num_plans, 3)
         self.assertEqual(
             landmark_infos[-1].action_name_plan_idx_map, expected_dict_1
         )
@@ -151,9 +119,8 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self,
     ) -> None:
         selected_landmark_0 = SelelctionInfo(
-            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
-            disjunctive=True,
             selected_first_achiever="pick ball2 rooma right",
+            selected_plan_hashes=["9d49f737b4735da2a3b0d85e3be0bf67"],
         )
         (
             selected_plans,
@@ -168,8 +135,8 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.gripper_problem,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
-        self.assertEqual(len(selected_plans), 3)
-        self.assertEqual(len(landmark_infos), 7)
+        self.assertEqual(len(selected_plans), 1)
+        self.assertEqual(len(landmark_infos), 8)
         self.assertEqual(g.name, "G")
 
     def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(self):
@@ -200,51 +167,6 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
         self.assertEqual(len(plans), 2)
-
-    def test_get_plans_with_selection_info(self):
-        hashes = [
-            "6a81b2a65657b4444a989205b590c346",
-            "a30b377144530876cd5506f0df8a1f16",
-        ]
-        selected_landmark = SelelctionInfo(selected_plan_hashes=hashes)
-        plans = get_plans_with_selection_info(
-            selected_landmark,
-            TestPlanDisambiguatorHelper.gripper_landmarks,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        self.assertEqual(len(plans), 2)
-
-    def test_get_plans_with_selection_info(self):
-        selected_landmark = SelelctionInfo(
-            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
-            disjunctive=True,
-            selected_first_achiever="pick ball2 rooma right",
-        )
-        plans = get_plans_with_selection_info(
-            selected_landmark,
-            TestPlanDisambiguatorHelper.gripper_landmarks,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        self.assertEqual(len(plans), 3)
-
-    def test_get_plans_with_selection_infos(self):
-        selected_landmark_0 = SelelctionInfo(
-            facts=["Atom carry(ball2, left)", "Atom carry(ball2, right)"],
-            disjunctive=True,
-            selected_first_achiever="pick ball2 rooma right",
-        )
-        hashes = [
-            "6a81b2a65657b4444a989205b590c346",
-            "a30b377144530876cd5506f0df8a1f16",
-        ]
-        selected_landmark_1 = SelelctionInfo(selected_plan_hashes=hashes)
-        plans = get_plans_with_selection_infos(
-            [selected_landmark_0, selected_landmark_1],
-            TestPlanDisambiguatorHelper.gripper_landmarks,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        self.assertEqual(len(plans), 1)
-        self.assertEqual(plans[0].plan_hash, "6a81b2a65657b4444a989205b590c346")
 
     def test_get_plan_idx_edge_dict_forward(self):
         plan_idx_action_dict = get_plan_idx_edge_dict(
@@ -306,7 +228,10 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
 
     def test_append_landmarks_not_avialable_for_choice(self):
         landmark = Landmark(facts=["b"])
-        landmarks = [Landmark(facts=["a"]), landmark]
+        landmarks = [
+            Landmark(facts=["a"], first_achievers=["sadadas", "asdasdsad"]),
+            landmark,
+        ]
         choice_infos = [ChoiceInfo(landmark=landmark)]
         new_choice_infos = append_landmarks_not_avialable_for_choice(
             landmarks, choice_infos

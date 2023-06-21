@@ -19,7 +19,7 @@ from helpers.graph_helper.graph_helper import (
 
 @planner_exception_handler
 def get_selection_flow_output(
-    selected_landmarks: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelelctionInfo]],
     landmarks: List[Landmark],
     domain: str,
     problem: str,
@@ -27,37 +27,34 @@ def get_selection_flow_output(
 ) -> PlanDisambiguatorOutput:
     (
         selected_plans,
-        landmark_infos,
+        choice_infos,
         g,
         _,
         node_plan_hashes_dict,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
-        selected_landmarks, landmarks, domain, problem, plans
+        selection_infos, landmarks, domain, problem, plans
     )
     networkx_graph = get_dict_from_graph(g)
 
-    if (
-        len(selected_plans) > 1 and len(landmark_infos) == 0
-    ):  # no landmarks for disambiguating plans
-        (
-            node_with_multiple_out_edges,
-            _,
-            _,
-            edges_traversed,
-        ) = get_first_node_with_multiple_out_edges(g, dict(), True)
-
+    if len(selected_plans) > 1 and len(choice_infos) == 0:  # manual selection
+        nodes_with_multiple_edges = get_first_node_with_multiple_out_edges(
+            g, dict(), True
+        )
         return PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=append_landmarks_not_avialable_for_choice(
                 landmarks,
-                [
-                    get_choice_info_multiple_edges_without_landmark(
-                        node_with_multiple_edges=node_with_multiple_out_edges,
-                        edges_traversed=edges_traversed,
-                        plans=selected_plans,
-                        is_forward=True,
+                list(
+                    map(
+                        lambda payload: get_choice_info_multiple_edges_without_landmark(
+                            node_with_multiple_edges=payload[0],
+                            edges_traversed=payload[2],
+                            plans=selected_plans,
+                            is_forward=True,
+                        ),
+                        nodes_with_multiple_edges,
                     )
-                ],
+                ),
             ),
             networkx_graph=networkx_graph,
         )
@@ -65,7 +62,7 @@ def get_selection_flow_output(
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=append_landmarks_not_avialable_for_choice(
-            landmarks, landmark_infos
+            landmarks, choice_infos
         ),
         networkx_graph=networkx_graph,
         node_plan_hashes_dict=node_plan_hashes_dict,

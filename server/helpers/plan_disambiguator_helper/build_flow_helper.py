@@ -61,23 +61,22 @@ def get_build_flow_output(
         )
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
-    choice_infos: List[ChoiceInfo] = List()
+    choice_infos: List[ChoiceInfo] = list()
     for (
         node_with_multiple_out_edges,
         out_edges_first_node_with_multiple_out_edges,
         edges_traversed,
     ) in node_search_results:
-        for edges in out_edges_first_node_with_multiple_out_edges:
-            edges_to_traverse_to_remove_from_graph.add(edges)
-            choice_infos.append(
-                get_choice_info_multiple_edges_without_landmark(
-                    node_with_multiple_edges=node_with_multiple_out_edges,
-                    edges_traversed=edges_traversed,
-                    plans=selected_plans,
-                    is_forward=is_forward,
-                )
+        choice_infos.append(
+            get_choice_info_multiple_edges_without_landmark(
+                node_with_multiple_edges=node_with_multiple_out_edges,
+                edges_traversed=edges_traversed,
+                plans=selected_plans,
+                is_forward=is_forward,
             )
-    # get a graph to render
+        )
+        for edge in out_edges_first_node_with_multiple_out_edges:
+            edges_to_traverse_to_remove_from_graph.add(edge)
 
     nodes_to_end = set(
         map(
@@ -89,19 +88,8 @@ def get_build_flow_output(
         get_graph_upto_nodes(g, nodes_to_end, is_forward)
     )
     selectable_landmarks, first_achiever_edge_dict = get_landmarks_in_edges(
-        edges_to_traverse_to_remove_from_graph
+        g, list(edges_to_traverse_to_remove_from_graph), landmarks
     )
-
-    if (
-        len(selectable_landmarks) == 0
-    ):  # a node with multiple edges, no first achiever
-        return PlanDisambiguatorOutput(
-            plans=selected_plans,
-            choice_infos=choice_infos,
-            networkx_graph=networkx_graph,
-            node_plan_hashes_dict=node_plan_hashes_dict,
-        )
-
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=choice_infos,

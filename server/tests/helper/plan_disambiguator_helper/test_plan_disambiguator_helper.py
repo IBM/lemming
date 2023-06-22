@@ -18,7 +18,6 @@ from helpers.planner_helper.planner_helper_data_types import (
     ChoiceInfo,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
-    # get_filtered_out_selection_infos_by_selection_infos,
     get_plans_with_selection_infos,
     get_split_by_actions,
     get_plan_disambiguator_output_filtered_by_selection_infos,

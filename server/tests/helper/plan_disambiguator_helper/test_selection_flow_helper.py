@@ -32,6 +32,37 @@ class TestSelectionFlowHelper(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        TestSelectionFlowHelper.toy_domain = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
+        )
+        TestSelectionFlowHelper.toy_problem = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/problem"))
+        )
+        TestSelectionFlowHelper.toy_landmarks = (
+            get_landmarks_by_landmark_category(
+                PlanningTask(
+                    domain=TestSelectionFlowHelper.toy_domain,
+                    problem=TestSelectionFlowHelper.toy_problem,
+                ),
+                LandmarkCategory.RWH.value,
+            )
+        )
+        TestSelectionFlowHelper.toy_planner_response_model = (
+            PlannerResponseModel.parse_obj(
+                asdict(
+                    get_plan_topq(
+                        PlanningTask(
+                            domain=TestSelectionFlowHelper.toy_domain,
+                            problem=TestSelectionFlowHelper.toy_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
+                    )
+                )
+            )
+        )
+        TestSelectionFlowHelper.toy_planner_response_model.set_plan_hashes()
+
         TestSelectionFlowHelper.gripper_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
@@ -77,6 +108,22 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+        )
+        self.assertEqual(len(selection_flow_output.plans), 2)
+        self.assertEqual(len(selection_flow_output.choice_infos), 12)
+        self.assertEqual(len(selection_flow_output.networkx_graph), 5)
+
+    def test_get_selection_flow_output_no_selected_landmarks_toy(self) -> None:
+        selected_landmark_0 = SelelctionInfo(
+            selected_first_achiever="",
+            selected_plan_hashes=[],
+        )
+        selection_flow_output = get_selection_flow_output(
+            [selected_landmark_0],
+            TestSelectionFlowHelper.toy_landmarks,
+            TestSelectionFlowHelper.toy_domain,
+            TestSelectionFlowHelper.toy_problem,
+            TestSelectionFlowHelper.toy_planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
         self.assertEqual(len(selection_flow_output.choice_infos), 12)

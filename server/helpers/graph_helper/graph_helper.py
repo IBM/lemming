@@ -207,6 +207,8 @@ def get_node_edge_name_plan_hash_list(
             plan_hashes_for_node: set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
+                edge_label = edge_label.strip()
+                edge_label = edge_label.lower()
                 for plan in plans:
                     if depth < len(plan.actions):
                         if edge_label in plan.actions[depth]:

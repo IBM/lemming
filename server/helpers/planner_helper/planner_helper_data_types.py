@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
 
+from typing import Dict, List, Optional, Any
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, Translation
@@ -23,8 +23,6 @@ class Landmark(BaseModel):
 
 
 class SelelctionInfo(BaseModel):
-    facts: Optional[List[str]] = []
-    disjunctive: Optional[bool] = False
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
 
@@ -107,6 +105,7 @@ class PlanDisambiguatorOutput(BaseModel):
     networkx_graph: Dict[str, Any] = {}
     first_achiever_edge_dict: Optional[Dict[str, Any]] = None
     node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
+    edge_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
 
 
 class PlanningTask(BaseModel):

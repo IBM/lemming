@@ -4,9 +4,6 @@ from dataclasses import asdict
 from typing import List
 
 from helpers.common_helper.file_helper import read_str_from_file
-from helpers.plan_disambiguator_helper.build_flow_helper import (
-    get_build_flow_output,
-)
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topq,
@@ -16,6 +13,10 @@ from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
     PlannerResponseModel,
     PlanningTask,
+    SelelctionInfo,
+)
+from helpers.plan_disambiguator_helper.build_flow_helper import (
+    get_build_flow_output,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -97,6 +98,49 @@ class TestBuildFlowHelper(unittest.TestCase):
         )
         self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
 
+    def test_get_build_forward_flow_output_one_selection_info_no_landmark(
+        self,
+    ) -> None:
+        selected_landmark_0 = SelelctionInfo(
+            selected_first_achiever="",
+            selected_plan_hashes=[
+                "08ef565ec364978b0295105f8ae52bce",
+                "f7f6db06a380e59c52ab115b2d771988",
+            ],
+        )
+        build_forward_flow_output = get_build_flow_output(
+            [selected_landmark_0],
+            [],
+            TestBuildFlowHelper.gripper_domain,
+            TestBuildFlowHelper.gripper_problem,
+            TestBuildFlowHelper.planner_response_model.plans,
+            True,
+        )
+        self.assertEqual(len(build_forward_flow_output.plans), 2)
+        self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
+        self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
+        self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].max_num_plans
+        )
+        self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        )
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[
+                0
+            ].node_with_multiple_out_edges,
+            "node0",
+        )
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_hash_map
+            ),
+            2,
+        )
+        self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
+
     def test_get_build_backword_flow_output_no_selection_info_no_landmark(
         self,
     ) -> None:
@@ -133,87 +177,38 @@ class TestBuildFlowHelper(unittest.TestCase):
         )
         self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
 
-    def test_get_build_forward_flow_output_no_selection_info(self) -> None:
+    def test_get_build_backword_flow_output_one_selection_info_no_landmark(
+        self,
+    ) -> None:
+        selected_landmark_0 = SelelctionInfo(
+            selected_first_achiever="",
+            selected_plan_hashes=[
+                "08ef565ec364978b0295105f8ae52bce",
+                "f7f6db06a380e59c52ab115b2d771988",
+            ],
+        )
         build_forward_flow_output = get_build_flow_output(
+            [selected_landmark_0],
             [],
-            TestBuildFlowHelper.gripper_landmarks,
-            TestBuildFlowHelper.gripper_domain,
-            TestBuildFlowHelper.gripper_problem,
-            TestBuildFlowHelper.planner_response_model.plans,
-            True,
-        )
-        self.assertEqual(len(build_forward_flow_output.plans), 6)
-        self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
-        self.assertIsNotNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertEqual(
-            build_forward_flow_output.choice_infos[0].max_num_plans, 3
-        )
-        self.assertEqual(
-            set(
-                build_forward_flow_output.choice_infos[
-                    0
-                ].landmark.first_achievers
-            ),
-            set(["pick ball3 rooma left", "pick ball3 rooma right"]),
-        )
-        self.assertEqual(
-            len(
-                build_forward_flow_output.choice_infos[
-                    0
-                ].action_name_plan_idx_map
-            ),
-            2,
-        )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[
-                0
-            ].node_with_multiple_out_edges
-        )
-        self.assertEqual(
-            len(
-                build_forward_flow_output.choice_infos[
-                    0
-                ].action_name_plan_hash_map
-            ),
-            2,
-        )
-        self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
-
-    def test_get_build_backward_flow_output_no_selection_info(self) -> None:
-        build_forward_flow_output = get_build_flow_output(
-            [],
-            TestBuildFlowHelper.gripper_landmarks,
             TestBuildFlowHelper.gripper_domain,
             TestBuildFlowHelper.gripper_problem,
             TestBuildFlowHelper.planner_response_model.plans,
             False,
         )
-        self.assertEqual(len(build_forward_flow_output.plans), 6)
+        self.assertEqual(len(build_forward_flow_output.plans), 2)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
-        self.assertIsNotNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertEqual(
-            build_forward_flow_output.choice_infos[0].max_num_plans, 3
-        )
-        self.assertEqual(
-            set(
-                build_forward_flow_output.choice_infos[
-                    0
-                ].landmark.first_achievers
-            ),
-            set(["drop ball4 roomb left", "drop ball4 roomb right"]),
-        )
-        self.assertEqual(
-            len(
-                build_forward_flow_output.choice_infos[
-                    0
-                ].action_name_plan_idx_map
-            ),
-            2,
+        self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
+        self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].max_num_plans
         )
         self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        )
+        self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges
+            ].node_with_multiple_out_edges,
+            "node11",
         )
         self.assertEqual(
             len(

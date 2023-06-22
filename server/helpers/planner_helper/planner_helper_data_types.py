@@ -102,7 +102,7 @@ class PlanDisambiguatorOutput(BaseModel):
     networkx_graph: Dict[str, Any] = {}
     first_achiever_edge_dict: Optional[Dict[str, Any]] = None
     node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
-    edge_plan_hashes_dict: Optional[Dict[Tuple[str, str], List[str]]] = None
+    edge_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
 
 
 class PlanningTask(BaseModel):

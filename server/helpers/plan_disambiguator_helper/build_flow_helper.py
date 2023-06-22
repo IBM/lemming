@@ -46,6 +46,10 @@ def get_build_flow_output(
             choice_infos=[],
             networkx_graph=networkx_graph,
             node_plan_hashes_dict=node_plan_hashes_dict,
+            edge_plan_hashes_dict={
+                f"{label[0]}_{label[1]}": plan_hashes
+                for label, plan_hashes in edge_plan_hash_dict.items()
+            },
         )
 
     first_achiever_plan_idx_dict = get_merged_first_achievers_dict(choice_infos)
@@ -59,7 +63,10 @@ def get_build_flow_output(
             choice_infos=[],
             networkx_graph=networkx_graph,
             node_plan_hashes_dict=node_plan_hashes_dict,
-            edge_plan_hashes_dict=edge_plan_hash_dict,
+            edge_plan_hashes_dict={
+                f"{label[0]}_{label[1]}": plan_hashes
+                for label, plan_hashes in edge_plan_hash_dict.items()
+            },
         )
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
@@ -98,5 +105,8 @@ def get_build_flow_output(
         networkx_graph=networkx_graph,
         first_achiever_edge_dict=first_achiever_edge_dict,
         node_plan_hashes_dict=node_plan_hashes_dict,
-        edge_plan_hashes_dict=edge_plan_hash_dict,
+        edge_plan_hashes_dict={
+            f"{label[0]}_{label[1]}": plan_hashes
+            for label, plan_hashes in edge_plan_hash_dict.items()
+        },
     )

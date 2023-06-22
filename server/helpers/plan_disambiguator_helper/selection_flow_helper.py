@@ -59,7 +59,10 @@ def get_selection_flow_output(
             ),
             networkx_graph=networkx_graph,
             node_plan_hashes_dict=node_plan_hashes_dict,
-            edge_plan_hashes_dict=edge_plan_hash_dict,
+            edge_plan_hashes_dict={
+                f"{label[0]}_{label[1]}": plan_hashes
+                for label, plan_hashes in edge_plan_hash_dict.items()
+            },
         )
 
     return PlanDisambiguatorOutput(
@@ -69,5 +72,8 @@ def get_selection_flow_output(
         ),
         networkx_graph=networkx_graph,
         node_plan_hashes_dict=node_plan_hashes_dict,
-        edge_plan_hashes_dict=edge_plan_hash_dict,
+        edge_plan_hashes_dict={
+            f"{label[0]}_{label[1]}": plan_hashes
+            for label, plan_hashes in edge_plan_hash_dict.items()
+        },
     )

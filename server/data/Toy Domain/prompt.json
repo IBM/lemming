@@ -16,14 +16,28 @@
       "Finish E before D",
       "Finish D after E"
     ],
-    "symbols": [
-      "has_done_E",
-      "has_done_D"
-    ],
     "declare": [
-      "Response has_done_E has_done_D",
-      "ChainResponse has_done_E has_done_D",
-      "Precedence has_done_D has_done_E"
+      {
+        "pattern": "Response",
+        "symbols": [
+          "has_done_E",
+          "has_done_D"
+        ]
+      },
+      {
+        "pattern": "ChainResponse",
+        "symbols": [
+          "has_done_E",
+          "has_done_D"
+        ]
+      },
+      {
+        "pattern": "Precedence",
+        "symbols": [
+          "has_done_D",
+          "has_done_E"
+        ]
+      }
     ]
   },
   {
@@ -34,11 +48,13 @@
       "Use B_alt",
       "Get B_alt before the end"
     ],
-    "symbols": [
-      "has_done_B_alt"
-    ],
     "declare": [
-      "Existence has_done_B_alt"
+      {
+        "pattern": "Existence",
+        "symbols": [
+          "has_done_B_alt"
+        ]
+      }
     ]
   },
   {
@@ -51,11 +67,13 @@
       "Avoid B",
       "Avoid B_main"
     ],
-    "symbols": [
-      "has_done_B_main"
-    ],
     "declare": [
-      "Absence has_done_B_main"
+      {
+        "pattern": "Absence",
+        "symbols": [
+          "has_done_B_main"
+        ]
+      }
     ]
   },
   {
@@ -67,11 +85,13 @@
       "Do G at some point",
       "Execute G before the end"
     ],
-    "symbols": [
-      "has_done_G"
-    ],
     "declare": [
-      "Existence has_done_G"
+      {
+        "pattern": "Existence",
+        "symbols": [
+          "has_done_G"
+        ]
+      }
     ]
   },
   {
@@ -84,14 +104,28 @@
       "When you do E, B_main should be done already",
       "Complete B_main before E"
     ],
-    "symbols": [
-      "has_done_B_main",
-      "has_done_E"
-    ],
     "declare": [
-      "Response has_done_B_main has_done_E",
-      "ChainResponse has_done_B_main has_done_E",
-      "Precedence has_done_E has_done_B_main"
+      {
+        "pattern": "Response",
+        "symbols": [
+          "has_done_B_main",
+          "has_done_E"
+        ]
+      },
+      {
+        "pattern": "ChainResponse",
+        "symbols": [
+          "has_done_B_main",
+          "has_done_E"
+        ]
+      },
+      {
+        "pattern": "Precedence",
+        "symbols": [
+          "has_done_E",
+          "has_done_B_main"
+        ]
+      }
     ]
   }
 ]

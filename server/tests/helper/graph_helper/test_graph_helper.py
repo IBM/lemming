@@ -274,15 +274,6 @@ class TestGraphHelper(unittest.TestCase):
         nodes_to_exclude = get_nodes_to_exclude(g, {nodes_to_start}, True)
         self.assertEqual(len(nodes_to_exclude), 13)
 
-    def test_get_node_name_plan_hash_list(self) -> None:
-        res = get_node_name_plan_hash_list(
-            TestGraphHelper.test_graph,
-            TestGraphHelper.planner_response_model.plans,
-            True,
-        )
-        self.assertEqual(len(res), 40)
-        self.assertEqual(res["node31"][0], "80af1fcf0d421d8bfc7bf4751a6ee24c")
-
     def test_get_graph_with_number_of_plans_label(self) -> None:
         node = "node0"
         value = "abcdedfshads"

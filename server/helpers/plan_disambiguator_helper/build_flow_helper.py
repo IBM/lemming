@@ -70,13 +70,13 @@ def get_build_flow_output(
         )
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
-    choice_infos: List[ChoiceInfo] = list()
+    new_choice_infos: List[ChoiceInfo] = list()
     for (
         node_with_multiple_out_edges,
         out_edges_first_node_with_multiple_out_edges,
         edges_traversed,
     ) in node_search_results:
-        choice_infos.append(
+        new_choice_infos.append(
             get_choice_info_multiple_edges_without_landmark(
                 node_with_multiple_edges=node_with_multiple_out_edges,
                 edges_traversed=edges_traversed,
@@ -101,7 +101,7 @@ def get_build_flow_output(
     )
     return PlanDisambiguatorOutput(
         plans=selected_plans,
-        choice_infos=choice_infos,
+        choice_infos=new_choice_infos,
         networkx_graph=networkx_graph,
         first_achiever_edge_dict=first_achiever_edge_dict,
         node_plan_hashes_dict=node_plan_hashes_dict,

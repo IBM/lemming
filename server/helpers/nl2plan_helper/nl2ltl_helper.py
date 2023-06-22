@@ -27,8 +27,8 @@ class LTLFormula(BaseModel):
 class Translation(BaseModel):
     utterance: str
     paraphrases: List[str]
+    declare: str
     symbols: List[str]
-    declare: List[str]
 
 
 class LLMPrompt(BaseModel):
@@ -42,14 +42,17 @@ def _prompt_from_dict(data: Json[List[Dict]]) -> LLMPrompt:
     """Instantiate a Prompt from parsed data."""
     examples = []
     for obj in data:
-        examples.append(
-            Translation(
-                utterance=obj["utterance"],
-                paraphrases=obj["paraphrases"],
-                symbols=obj["symbols"],
-                declare=obj["declare"],
+        utterance = obj["utterance"]
+        paraphrases = obj["paraphrases"]
+        for pattern_obj in obj["declare"]:
+            examples.append(
+                Translation(
+                    utterance=utterance,
+                    paraphrases=paraphrases,
+                    declare=pattern_obj["pattern"],
+                    symbols=pattern_obj["symbols"],
+                )
             )
-        )
     return LLMPrompt(example_translations=examples)
 
 
@@ -61,7 +64,7 @@ def _parse_prompt_data(prompt_path: Path) -> LLMPrompt:
     return prompt
 
 
-def prompt_builder(prompt_path: Path) -> Json:
+def prompt_builder(prompt_path: Path) -> str:
     """Builds a Json prompt from a given path."""
     header = (
         "Translate natural language sentences into patterns.\n\nALLOWED_PATTERN_NAMES: Existence, ExistenceTwo, "
@@ -70,13 +73,7 @@ def prompt_builder(prompt_path: Path) -> Json:
     prompt: LLMPrompt = _parse_prompt_data(prompt_path)
     body = ""
     for example in prompt.example_translations:
-        if len(example.declare) > 1:
-            for pattern in example.declare:
-                body += f"\nNL: {example.utterance}\n"
-                body += f"PATTERN: {pattern}\n"
-                body += f"SYMBOLS: {', '.join(example.symbols)}\n\n"
-        else:
-            body += f"\nNL: {example.utterance}\n"
-            body += f"PATTERN: {example.declare[0]}\n"
-            body += f"SYMBOLS: {', '.join(example.symbols)}\n\n"
+        body += f"\nNL: {example.utterance}\n"
+        body += f"PATTERN: {example.declare}\n"
+        body += f"SYMBOLS: {', '.join(example.symbols)}\n\n"
     return json.dumps({"prompt": header + body})

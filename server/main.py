@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
-from typing import List
+from typing import List, Dict, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from nl2ltl.declare.base import Template
+
 from helpers.common_helper.file_helper import read_str_from_upload_file
 from helpers.common_helper.static_data_helper import app_description
 from helpers.nl2plan_helper.utils import temporary_directory
@@ -257,7 +259,9 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
         engine = GPTEngine(model=Models.DAVINCI3.value, prompt=tmp_file)
 
     utterance = request.utterance
-    matched_formulas = translate(utterance, engine)
+    matched_formulas: Dict[Template, float] = cast(
+        Dict[Template, float], translate(utterance, engine)
+    )
     ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
         utterance, matched_formulas
     )

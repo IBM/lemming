@@ -67,3 +67,36 @@
   width: 150px;
   margin-left: 10px;
 }
+
+.text-silver {
+  color: silver;
+}
+
+.hover-zone {
+  margin-top: 20px;
+  position: fixed;
+  z-index: 999;
+  width: 250px;
+}
+
+.hover-zone-tile {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.node-pop > div {
+  max-height: 80px;
+  overflow-y: scroll;
+}
+
+.count-tag {
+  float: right;
+}
+
+.suggested-option {
+  padding: 5px;
+}
+
+.suggested-option:hover {
+  cursor: pointer;
+  background-color: #f4f4f4;
+}

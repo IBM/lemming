@@ -1,5 +1,6 @@
 import json
 
+from typing import List
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from helpers.planner_helper.planner_helper_data_types import (
@@ -10,6 +11,10 @@ from helpers.planner_helper.planner_helper_data_types import (
     LemmingTask,
     PlanningTask,
     Plan,
+    LTLFormula,
+    NL2LTLRequest,
+    LTL2PDDLRequest,
+    Translation,
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
@@ -84,15 +89,23 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         plans = json.load(open(f"./data/{domain_name}/plans.json"))
-        plans = [
-            Plan(actions=item["actions"], cost=item["cost"]) for item in plans
-        ]
+        plans = [Plan.parse_obj(item) for item in plans]
 
     except Exception as e:
         print(e)
         plans = []
 
-    new_lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
+    try:
+        prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
+        nl_prompts = [Translation.parse_obj(item) for item in prompt]
+
+    except Exception as e:
+        print(e)
+        nl_prompts = []
+
+    new_lemming_task = LemmingTask(
+        planning_task=planning_task, plans=plans, nl_prompts=nl_prompts
+    )
     return new_lemming_task
 
 
@@ -185,3 +198,48 @@ def generate_build_backward(
     )
 
     return handle_flow_output(flow_output)
+
+
+@app.post("/generate_nl2ltl_integration")
+def generate_nl2ltl_integration(
+    plan_disambiguator_input: PlanDisambiguatorInput,
+) -> PlanDisambiguatorOutput:
+    return generate_select_view(plan_disambiguator_input)
+
+
+@app.post("/nl2ltl")
+def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+    _ = request
+
+    # TODO: Call to NL2LTL
+    ltl_formulas: List[LTLFormula] = [
+        LTLFormula(
+            user_prompt=request.utterance,
+            formula="RespondedExistence Slack Gmail",
+            description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
+            confidence=0.4,
+        ),
+        LTLFormula(
+            user_prompt=request.utterance,
+            formula="Response Slack Gmail",
+            description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
+            confidence=0.3,
+        ),
+        LTLFormula(
+            user_prompt=request.utterance,
+            formula="ExistenceTwo Slack",
+            description="Slack will happen at least twice.",
+            confidence=0.2,
+        ),
+    ]
+
+    return ltl_formulas
+
+
+@app.post("/ltl_compile")
+def ltl_compile(request: LTL2PDDLRequest) -> LemmingTask:
+    planning_task = PlanningTask(domain=request.domain, problem=request.problem)
+    lemming_task = LemmingTask(planning_task=planning_task, plans=request.plans)
+
+    # TODO: Compile to new planning task
+    return lemming_task

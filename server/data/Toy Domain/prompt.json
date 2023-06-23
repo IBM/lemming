@@ -1,0 +1,35 @@
+[
+  {
+    "utterance": "Do E before D",
+    "paraphrases": [
+      "Do D after E",
+      "E should come before D",
+      "D should come after E",
+      "Complete E before D",
+      "Complete D after E",
+      "Achieve E before D",
+      "Achieve D after E",
+      "E should be done before D",
+      "D should be done after E",
+      "E should be completed before D",
+      "D should be completed after E",
+      "Finish E before D",
+      "Finish D after E"
+    ],
+    "declare": [
+      "Response has_done_E has_done_D",
+      "ChainResponse has_done_E has_done_D",
+      "Precedence has_done_D has_done_E"
+    ]
+  },
+  {
+    "utterance": "Use only alternative B",
+    "paraphrases": [
+      "Use alternative B only",
+      "Prefer using B_alt"
+    ],
+    "declare": [
+      "Existence has_done_B_alt"
+    ]
+  }
+]

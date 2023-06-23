@@ -45,6 +45,9 @@
         {
             "name": "Landmarks View",
             "disabled": true
+        },
+        {
+            "name": "NL2LTL Integration"
         }
     ]
 }

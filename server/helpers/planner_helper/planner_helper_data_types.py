@@ -1,6 +1,6 @@
 from __future__ import annotations
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from pydantic import BaseModel, validator
 from dacite import from_dict
 from watson_ai_planning.data_model.planning_types import PlanningResult
@@ -20,8 +20,6 @@ class Landmark(BaseModel):
 
 
 class SelelctionInfo(BaseModel):
-    facts: Optional[List[str]] = []
-    disjunctive: Optional[bool] = False
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
 
@@ -56,6 +54,7 @@ class ChoiceInfo(BaseModel):
     action_name_plan_idx_map: Optional[Dict[str, List[int]]] = None
     action_name_plan_hash_map: Optional[Dict[str, List[str]]] = None
     node_with_multiple_out_edges: Optional[str] = None
+    is_available_for_choice: bool = True
 
 
 class PlanDisambiguatorInput(BaseModel):
@@ -103,6 +102,7 @@ class PlanDisambiguatorOutput(BaseModel):
     networkx_graph: Dict[str, Any] = {}
     first_achiever_edge_dict: Optional[Dict[str, Any]] = None
     node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
+    edge_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
 
 
 class PlanningTask(BaseModel):
@@ -112,6 +112,31 @@ class PlanningTask(BaseModel):
     quality_bound: float = 1.0
 
 
+class Translation(BaseModel):
+    utterance: str
+    paraphrases: List[str]
+    declare: List[str]
+
+
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
+    plans: List[Plan] = []
+    nl_prompts: List[Translation] = []
+
+
+class NL2LTLRequest(BaseModel):
+    utterance: str
+
+
+class LTLFormula(BaseModel):
+    user_prompt: str
+    formula: str
+    description: str
+    confidence: float
+
+
+class LTL2PDDLRequest(BaseModel):
+    formulas: List[LTLFormula]
     plans: List[Plan]
+    domain: str
+    problem: str

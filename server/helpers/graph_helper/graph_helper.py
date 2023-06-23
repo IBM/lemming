@@ -1,10 +1,13 @@
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
 import pydot
-from networkx import Graph, nx_pydot, set_node_attributes
+from networkx import Graph, nx_pydot, set_node_attributes, set_edge_attributes
 from networkx.readwrite import json_graph
 from helpers.common_helper.data_type_helper import merge_sets
-from helpers.planner_helper.planner_helper_data_types import Plan
+from helpers.planner_helper.planner_helper_data_types import (
+    Landmark,
+    Plan,
+)
 
 
 def convert_dot_str_to_networkx_graph(dot_str: str) -> Graph:
@@ -16,11 +19,12 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph) -> Optional[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Optional[Any]:
     if len(g.nodes) == 0:
         return None
-    root = [n for n, d in g.in_degree() if d == 0]
-    return root[0]
+    degrees = g.in_degree() if is_forward else g.out_degree()
+    root = [n for n, d in degrees if d == 0]
+    return root
 
 
 def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
@@ -42,57 +46,76 @@ def get_first_node_with_multiple_out_edges(
     g: Graph,
     first_achiever_plan_idx_dict: Dict[Any, List[Any]],
     is_forward: bool = True,
-) -> Optional[Tuple[Any, Optional[Any], List[Any], List[Any]]]:
+) -> List[Tuple[Any, List[Any], List[Any]]]:
     """
-    returns 1) node with multiple out edges, 2) first achiever in the node, 3) out edges from the node, and 4) edges traversed up to the node
+    returns a list of tuples of 1) node with multiple out edges, 2) first achiever in the node, 3) out edges from the node, and 4) edges traversed up to the node
     """
     if len(g.nodes) == 0:
         return None
     root: Optional[Any] = None
     # find a node to start
-    root = (
-        get_root_node_in_digraph(g)
-        if is_forward
-        else get_end_goal_node_in_digraph(g)
-    )
-    queue: List[Any] = list()
-    queue.append(root)
-    edges_traversed: List[Any] = list()
+    roots = get_root_node_in_digraph(g, is_forward)
+    queue: List[Tuple[Any, List[Any]]] = list()
+    queue.extend(list(map(lambda root: (root, []), roots)))
+    # edges_traversed: List[Any] = list()
+    nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
+    nodes_visited: Set[Any] = set()
     while len(queue) > 0:
         new_queue: List[Any] = list()
-        for node in queue:
+        for node, edges_traversed in queue:
             edges = (
                 list(g.out_edges(node))
                 if is_forward
                 else list(g.in_edges(node))
             )
+
+            if len(edges) > 1 and node not in nodes_visited:
+                nodes_with_multiple_edges.append(
+                    (
+                        deepcopy(node),
+                        deepcopy(edges),
+                        deepcopy(edges_traversed),
+                    )
+                )
+                nodes_visited.add(node)
+                continue
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
+                edges_traversed_so_far = edges_traversed + [edge_label]
+                new_queue.append(
+                    (edge[1], deepcopy(edges_traversed_so_far))
+                    if is_forward
+                    else (edge[0], deepcopy(edges_traversed_so_far))
+                )
 
-                if (
-                    len(edges) > 1
-                    and edge_label in first_achiever_plan_idx_dict
-                ):
-                    return (
-                        deepcopy(node),
-                        edge_label,
-                        edges,
-                        edges_traversed,
-                    )
-
-                if len(edges) == 1:
-                    edges_traversed.append(edge_label)
-
-                if is_forward:
-                    new_queue.append(edge[1])
-                else:
-                    new_queue.append(edge[0])
-
-            if len(edges) > 1:  # out edges are not first achievers
-                return deepcopy(node), None, edges, edges_traversed
-
+            nodes_visited.add(node)
         queue = new_queue
-    return None
+    return nodes_with_multiple_edges
+
+
+def get_landmarks_in_edges(
+    g: Graph,
+    edges: List[Any],
+    landmarks: List[Landmark],
+) -> List[Landmark]:
+    # TODO TEST THIS
+    edge_label_landmark_dict: Dict[str, List[Landmark]] = dict()
+    for landmark in landmarks:
+        if len(landmark.first_achievers) > 0:
+            for first_achiever in landmark.first_achievers:
+                if first_achiever not in edge_label_landmark_dict:
+                    edge_label_landmark_dict[first_achiever] = list()
+                edge_label_landmark_dict[first_achiever].append(landmark)
+
+    selectable_landmarks: List[Landmark] = list()
+    first_achiever_edge_dict: Dict[str, Tuple(str, str)] = dict()
+    for edge in edges:
+        edge_label = get_edge_label(g, edge)
+        if edge_label in edge_label_landmark_dict:
+            first_achiever_edge_dict[edge_label] = deepcopy(edge)
+            for landmark in edge_label_landmark_dict[edge_label]:
+                selectable_landmarks.append(landmark.copy(deep=True))
+    return selectable_landmarks, first_achiever_edge_dict
 
 
 def get_all_nodes_coming_from_node(
@@ -158,23 +181,20 @@ def get_graph_upto_nodes(
     return remove_nodes_from_graph(g, nodes_to_exclude)
 
 
-def get_node_name_plan_hash_list(
+def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
-) -> Dict[str, List[str]]:
+) -> Tuple[Dict[str, List[str]], Dict[Tuple[Any, Any], List[str]]]:
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
     if len(g.nodes) == 0:
         return dict()
 
-    start_node = (
-        get_root_node_in_digraph(g)
-        if is_forward
-        else get_end_goal_node_in_digraph(g)
-    )
+    start_nodes = get_root_node_in_digraph(g, is_forward)
     node_list_plan_hash_dict: Dict[str, List[str]] = dict()
+    edge_list_plan_hash_dict: Dict[Tuple[Any, Any], List[str]] = dict()
     queue: List[Any] = list()
-    queue.append(start_node)
+    queue.extend(start_nodes)
     depth = 0
     while len(queue) > 0:
         new_queue: List[Any] = list()
@@ -187,20 +207,28 @@ def get_node_name_plan_hash_list(
             plan_hashes_for_node: set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
+                edge_label = edge_label.strip()
+                edge_label = edge_label.lower()
                 for plan in plans:
                     if depth < len(plan.actions):
                         if edge_label in plan.actions[depth]:
                             plan_hashes_for_node.add(plan.plan_hash[:])
+                            if edge not in edge_list_plan_hash_dict:
+                                edge_list_plan_hash_dict[edge] = list()
+                            edge_list_plan_hash_dict[edge].append(
+                                plan.plan_hash[:]
+                            )
                 target_node = edge[1] if is_forward else edge[0]
                 new_queue.append(target_node)
             node_list_plan_hash_dict[node] = list(plan_hashes_for_node)
         depth += 1
         queue = new_queue
-    return node_list_plan_hash_dict
+    return node_list_plan_hash_dict, edge_list_plan_hash_dict
 
 
 def get_graph_with_number_of_plans_label(
-    g: Graph, node_list_plan_hash_dict: Dict[str, List[str]]
+    g: Graph,
+    node_list_plan_hash_dict: Dict[str, List[str]],
 ) -> Graph:
     """
     returns a deep copy of a graph with "num_plans" attribute
@@ -208,9 +236,14 @@ def get_graph_with_number_of_plans_label(
     graph_with_new_attributes = g.copy()
     if len(g.nodes) == 0:
         return graph_with_new_attributes
-    attributes: Dict[str, Dict[str, int]] = {
-        node: {"num_plans": len(plan_hashes)}
+    node_attributes: Dict[str, Dict[str, Any]] = {
+        node: {
+            "num_plans": len(plan_hashes),
+            "plan_hashes": deepcopy(plan_hashes),
+        }
         for node, plan_hashes in node_list_plan_hash_dict.items()
     }
-    set_node_attributes(graph_with_new_attributes, attributes)
+
+    set_node_attributes(graph_with_new_attributes, node_attributes)
+
     return graph_with_new_attributes

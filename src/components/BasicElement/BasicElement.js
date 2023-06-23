@@ -3,6 +3,7 @@ import { BuildForward } from './BuildForward';
 import { BuildBackward } from './BuildBackward';
 import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
+import { NL2LTLIntegration } from './NL2LTLIntegration';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
 import {
   Grid,
@@ -28,6 +29,7 @@ import {
   RadioButton,
   Loading,
   NumberInput,
+  Tag,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -38,7 +40,14 @@ const components = {
   BuildBackward: BuildBackward,
   LandmarksView: LandmarksView,
   SelectView: SelectView,
+  NL2LTLIntegration: NL2LTLIntegration,
 };
+
+function getPlanHashesFromChoice(action_name, plans) {
+  return plans
+    .filter(plan => plan.actions.indexOf(action_name) > -1)
+    .map(item => item.plan_hash);
+}
 
 class PlanArea extends React.Component {
   constructor(props) {
@@ -51,16 +60,21 @@ class PlanArea extends React.Component {
       domain: null,
       problem: null,
       plans: [],
+      nl_prompts: [],
+      cached_formulas: [],
       graph: null,
       feedback: 'Welcome to Lemming! Get started by loading a planning task.',
+      cached_landmarks: [],
+      remaining_plans: [],
       selected_landmarks: [],
       unselected_landmarks: [],
+      choice_infos: [],
       controls: {
         selected_domain: null,
         modal_open: false,
         upload_tab: 0,
-        num_plans: 2,
-        quality_bound: 1.0,
+        num_plans: 10,
+        quality_bound: 1.2,
       },
       notifications: {
         import_select: false,
@@ -68,6 +82,7 @@ class PlanArea extends React.Component {
         no_plans_error: false,
         viz_loading: false,
       },
+      turn: 0,
     };
   }
 
@@ -92,8 +107,21 @@ class PlanArea extends React.Component {
         })
           .then(res => res.json())
           .then(data => {
-            if (this.state.selectedFileType === 'plans')
+            if (this.state.selectedFileType === 'plans') {
               data = JSON.parse(data);
+
+              this.setState({
+                ...this.state,
+                remaining_plans: data,
+                plans: data,
+              });
+            } else {
+              this.setState({
+                ...this.state,
+                [this.state.selectedFileType]: data,
+                plans: [],
+              });
+            }
 
             this.setState({
               ...this.state,
@@ -119,6 +147,12 @@ class PlanArea extends React.Component {
         this.setState(
           {
             ...this.state,
+            turn: 0,
+            graph: null,
+            cached_landmarks: [],
+            selected_landmarks: [],
+            unselected_landmarks: [],
+            choice_infos: [],
             controls: {
               ...this.state.controls,
               modal_open: false,
@@ -126,7 +160,6 @@ class PlanArea extends React.Component {
           },
           () => {
             this.getLandmarks();
-            this.generateViz();
           }
         );
       }
@@ -157,9 +190,17 @@ class PlanArea extends React.Component {
             this.setState(
               {
                 ...this.state,
+                turn: 0,
                 domain: planning_task['domain'],
                 problem: planning_task['problem'],
+                remaining_plans: data['plans'],
                 plans: data['plans'],
+                nl_prompts: data['nl_prompts'],
+                graph: null,
+                cached_landmarks: [],
+                selected_landmarks: [],
+                unselected_landmarks: [],
+                choice_infos: [],
                 controls: {
                   ...this.state.controls,
                   modal_open: false,
@@ -167,7 +208,6 @@ class PlanArea extends React.Component {
               },
               () => {
                 this.getLandmarks();
-                this.generateViz();
               }
             );
           })
@@ -201,6 +241,29 @@ class PlanArea extends React.Component {
     });
   }
 
+  update_planner_payload(planner_payload, new_formula) {
+    const planning_task = planner_payload['planning_task'];
+    const plans = planner_payload['plans'];
+
+    var cached_formulas = this.state.cached_formulas;
+
+    if (cached_formulas.indexOf(new_formula) === -1)
+      cached_formulas.push(new_formula);
+
+    this.setState(
+      {
+        ...this.state,
+        domain: planning_task.domain,
+        problem: planning_task.problem,
+        plans: plans,
+        cached_formulas: cached_formulas,
+      },
+      () => {
+        this.generateViz();
+      }
+    );
+  }
+
   getPlans(e) {
     this.setState({
       ...this.state,
@@ -231,7 +294,11 @@ class PlanArea extends React.Component {
         this.setState(
           {
             ...this.state,
+            turn: 0,
+            remaining_plans: data.plans,
             plans: data.plans,
+            selected_landmarks: [],
+            unselected_landmarks: [],
             notifications: {
               ...this.state.notifications,
               viz_loading: false,
@@ -289,11 +356,81 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
+        this.setState(
+          {
+            ...this.state,
+            cached_landmarks: data.landmarks,
+            notifications: {
+              ...this.state.notifications,
+              viz_loading: false,
+            },
+          },
+          () => {
+            this.generateViz();
+          }
+        );
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+
+  generateViz() {
+    if (!this.state.plans || this.state.plans.length === 0) return;
+
+    const viz_endpoint =
+      link_to_server +
+      '/generate_' +
+      this.state.active_view.toLowerCase().replace(/\s/g, '_');
+
+    var cache_plans = this.state.plans;
+    const selection_infos = this.state.selected_landmarks.map((item, i) => {
+      const plan_hashes = getPlanHashesFromChoice(item, cache_plans);
+      cache_plans = cache_plans.filter(
+        item => plan_hashes.indexOf(item.plan_hash) > -1
+      );
+
+      return {
+        selected_first_achiever: item,
+        selected_plan_hashes: plan_hashes,
+      };
+    });
+
+    const payload = {
+      domain: this.state.domain,
+      problem: this.state.problem,
+      plans: this.state.plans,
+      landmarks: this.state.cached_landmarks,
+      selection_infos: selection_infos,
+    };
+
+    fetch(viz_endpoint, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        const choice_infos = data.choice_infos.filter(
+          item => item.landmark !== null
+        );
+        var unselected_landmarks =
+          this.state.turn > 0
+            ? this.state.unselected_landmarks
+            : choice_infos.reduce(
+                (choices, item) =>
+                  choices.concat(
+                    item.landmark.first_achievers.map(item => item.trim())
+                  ),
+                []
+              );
+
         this.setState({
           ...this.state,
-          unselected_landmarks: data.landmarks
-            .filter((item, id) => item.first_achievers.length > 1)
-            .reduce((result, item) => result.concat(item.first_achievers), []),
+          remaining_plans: data.plans,
+          graph: data.networkx_graph,
+          choice_infos: choice_infos,
+          unselected_landmarks: unselected_landmarks,
           notifications: {
             ...this.state.notifications,
             viz_loading: false,
@@ -303,34 +440,6 @@ class PlanArea extends React.Component {
       .catch(err => {
         console.error(err);
       });
-  }
-
-  generateViz() {
-    if (!this.state.plans || this.state.plans.length === 0) return;
-    // const viz_endpoint =
-    //   link_to_server +
-    //   '/generate_' +
-    //   this.state.active_view.toLowerCase().replace(/\s/g, '_');
-
-    // fetch(viz_endpoint, {
-    //   method: 'POST',
-    //   body: JSON.stringify(this.state),
-    //   headers: { 'Content-Type': 'application/json' },
-    // })
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     this.setState({
-    //       ...this.state,
-    //       graph: data,
-    //       notifications: {
-    //         ...this.state.notifications,
-    //         viz_loading: false,
-    //       },
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   });
   }
 
   selectImport(itemIndex) {
@@ -371,20 +480,27 @@ class PlanArea extends React.Component {
     return feedback;
   }
 
-  selectLandmark(landmark) {
+  selectLandmarks(landmarks) {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    const index = unselected_landmarks.indexOf(landmark);
-    unselected_landmarks.splice(index, 1);
+    for (var i = 0; i < landmarks.length; i++) {
+      if (selected_landmarks.indexOf(landmarks[i]) === -1)
+        selected_landmarks.push(landmarks[i]);
 
-    selected_landmarks.push(landmark);
+      if (unselected_landmarks.indexOf(landmarks[i]) > -1)
+        unselected_landmarks.splice(
+          unselected_landmarks.indexOf(landmarks[i]),
+          1
+        );
+    }
 
     this.setState(
       {
         ...this.state,
         selected_landmarks: selected_landmarks,
         unselected_landmarks: unselected_landmarks,
+        turn: this.state.turn + 1,
       },
       () => {
         this.generateViz();
@@ -392,20 +508,42 @@ class PlanArea extends React.Component {
     );
   }
 
-  deselectLandmark(landmark) {
+  deselectLandmarks(landmarks) {
     var selected_landmarks = this.state.selected_landmarks;
     var unselected_landmarks = this.state.unselected_landmarks;
 
-    const index = selected_landmarks.indexOf(landmark);
-    selected_landmarks.splice(index, 1);
+    for (var i = 0; i < landmarks.length; i++) {
+      if (unselected_landmarks.indexOf(landmarks[i]) === -1)
+        unselected_landmarks.push(landmarks[i]);
 
-    unselected_landmarks.push(landmark);
+      if (selected_landmarks.indexOf(landmarks[i]) > -1)
+        selected_landmarks.splice(selected_landmarks.indexOf(landmarks[i]), 1);
+    }
 
     this.setState(
       {
         ...this.state,
         selected_landmarks: selected_landmarks,
         unselected_landmarks: unselected_landmarks,
+        turn: this.state.turn + 1,
+      },
+      () => {
+        this.generateViz();
+      }
+    );
+  }
+
+  deleteUserPrompt(formula) {
+    var cached_formulas = this.state.cached_formulas;
+    const index = cached_formulas.indexOf(formula);
+
+    if (index > -1) cached_formulas.splice(index, 1);
+
+    this.setState(
+      {
+        ...this.state,
+        cached_formulas: cached_formulas,
+        turn: this.state.turn + 1,
       },
       () => {
         this.generateViz();
@@ -435,7 +573,11 @@ class PlanArea extends React.Component {
   }
 
   onEdgeClick(edge) {
-    console.log(edge);
+    this.selectLandmarks([edge]);
+  }
+
+  commitChanges(commits) {
+    this.selectLandmarks(Array.from(commits));
   }
 
   render() {
@@ -511,6 +653,19 @@ class PlanArea extends React.Component {
                     />
                   </div>
                 </>
+              )}
+
+              {this.state.plans.length > 0 && (
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  kind="tertiary"
+                  size="sm"
+                  href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                    JSON.stringify(this.state.remaining_plans, 0, 4)
+                  )}`}
+                  download={'plans.json'}>
+                  Export
+                </Button>
               )}
 
               <Modal
@@ -717,7 +872,11 @@ class PlanArea extends React.Component {
                             <Component
                               key={id}
                               onEdgeClick={this.onEdgeClick.bind(this)}
+                              commitChanges={this.commitChanges.bind(this)}
                               state={this.state}
+                              update_planner_payload={this.update_planner_payload.bind(
+                                this
+                              )}
                             />
                           )}
                       </div>
@@ -733,8 +892,9 @@ class PlanArea extends React.Component {
         <Column lg={4} md={2} sm={1}>
           <FeedbackArea
             state={this.state}
-            selectLandmark={this.selectLandmark.bind(this)}
-            deselectLandmark={this.deselectLandmark.bind(this)}
+            selectLandmarks={this.selectLandmarks.bind(this)}
+            deselectLandmarks={this.deselectLandmarks.bind(this)}
+            deleteUserPrompt={this.deleteUserPrompt.bind(this)}
           />
         </Column>
       </Grid>
@@ -755,11 +915,20 @@ class FeedbackArea extends React.Component {
   }
 
   selectLandmark(landmark) {
-    this.props.selectLandmark(landmark);
+    this.props.selectLandmarks([landmark]);
   }
 
   deselectLandmark(landmark) {
-    this.props.deselectLandmark(landmark);
+    this.props.deselectLandmarks([landmark]);
+  }
+
+  deleteUserPrompt(prompt) {
+    this.props.deleteUserPrompt(prompt);
+  }
+
+  getNumPlans(item) {
+    const plan_hashes = getPlanHashesFromChoice(item, this.state.plans);
+    return plan_hashes.length;
   }
 
   render() {
@@ -769,37 +938,88 @@ class FeedbackArea extends React.Component {
           {this.state.feedback}
         </Tile>
 
-        {this.state.selected_landmarks.length +
-          this.state.unselected_landmarks.length >
-          0 && (
-          <StructuredListWrapper ariaLabel="Landmarks">
-            <StructuredListHead>
-              <StructuredListRow head>
-                <StructuredListCell head>Landmarks</StructuredListCell>
-              </StructuredListRow>
-            </StructuredListHead>
-            <StructuredListBody className="landmarks-list">
-              {this.state.selected_landmarks.map((item, i) => (
-                <StructuredListRow key={item}>
-                  <StructuredListCell
-                    className="text-blue landmark-list-item"
-                    onClick={this.deselectLandmark.bind(this, item)}>
-                    {item}
-                  </StructuredListCell>
-                </StructuredListRow>
-              ))}
-              {this.state.unselected_landmarks.map((item, i) => (
-                <StructuredListRow key={item}>
-                  <StructuredListCell
-                    className="text-secondary landmark-list-item"
-                    onClick={this.selectLandmark.bind(this, item)}>
-                    {item}
-                  </StructuredListCell>
-                </StructuredListRow>
-              ))}
-            </StructuredListBody>
-          </StructuredListWrapper>
-        )}
+        <StructuredListWrapper ariaLabel="Choices">
+          {this.state.active_view !== 'NL2LTL Integration' &&
+            this.state.choice_infos.length > 0 && (
+              <>
+                <StructuredListHead>
+                  <StructuredListRow head>
+                    <StructuredListCell head>Choices</StructuredListCell>
+                  </StructuredListRow>
+                </StructuredListHead>
+                <StructuredListBody className="landmarks-list">
+                  {this.state.selected_landmarks.map((item, i) => (
+                    <StructuredListRow key={item}>
+                      <StructuredListCell
+                        className="text-blue landmark-list-item"
+                        onClick={this.deselectLandmark.bind(this, item)}>
+                        {item}
+                        <Tag
+                          className="count-tag"
+                          size="sm"
+                          type="cool-gray"
+                          title={this.getNumPlans(item).toString()}>
+                          {' '}
+                          {this.getNumPlans(item)}{' '}
+                        </Tag>
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  ))}
+                </StructuredListBody>
+                <StructuredListBody className="landmarks-list">
+                  {this.state.unselected_landmarks.map((item, i) => (
+                    <StructuredListRow key={item}>
+                      <StructuredListCell
+                        className="text-silver landmark-list-item"
+                        onClick={this.selectLandmark.bind(this, item)}>
+                        {item}
+                        <Tag
+                          className="count-tag"
+                          size="sm"
+                          type="cool-gray"
+                          title={this.getNumPlans(item).toString()}>
+                          {' '}
+                          {this.getNumPlans(item)}{' '}
+                        </Tag>
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  ))}
+                </StructuredListBody>
+                <Tile
+                  style={{
+                    fontSize: 'small',
+                    lineHeight: 'initial',
+                    backgroundColor: 'white',
+                    color: 'gray',
+                  }}>
+                  This list shows all available choices of interest, with ones
+                  currently selected by you in blue. Click to toggle selection.
+                </Tile>
+              </>
+            )}
+
+          {this.state.active_view === 'NL2LTL Integration' &&
+            this.state.cached_formulas.length > 0 && (
+              <>
+                <StructuredListHead>
+                  <StructuredListRow head>
+                    <StructuredListCell head>Constraints</StructuredListCell>
+                  </StructuredListRow>
+                </StructuredListHead>
+                <StructuredListBody className="landmarks-list">
+                  {this.state.cached_formulas.map((item, i) => (
+                    <StructuredListRow key={item}>
+                      <StructuredListCell
+                        className="text-blue landmark-list-item"
+                        onClick={this.deleteUserPrompt.bind(this, item)}>
+                        {item.user_prompt}
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  ))}
+                </StructuredListBody>
+              </>
+            )}
+        </StructuredListWrapper>
       </>
     );
   }

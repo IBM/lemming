@@ -1,19 +1,18 @@
-import os
 import unittest
+import os
 from dataclasses import asdict
 from typing import List
-
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topq,
 )
 from helpers.planner_helper.planner_helper_data_types import (
-    Landmark,
-    LandmarkCategory,
-    PlannerResponseModel,
     PlanningTask,
-    SelelctionInfo,
+    PlannerResponseModel,
+    LandmarkCategory,
+    Landmark,
+    SelectionInfo,
 )
 from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
@@ -101,7 +100,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_forward_flow_output_one_selection_info_no_landmark(
         self,
     ) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[
                 "08ef565ec364978b0295105f8ae52bce",
@@ -180,7 +179,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_backword_flow_output_one_selection_info_no_landmark(
         self,
     ) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[
                 "08ef565ec364978b0295105f8ae52bce",

@@ -66,23 +66,33 @@ const SelectView = props => {
   const actives = getActiveNodes(props.state);
 
   const ref = useRef(null);
-  const [commits] = useState(new Set());
+  const [commits] = useState([]);
 
   const [commit_mode, setCommitMode] = useState(false);
   const [feedback_text, setFeedbackText] = useState(init_feedback);
 
   const setCommits = edge => {
-    if (commits.has(edge)) {
-      commits.delete(edge);
+    if (!edge) {
+      commits.splice(0, commits.length);
     } else {
-      commits.add(edge);
+      const indexOf = commits.indexOf(edge);
+
+      if (indexOf > -1) {
+        commits.splice(indexOf, 1);
+      } else {
+        commits.push(edge);
+      }
     }
 
-    const commit_msg =
-      'Selected edges: <strong>' +
-      Array.from(commits).join(', ') +
-      "</strong>. Don't forget to commit!";
-    setFeedbackText(commit_msg);
+    if (commits.length > 0) {
+      const commit_msg =
+        'Selected edges: <strong>' +
+        commits.join(', ') +
+        "</strong>. Don't forget to commit!";
+      setFeedbackText(commit_msg);
+    } else {
+      setFeedbackText(init_feedback);
+    }
   };
 
   const onEdgeClick = edge => {
@@ -96,7 +106,10 @@ const SelectView = props => {
   };
 
   const commitChanges = e => {
-    props.commitChanges(commits);
+    if (commits.length > 0) props.commitChanges(commits);
+
+    setCommits();
+    // commits = [];
   };
 
   const onFocus = e => {
@@ -139,13 +152,17 @@ const SelectView = props => {
               />
             </Tile>
             <br />
-            <Button kind="tertiary" size="sm" onClick={onFocus}>
+            <Button
+              style={{ width: '100px' }}
+              kind="tertiary"
+              size="sm"
+              onClick={onFocus}>
               Focus
             </Button>
 
             {commit_mode && (
               <Button
-                style={{ marginLeft: '10px' }}
+                style={{ marginLeft: '10px', width: '100px' }}
                 kind="tertiary"
                 size="sm"
                 onClick={commitChanges}>

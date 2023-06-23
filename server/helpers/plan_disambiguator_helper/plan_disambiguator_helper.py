@@ -7,7 +7,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     Plan,
     PlannerResponseModel,
     PlanningTask,
-    SelelctionInfo,
+    SelectionInfo,
 )
 from networkx import Graph
 from helpers.planner_helper.planner_helper import get_dot_graph_str
@@ -19,7 +19,7 @@ from helpers.graph_helper.graph_helper import (
 
 
 # def get_filtered_out_selection_infos_by_selection_infos(
-#     landmarks: List[Landmark], selection_infos: List[SelelctionInfo]
+#     landmarks: List[Landmark], selection_infos: List[SelectionInfo]
 # ) -> List[Landmark]:
 #     selected_first_achievers = (
 #         set(
@@ -65,7 +65,7 @@ def get_first_achievers(landmarks: Optional[List[Landmark]]) -> List[List[str]]:
 
 
 # def get_filtered_in_landmark_by_selection_info(
-#     selection_info: SelelctionInfo, landmarks: List[Landmark]
+#     selection_info: SelectionInfo, landmarks: List[Landmark]
 # ) -> List[Landmark]:
 #     return list(
 #         map(
@@ -79,7 +79,7 @@ def get_first_achievers(landmarks: Optional[List[Landmark]]) -> List[List[str]]:
 
 
 # def get_filtered_out_landmark_by_selection_info(
-#     selection_info: SelelctionInfo, landmarks: List[Landmark]
+#     selection_info: SelectionInfo, landmarks: List[Landmark]
 # ) -> List[Landmark]:
 #     return list(
 #         map(
@@ -133,7 +133,7 @@ def split_plans_with_actions(
 
 
 def get_plans_filetered_by_selected_plan_hashes(
-    selection_info: SelelctionInfo, plans: List[Plan]
+    selection_info: SelectionInfo, plans: List[Plan]
 ) -> List[Plan]:
     if (
         selection_info.selected_plan_hashes is None
@@ -148,7 +148,7 @@ def get_plans_filetered_by_selected_plan_hashes(
 
 
 def get_plans_with_selection_info(
-    selection_info: SelelctionInfo, landmarks: List[Landmark], plans: List[Plan]
+    selection_info: SelectionInfo, landmarks: List[Landmark], plans: List[Plan]
 ) -> List[Plan]:
     """
     returns plans filtered by a selected landmark
@@ -174,7 +174,7 @@ def get_plans_with_selection_info(
 
 
 def get_plans_with_selection_infos(
-    selection_infos: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelectionInfo]],
     plans: List[Plan],
 ) -> List[Plan]:
     """
@@ -249,7 +249,7 @@ def get_filtered_landmark_by_selected_plans(
 
 
 def get_plan_disambiguator_output_filtered_by_selection_infos(
-    selection_infos: List[SelelctionInfo],
+    selection_infos: List[SelectionInfo],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

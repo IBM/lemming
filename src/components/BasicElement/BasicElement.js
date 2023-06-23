@@ -43,11 +43,10 @@ const components = {
   NL2LTLIntegration: NL2LTLIntegration,
 };
 
-function getPlanHashesFromChoice(item, choice_infos) {
-  return choice_infos
-    .filter(choice => item in choice.action_name_plan_hash_map)
-    .map(choice => choice.action_name_plan_hash_map[item])
-    .reduce((hashes, item) => hashes.concat(item), []);
+function getPlanHashesFromChoice(action_name, plans) {
+  return plans
+    .filter(plan => plan.actions.indexOf(action_name) > -1)
+    .map(item => item.plan_hash);
 }
 
 class PlanArea extends React.Component {
@@ -110,9 +109,16 @@ class PlanArea extends React.Component {
           .then(data => {
             if (this.state.selectedFileType === 'plans') {
               data = JSON.parse(data);
+
+              this.setState({
+                ...this.state,
+                remaining_plans: data,
+                plans: data,
+              });
             } else {
               this.setState({
                 ...this.state,
+                [this.state.selectedFileType]: data,
                 plans: [],
               });
             }
@@ -141,10 +147,11 @@ class PlanArea extends React.Component {
         this.setState(
           {
             ...this.state,
+            turn: 0,
             graph: null,
             cached_landmarks: [],
-            selected_landmarks: new Set(),
-            unselected_landmarks: new Set(),
+            selected_landmarks: [],
+            unselected_landmarks: [],
             choice_infos: [],
             controls: {
               ...this.state.controls,
@@ -153,7 +160,6 @@ class PlanArea extends React.Component {
           },
           () => {
             this.getLandmarks();
-            this.generateViz();
           }
         );
       }
@@ -184,14 +190,16 @@ class PlanArea extends React.Component {
             this.setState(
               {
                 ...this.state,
+                turn: 0,
                 domain: planning_task['domain'],
                 problem: planning_task['problem'],
+                remaining_plans: data['plans'],
                 plans: data['plans'],
                 nl_prompts: data['nl_prompts'],
                 graph: null,
                 cached_landmarks: [],
-                selected_landmarks: new Set(),
-                unselected_landmarks: new Set(),
+                selected_landmarks: [],
+                unselected_landmarks: [],
                 choice_infos: [],
                 controls: {
                   ...this.state.controls,
@@ -200,7 +208,6 @@ class PlanArea extends React.Component {
               },
               () => {
                 this.getLandmarks();
-                this.generateViz();
               }
             );
           })
@@ -287,7 +294,11 @@ class PlanArea extends React.Component {
         this.setState(
           {
             ...this.state,
+            turn: 0,
+            remaining_plans: data.plans,
             plans: data.plans,
+            selected_landmarks: [],
+            unselected_landmarks: [],
             notifications: {
               ...this.state.notifications,
               viz_loading: false,
@@ -345,14 +356,19 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        this.setState({
-          ...this.state,
-          cached_landmarks: data.landmarks,
-          notifications: {
-            ...this.state.notifications,
-            viz_loading: false,
+        this.setState(
+          {
+            ...this.state,
+            cached_landmarks: data.landmarks,
+            notifications: {
+              ...this.state.notifications,
+              viz_loading: false,
+            },
           },
-        });
+          () => {
+            this.generateViz();
+          }
+        );
       })
       .catch(err => {
         console.error(err);
@@ -367,17 +383,18 @@ class PlanArea extends React.Component {
       '/generate_' +
       this.state.active_view.toLowerCase().replace(/\s/g, '_');
 
-    const selection_infos = Array.from(this.state.selected_landmarks).map(
-      (item, i) => {
-        return {
-          selected_first_achiever: item,
-          selected_plan_hashes: getPlanHashesFromChoice(
-            item,
-            this.state.choice_infos
-          ),
-        };
-      }
-    );
+    var cache_plans = this.state.plans;
+    const selection_infos = this.state.selected_landmarks.map((item, i) => {
+      const plan_hashes = getPlanHashesFromChoice(item, cache_plans);
+      cache_plans = cache_plans.filter(
+        item => plan_hashes.indexOf(item.plan_hash) > -1
+      );
+
+      return {
+        selected_first_achiever: item,
+        selected_plan_hashes: plan_hashes,
+      };
+    });
 
     const payload = {
       domain: this.state.domain,
@@ -394,54 +411,18 @@ class PlanArea extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        // HOPEFUL PAYLOAD //
-        const choice_infos = [
-          {
-            landmark: null,
-            max_num_plans: null,
-            action_name_plan_idx_map: null,
-            action_name_plan_hash_map: {
-              b_alt: [
-                'a7c1751ede3793f3b93d852a1d2dc1f5',
-                '5ff5ea83b641f893fb50f7f807582f39',
-              ],
-              b_main: [
-                '911d63019a4afc040e05e0cbb704736b',
-                '48c15d2926e48b356897fd864d97f3d8',
-              ],
-            },
-            node_with_multiple_out_edges: 'node1',
-            is_available_for_choice: this.state.turn === 0,
-          },
-          {
-            landmark: null,
-            max_num_plans: null,
-            action_name_plan_idx_map: null,
-            action_name_plan_hash_map: {
-              e: [
-                'a7c1751ede3793f3b93d852a1d2dc1f5',
-                '911d63019a4afc040e05e0cbb704736b',
-              ],
-              f: [
-                '5ff5ea83b641f893fb50f7f807582f39',
-                '48c15d2926e48b356897fd864d97f3d8',
-              ],
-            },
-            node_with_multiple_out_edges: 'node5',
-            is_available_for_choice: this.state.turn === 1,
-          },
-        ];
-
-        // const choice_infos = data.choice_infos;
+        const choice_infos = data.choice_infos.filter(
+          item => item.landmark !== null
+        );
         var unselected_landmarks =
           this.state.turn > 0
             ? this.state.unselected_landmarks
-            : new Set(
-                choice_infos.reduce(
-                  (choices, item) =>
-                    choices.concat(Object.keys(item.action_name_plan_hash_map)),
-                  []
-                )
+            : choice_infos.reduce(
+                (choices, item) =>
+                  choices.concat(
+                    item.landmark.first_achievers.map(item => item.trim())
+                  ),
+                []
               );
 
         this.setState({
@@ -504,8 +485,14 @@ class PlanArea extends React.Component {
     var unselected_landmarks = this.state.unselected_landmarks;
 
     for (var i = 0; i < landmarks.length; i++) {
-      selected_landmarks.add(landmarks[i]);
-      unselected_landmarks.delete(landmarks[i]);
+      if (selected_landmarks.indexOf(landmarks[i]) === -1)
+        selected_landmarks.push(landmarks[i]);
+
+      if (unselected_landmarks.indexOf(landmarks[i]) > -1)
+        unselected_landmarks.splice(
+          unselected_landmarks.indexOf(landmarks[i]),
+          1
+        );
     }
 
     this.setState(
@@ -526,8 +513,11 @@ class PlanArea extends React.Component {
     var unselected_landmarks = this.state.unselected_landmarks;
 
     for (var i = 0; i < landmarks.length; i++) {
-      unselected_landmarks.add(landmarks[i]);
-      selected_landmarks.delete(landmarks[i]);
+      if (unselected_landmarks.indexOf(landmarks[i]) === -1)
+        unselected_landmarks.push(landmarks[i]);
+
+      if (selected_landmarks.indexOf(landmarks[i]) > -1)
+        selected_landmarks.splice(selected_landmarks.indexOf(landmarks[i]), 1);
     }
 
     this.setState(
@@ -937,7 +927,7 @@ class FeedbackArea extends React.Component {
   }
 
   getNumPlans(item) {
-    const plan_hashes = getPlanHashesFromChoice(item, this.state.choice_infos);
+    const plan_hashes = getPlanHashesFromChoice(item, this.state.plans);
     return plan_hashes.length;
   }
 
@@ -958,7 +948,7 @@ class FeedbackArea extends React.Component {
                   </StructuredListRow>
                 </StructuredListHead>
                 <StructuredListBody className="landmarks-list">
-                  {Array.from(this.state.selected_landmarks).map((item, i) => (
+                  {this.state.selected_landmarks.map((item, i) => (
                     <StructuredListRow key={item}>
                       <StructuredListCell
                         className="text-blue landmark-list-item"
@@ -977,26 +967,34 @@ class FeedbackArea extends React.Component {
                   ))}
                 </StructuredListBody>
                 <StructuredListBody className="landmarks-list">
-                  {Array.from(this.state.unselected_landmarks).map(
-                    (item, i) => (
-                      <StructuredListRow key={item}>
-                        <StructuredListCell
-                          className="text-silver landmark-list-item"
-                          onClick={this.selectLandmark.bind(this, item)}>
-                          {item}
-                          <Tag
-                            className="count-tag"
-                            size="sm"
-                            type="cool-gray"
-                            title={this.getNumPlans(item).toString()}>
-                            {' '}
-                            {this.getNumPlans(item)}{' '}
-                          </Tag>
-                        </StructuredListCell>
-                      </StructuredListRow>
-                    )
-                  )}
+                  {this.state.unselected_landmarks.map((item, i) => (
+                    <StructuredListRow key={item}>
+                      <StructuredListCell
+                        className="text-silver landmark-list-item"
+                        onClick={this.selectLandmark.bind(this, item)}>
+                        {item}
+                        <Tag
+                          className="count-tag"
+                          size="sm"
+                          type="cool-gray"
+                          title={this.getNumPlans(item).toString()}>
+                          {' '}
+                          {this.getNumPlans(item)}{' '}
+                        </Tag>
+                      </StructuredListCell>
+                    </StructuredListRow>
+                  ))}
                 </StructuredListBody>
+                <Tile
+                  style={{
+                    fontSize: 'small',
+                    lineHeight: 'initial',
+                    backgroundColor: 'white',
+                    color: 'gray',
+                  }}>
+                  This list shows all available choices of interest, with ones
+                  currently selected by you in blue. Click to toggle selection.
+                </Tile>
               </>
             )}
 

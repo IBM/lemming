@@ -1,22 +1,23 @@
-import os
-import unittest
 from dataclasses import asdict
 from typing import List
 
+import unittest
+import os
+
 from helpers.common_helper.file_helper import read_str_from_file
-from helpers.plan_disambiguator_helper.selection_flow_helper import (
-    get_selection_flow_output,
-)
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topq,
 )
 from helpers.planner_helper.planner_helper_data_types import (
-    Landmark,
     LandmarkCategory,
+    SelectionInfo,
     PlannerResponseModel,
     PlanningTask,
-    SelelctionInfo,
+    Landmark,
+)
+from helpers.plan_disambiguator_helper.selection_flow_helper import (
+    get_selection_flow_output,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -24,66 +25,35 @@ rel_pddl_path = "../../data/pddl/{}.pddl"
 
 
 class TestSelectionFlowHelper(unittest.TestCase):
-    toy_domain: str
-    toy_problem: str
-    toy_landmarks: List[Landmark]
-    toy_planner_response_model: PlannerResponseModel
+    gripper_domain: str
+    gripper_problem: str
+    gripper_landmarks: List[Landmark]
+    planner_response_model: PlannerResponseModel
 
     @classmethod
     def setUpClass(cls) -> None:
-        TestSelectionFlowHelper.toy_domain = read_str_from_file(
-            os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
-        )
-        TestSelectionFlowHelper.toy_problem = read_str_from_file(
-            os.path.join(my_dir, rel_pddl_path.format("toy/problem"))
-        )
-        TestSelectionFlowHelper.toy_landmarks = (
-            get_landmarks_by_landmark_category(
-                PlanningTask(
-                    domain=TestSelectionFlowHelper.toy_domain,
-                    problem=TestSelectionFlowHelper.toy_problem,
-                ),
-                LandmarkCategory.RWH.value,
-            )
-        )
-        TestSelectionFlowHelper.toy_toy_planner_response_model = (
-            PlannerResponseModel.parse_obj(
-                asdict(
-                    get_plan_topq(
-                        PlanningTask(
-                            domain=TestSelectionFlowHelper.toy_domain,
-                            problem=TestSelectionFlowHelper.toy_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
-                        )
-                    )
-                )
-            )
-        )
-        TestSelectionFlowHelper.toy_toy_planner_response_model.set_plan_hashes()
-
-        TestSelectionFlowHelper.toy_domain = read_str_from_file(
+        TestSelectionFlowHelper.gripper_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
-        TestSelectionFlowHelper.toy_problem = read_str_from_file(
+        TestSelectionFlowHelper.gripper_problem = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/problem"))
         )
-        TestSelectionFlowHelper.toy_landmarks = (
+        TestSelectionFlowHelper.gripper_landmarks = (
             get_landmarks_by_landmark_category(
                 PlanningTask(
-                    domain=TestSelectionFlowHelper.toy_domain,
-                    problem=TestSelectionFlowHelper.toy_problem,
+                    domain=TestSelectionFlowHelper.gripper_domain,
+                    problem=TestSelectionFlowHelper.gripper_problem,
                 ),
                 LandmarkCategory.RWH.value,
             )
         )
-        TestSelectionFlowHelper.toy_planner_response_model = (
+        TestSelectionFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
                     get_plan_topq(
                         PlanningTask(
-                            domain=TestSelectionFlowHelper.toy_domain,
-                            problem=TestSelectionFlowHelper.toy_problem,
+                            domain=TestSelectionFlowHelper.gripper_domain,
+                            problem=TestSelectionFlowHelper.gripper_problem,
                             num_plans=6,
                             quality_bound=1.0,
                         )
@@ -91,10 +61,10 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 )
             )
         )
-        TestSelectionFlowHelper.toy_planner_response_model.set_plan_hashes()
+        TestSelectionFlowHelper.planner_response_model.set_plan_hashes()
 
     def test_get_selection_flow_output_no_selected_landmarks(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="pick ball2 rooma right",
             selected_plan_hashes=[
                 "9d49f737b4735da2a3b0d85e3be0bf67",
@@ -103,28 +73,28 @@ class TestSelectionFlowHelper(unittest.TestCase):
         )
         selection_flow_output = get_selection_flow_output(
             [selected_landmark_0],
-            TestSelectionFlowHelper.toy_landmarks,
-            TestSelectionFlowHelper.toy_domain,
-            TestSelectionFlowHelper.toy_problem,
-            TestSelectionFlowHelper.toy_planner_response_model.plans,
+            TestSelectionFlowHelper.gripper_landmarks,
+            TestSelectionFlowHelper.gripper_domain,
+            TestSelectionFlowHelper.gripper_problem,
+            TestSelectionFlowHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
         self.assertEqual(len(selection_flow_output.choice_infos), 12)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_selected_landmarks_toy(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[],
         )
         selection_flow_output = get_selection_flow_output(
             [selected_landmark_0],
-            TestSelectionFlowHelper.toy_landmarks,
-            TestSelectionFlowHelper.toy_domain,
-            TestSelectionFlowHelper.toy_problem,
-            TestSelectionFlowHelper.toy_toy_planner_response_model.plans,
+            TestSelectionFlowHelper.gripper_landmarks,
+            TestSelectionFlowHelper.gripper_domain,
+            TestSelectionFlowHelper.gripper_problem,
+            TestSelectionFlowHelper.planner_response_model.plans,
         )
-        self.assertEqual(len(selection_flow_output.plans), 2)
+        self.assertEqual(len(selection_flow_output.plans), 6)
         self.assertEqual(len(selection_flow_output.choice_infos), 3)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
@@ -134,9 +104,9 @@ class TestSelectionFlowHelper(unittest.TestCase):
         selection_flow_output = get_selection_flow_output(
             [],
             [],
-            TestSelectionFlowHelper.toy_domain,
-            TestSelectionFlowHelper.toy_problem,
-            TestSelectionFlowHelper.toy_planner_response_model.plans,
+            TestSelectionFlowHelper.gripper_domain,
+            TestSelectionFlowHelper.gripper_problem,
+            TestSelectionFlowHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 6)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)

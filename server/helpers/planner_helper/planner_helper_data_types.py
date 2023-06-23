@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from enum import Enum
-
 from typing import Dict, List, Optional, Any
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
@@ -22,7 +20,7 @@ class Landmark(BaseModel):
     first_achievers: List[str] = []
 
 
-class SelelctionInfo(BaseModel):
+class SelectionInfo(BaseModel):
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
 
@@ -61,7 +59,7 @@ class ChoiceInfo(BaseModel):
 
 
 class PlanDisambiguatorInput(BaseModel):
-    selection_infos: List[SelelctionInfo] = []
+    selection_infos: List[SelectionInfo] = []
     landmarks: List[Landmark] = []
     plans: List[Plan]
     domain: str = ""
@@ -78,8 +76,8 @@ class PlanDisambiguatorInput(BaseModel):
 
     @validator("selection_infos")
     def check_selected_landmarks(
-        cls, v: List[SelelctionInfo]
-    ) -> Optional[List[SelelctionInfo]]:
+        cls, v: List[SelectionInfo]
+    ) -> Optional[List[SelectionInfo]]:
         if v is None:
             raise ValueError("selection_infos should not be None")
         return v

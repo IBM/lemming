@@ -1,10 +1,9 @@
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
-
 import pydot
-from helpers.common_helper.data_type_helper import merge_sets
 from networkx import Graph, nx_pydot, set_node_attributes
 from networkx.readwrite import json_graph
+from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
@@ -108,7 +107,7 @@ def get_landmarks_in_edges(
                 edge_label_landmark_dict[first_achiever].append(landmark)
 
     selectable_landmarks: List[Landmark] = list()
-    first_achiever_edge_dict: Dict[str, Tuple(str, str)] = dict()
+    first_achiever_edge_dict: Dict[str, Tuple[str, str]] = dict()
     for edge in edges:
         edge_label = get_edge_label(g, edge)
         if edge_label in edge_label_landmark_dict:

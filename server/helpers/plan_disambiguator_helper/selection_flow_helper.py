@@ -1,26 +1,25 @@
 from typing import List, Optional
-
-from helpers.common_helper.exception_handler import planner_exception_handler
-from helpers.graph_helper.graph_helper import (
-    get_dict_from_graph,
-    get_first_node_with_multiple_out_edges,
-)
-from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
-    append_landmarks_not_available_for_choice,
-    get_choice_info_multiple_edges_without_landmark,
-    get_plan_disambiguator_output_filtered_by_selection_infos,
-)
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
+    SelectionInfo,
     PlanDisambiguatorOutput,
-    SelelctionInfo,
+)
+from helpers.graph_helper.graph_helper import get_dict_from_graph
+from helpers.common_helper.exception_handler import planner_exception_handler
+from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
+    get_plan_disambiguator_output_filtered_by_selection_infos,
+    get_choice_info_multiple_edges_without_landmark,
+    append_landmarks_not_available_for_choice,
+)
+from helpers.graph_helper.graph_helper import (
+    get_first_node_with_multiple_out_edges,
 )
 
 
 @planner_exception_handler
 def get_selection_flow_output(
-    selection_infos: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelectionInfo]],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

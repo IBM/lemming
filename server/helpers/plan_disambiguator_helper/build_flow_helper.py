@@ -2,9 +2,9 @@ from typing import Any, List, Optional, Set
 from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
+    SelectionInfo,
     Plan,
     PlanDisambiguatorOutput,
-    SelelctionInfo,
     ChoiceInfo,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
@@ -22,7 +22,7 @@ from helpers.graph_helper.graph_helper import (
 
 @planner_exception_handler
 def get_build_flow_output(
-    selection_infos: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelectionInfo]],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

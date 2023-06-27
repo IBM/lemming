@@ -127,5 +127,5 @@ class LTL2PDDLRequest(BaseModel):
 
 
 class ToolCompiler(Enum):
-    LF2F = "lf2f"
     P4P = "p4p"
+    LF2F = "lf2f"

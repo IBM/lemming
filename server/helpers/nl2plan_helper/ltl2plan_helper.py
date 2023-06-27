@@ -24,7 +24,7 @@ def compile_instance(
         compiler = Compiler(domain, problem, formula, mapping)
         compiler.compile()
         compiled_domain, compiled_problem = compiler.result
-    else:
+    elif tool == ToolCompiler.LF2F:
         # TODO: add compilation for LF2F
         assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
     return compiled_domain, compiled_problem

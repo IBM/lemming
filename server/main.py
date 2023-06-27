@@ -286,8 +286,10 @@ def ltl_compile(request: LTL2PDDLRequest, tool: ToolCompiler) -> LemmingTask:
         domain=compiled_domain, problem=compiled_problem
     )
 
-    # TODO get plans
+    compiled_plans = get_plans(planning_task)
 
-    lemming_task = LemmingTask(planning_task=planning_task, plans=request.plans)
+    lemming_task = LemmingTask(
+        planning_task=planning_task, plans=compiled_plans
+    )
 
     return lemming_task

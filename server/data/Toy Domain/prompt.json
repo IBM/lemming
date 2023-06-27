@@ -20,22 +20,22 @@
       {
         "pattern": "Response",
         "symbols": [
-          "has_done_E",
-          "has_done_D"
+          "has_done_e",
+          "has_done_d"
         ]
       },
       {
         "pattern": "ChainResponse",
         "symbols": [
-          "has_done_E",
-          "has_done_D"
+          "has_done_e",
+          "has_done_d"
         ]
       },
       {
         "pattern": "Precedence",
         "symbols": [
-          "has_done_D",
-          "has_done_E"
+          "has_done_d",
+          "has_done_e"
         ]
       }
     ]
@@ -46,13 +46,15 @@
       "Use alternative B only",
       "Prefer using B_alt",
       "Use B_alt",
+      "Use alternative B",
+      "Pick alternative B",
       "Get B_alt before the end"
     ],
     "declare": [
       {
         "pattern": "Existence",
         "symbols": [
-          "has_done_B_alt"
+          "has_done_b_alt"
         ]
       }
     ]
@@ -71,7 +73,7 @@
       {
         "pattern": "Absence",
         "symbols": [
-          "has_done_B_main"
+          "has_done_b_main"
         ]
       }
     ]
@@ -89,7 +91,7 @@
       {
         "pattern": "Existence",
         "symbols": [
-          "has_done_G"
+          "has_done_g"
         ]
       }
     ]
@@ -108,22 +110,22 @@
       {
         "pattern": "Response",
         "symbols": [
-          "has_done_B_main",
-          "has_done_E"
+          "has_done_b_main",
+          "has_done_e"
         ]
       },
       {
         "pattern": "ChainResponse",
         "symbols": [
-          "has_done_B_main",
-          "has_done_E"
+          "has_done_b_main",
+          "has_done_e"
         ]
       },
       {
         "pattern": "Precedence",
         "symbols": [
-          "has_done_E",
-          "has_done_B_main"
+          "has_done_e",
+          "has_done_b_main"
         ]
       }
     ]

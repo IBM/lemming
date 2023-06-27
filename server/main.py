@@ -28,6 +28,7 @@ from helpers.planner_helper.planner_helper import (
     get_plan_topq,
     get_planner_response_model_with_hash,
 )
+from helpers.nl2plan_helper.nl2ltl_helper import CachedPrompt
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarksResponseModel,
     LemmingTask,
@@ -39,7 +40,6 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     PlanningTask,
     ToolCompiler,
-    Translation,
 )
 from nl2ltl import translate
 from nl2ltl.engines.gpt.core import GPTEngine, Models
@@ -111,7 +111,7 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
-        nl_prompts = [Translation.parse_obj(item) for item in prompt]
+        nl_prompts = [CachedPrompt.parse_obj(item) for item in prompt]
 
     except Exception as e:
         print(e)
@@ -223,33 +223,13 @@ def generate_nl2ltl_integration(
 
 @app.post("/nl2ltl", response_model=None)
 def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
-    # TODO: Remove this after the backend is ready
-    # Uncomment this to test the UI
-    # ltl_formulas: List[LTLFormula] = [
-    #     LTLFormula(
-    #         user_prompt=request.utterance,
-    #         formula="RespondedExistence Slack Gmail",
-    #         description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
-    #         confidence=0.4,
-    #     ),
-    #     LTLFormula(
-    #         user_prompt=request.utterance,
-    #         formula="Response Slack Gmail",
-    #         description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
-    #         confidence=0.3,
-    #     ),
-    #     LTLFormula(
-    #         user_prompt=request.utterance,
-    #         formula="ExistenceTwo Slack",
-    #         description="Slack will happen at least twice.",
-    #         confidence=0.2,
-    #     ),
-    # ]
-
-    # TODO: we currently use only the Toy Domain
-    custom_prompt = prompt_builder(
-        prompt_path=Path(r"data/Toy Domain/prompt.json").resolve()
-    )
+    domain_name = request.domain_name
+    if domain_name:
+        custom_prompt = prompt_builder(
+            prompt_path=Path(f"data/{domain_name}/prompt.json").resolve()
+        )
+    else:
+        raise NotImplementedError
 
     with temporary_directory() as tmp_dir:
         tmp_file = Path(tmp_dir) / "tmp.json"

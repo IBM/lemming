@@ -49,6 +49,13 @@ function getPlanHashesFromChoice(action_name, plans) {
     .map(item => item.plan_hash);
 }
 
+function getDomainName(domain_string) {
+  const reg = /.*\(domain (.*)\).*/g;
+  const reg_exec = reg.exec(domain_string);
+
+  if (reg_exec !== null && reg_exec.length > 1) return reg_exec[1];
+}
+
 class PlanArea extends React.Component {
   constructor(props) {
     super(props);
@@ -57,6 +64,7 @@ class PlanArea extends React.Component {
       active_view: config.default_view,
       selectedFile: null,
       selectedFileType: null,
+      domain_name: null,
       domain: null,
       problem: null,
       plans: [],
@@ -85,8 +93,6 @@ class PlanArea extends React.Component {
       turn: 0,
     };
   }
-
-  componentDidUpdate(prevProps, prevState) {}
 
   onFileChange(file_type, e) {
     this.setState(
@@ -122,11 +128,6 @@ class PlanArea extends React.Component {
                 plans: [],
               });
             }
-
-            this.setState({
-              ...this.state,
-              [this.state.selectedFileType]: data,
-            });
           })
           .catch(err => console.error(err));
       }
@@ -191,6 +192,8 @@ class PlanArea extends React.Component {
               {
                 ...this.state,
                 turn: 0,
+                domain_name:
+                  IMPORT_OPTIONS[this.state.controls.selected_domain].name,
                 domain: planning_task['domain'],
                 problem: planning_task['problem'],
                 remaining_plans: data['plans'],
@@ -217,6 +220,7 @@ class PlanArea extends React.Component {
   }
 
   logViewChange(e) {
+    this.props.changeView(e);
     this.setState({
       active_view: e.name,
     });
@@ -456,9 +460,7 @@ class PlanArea extends React.Component {
     var feedback = '';
 
     if (this.state.domain) {
-      const reg = /.*\(domain (.*)\).*/g;
-      const domain_name = reg.exec(this.state.domain)[1];
-
+      const domain_name = getDomainName(this.state.domain);
       feedback += `Have fun with the ${domain_name} domain!`;
     }
 
@@ -927,7 +929,7 @@ class FeedbackArea extends React.Component {
   }
 
   getNumPlans(item) {
-    const plan_hashes = getPlanHashesFromChoice(item, this.state.plans);
+    const plan_hashes = getPlanHashesFromChoice(item, this.state.remaining_plans);
     return plan_hashes.length;
   }
 

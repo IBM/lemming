@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Any
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
-from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, Translation
+from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 from pydantic import BaseModel, validator
 from watson_ai_planning.data_model.planning_types import PlanningResult
 
@@ -116,7 +116,7 @@ class PlanningTask(BaseModel):
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
     plans: List[Plan] = []
-    nl_prompts: List[Translation] = []
+    nl_prompts: List[CachedPrompt] = []
 
 
 class LTL2PDDLRequest(BaseModel):

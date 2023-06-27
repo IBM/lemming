@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from pydantic import BaseModel, Json
 
 
 class NL2LTLRequest(BaseModel):
+    domain_name: Optional[str]
     utterance: str
 
 
@@ -18,6 +19,17 @@ class LTLFormula(BaseModel):
     formula_ppltl: str
     description: str
     confidence: float
+
+
+class Declare(BaseModel):
+    pattern: str
+    symbols: List[str]
+
+
+class CachedPrompt(BaseModel):
+    utterance: str
+    paraphrases: List[str]
+    declare: List[Declare]
 
 
 class Translation(BaseModel):

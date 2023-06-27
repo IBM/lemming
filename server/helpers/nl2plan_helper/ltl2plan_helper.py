@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional, Tuple
 
+from pylogics.parsers import parse_pltl
+
 from helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
     ToolCompiler,
@@ -19,7 +21,9 @@ def compile_instance(
     mapping: Optional[Dict[Atomic, Predicate]] = None,
 ) -> Tuple[Domain, Problem]:
     """Compile the PDDL domain and problem files and the LTL/PPLTL goal formula."""
-    compiled_domain, compiled_problem = Domain("empty"), Problem("empty")
+    compiled_domain, compiled_problem = Domain("empty"), Problem(
+        "p-empty", domain_name="empty"
+    )
     if tool == ToolCompiler.P4P:
         compiler = Compiler(domain, problem, formula, mapping)
         compiler.compile()
@@ -33,6 +37,9 @@ def compile_instance(
 def get_goal_formula(formulas: List[LTLFormula], tool: ToolCompiler) -> Formula:
     """Get the goal formula from the list of formulas."""
     if tool == ToolCompiler.P4P:
-        return And(*[formula.formula_ppltl for formula in formulas])
+        return parse_pltl(
+            " & ".join([f"({formula.formula_ppltl})" for formula in formulas])
+        )
     assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
+    # TODO: remove pylogics strong next X[!] for LF2F
     return And()

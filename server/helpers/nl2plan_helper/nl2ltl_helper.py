@@ -75,7 +75,8 @@ def _parse_prompt_data(prompt_path: Path) -> LLMPrompt:
 def prompt_builder(prompt_path: Path) -> str:
     """Builds a Json prompt from a given path."""
     header = (
-        "Translate natural language sentences into patterns.\n\nALLOWED_PATTERN_NAMES: Existence, Absence,"
+        "Translate natural language sentences into patterns.\n\n"
+        "ALLOWED_PATTERN_NAMES: Existence, Absence,"
         "Response, ChainResponse, RespondedExistence, Precedence\n"
     )
     prompt: LLMPrompt = _parse_prompt_data(prompt_path)

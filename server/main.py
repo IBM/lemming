@@ -5,6 +5,7 @@ from typing import List, Dict, cast
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from nl2ltl.declare.base import Template
+from pddl.formatter import domain_to_string, problem_to_string
 
 from helpers.common_helper.file_helper import read_str_from_upload_file
 from helpers.common_helper.static_data_helper import app_description
@@ -249,27 +250,26 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 
 
 @app.post("/ltl_compile/{tool}")
-def ltl_compile(request: LTL2PDDLRequest, tool: ToolCompiler) -> LemmingTask:
+async def ltl_compile(
+    request: LTL2PDDLRequest, tool: ToolCompiler
+) -> LemmingTask:
     domain_parser = DomainParser()
     problem_parser = ProblemParser()
 
-    domain = domain_parser(Path(request.domain).read_text(encoding="utf-8"))
-    problem = problem_parser(Path(request.problem).read_text(encoding="utf-8"))
-
+    domain = domain_parser(request.domain)
+    problem = problem_parser(request.problem)
     goal = get_goal_formula(request.formulas, tool)
 
     compiled_domain, compiled_problem = compile_instance(
         domain, problem, goal, tool
     )
-
     planning_task = PlanningTask(
-        domain=compiled_domain, problem=compiled_problem
+        domain=domain_to_string(compiled_domain),
+        problem=problem_to_string(compiled_problem),
     )
-
-    compiled_plans = get_plans(planning_task)
-
+    planning_result = await get_plans(planning_task)
     lemming_task = LemmingTask(
-        planning_task=planning_task, plans=compiled_plans
+        planning_task=planning_task, plans=planning_result.plans
     )
 
     return lemming_task

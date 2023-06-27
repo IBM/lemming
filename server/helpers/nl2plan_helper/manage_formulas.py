@@ -1,6 +1,7 @@
 from typing import Dict, List
 
 from nl2ltl.declare.base import Template
+from pylogics.utils.to_string import to_string
 
 from helpers.planner_helper.planner_helper_data_types import LTLFormula
 
@@ -20,9 +21,9 @@ def get_formulas_from_matched_formulas(
         formulas.append(
             LTLFormula(
                 user_prompt=utterance,
-                formula_name=formula,
-                formula_ltl=formula.to_ltlf(),
-                formula_ppltl=formula.to_ppltl(),
+                formula_name=formula.SYMBOL,
+                formula_ltl=to_string(formula.to_ltlf()),
+                formula_ppltl=to_string(formula.to_ppltl()),
                 description=formula.to_english(),
                 confidence=confidence,
             )

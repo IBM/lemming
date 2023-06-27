@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import List, Dict
 
 from pydantic import BaseModel, Json
-from pylogics.syntax.base import Formula
 
 
 class NL2LTLRequest(BaseModel):
@@ -13,15 +12,12 @@ class NL2LTLRequest(BaseModel):
 
 
 class LTLFormula(BaseModel):
-    user_prompt = str
-    formula_name = str
-    formula_ltl = Formula
-    formula_ppltl = Formula
-    description = str
-    confidence = float
-
-    class Config:
-        arbitrary_types_allowed = True
+    user_prompt: str
+    formula_name: str
+    formula_ltl: str
+    formula_ppltl: str
+    description: str
+    confidence: float
 
 
 class Translation(BaseModel):
@@ -67,8 +63,8 @@ def _parse_prompt_data(prompt_path: Path) -> LLMPrompt:
 def prompt_builder(prompt_path: Path) -> str:
     """Builds a Json prompt from a given path."""
     header = (
-        "Translate natural language sentences into patterns.\n\nALLOWED_PATTERN_NAMES: Existence, ExistenceTwo, "
-        "Response, ChainResponse, RespondedExistence\n"
+        "Translate natural language sentences into patterns.\n\nALLOWED_PATTERN_NAMES: Existence, Absence,"
+        "Response, ChainResponse, RespondedExistence, Precedence\n"
     )
     prompt: LLMPrompt = _parse_prompt_data(prompt_path)
     body = ""

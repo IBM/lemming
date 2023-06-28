@@ -32,57 +32,40 @@ class CachedPrompt(BaseModel):
     declare: List[Declare]
 
 
-class Translation(BaseModel):
-    utterance: str
-    paraphrases: List[str]
-    declare: str
-    symbols: List[str]
-
-
 class LLMPrompt(BaseModel):
-    example_translations: List[Translation]
+    prompt: str
     objects: List[str] = []
     actions: List[str] = []
     predicates: List[str] = []
 
 
-def _prompt_from_dict(data: Json[List[Dict]]) -> LLMPrompt:
-    """Instantiate a Prompt from parsed data."""
-    examples = []
-    for obj in data:
-        utterance = obj["utterance"]
-        paraphrases = obj["paraphrases"]
-        for pattern_obj in obj["declare"]:
-            examples.append(
-                Translation(
-                    utterance=utterance,
-                    paraphrases=paraphrases,
-                    declare=pattern_obj["pattern"],
-                    symbols=pattern_obj["symbols"],
-                )
-            )
-    return LLMPrompt(example_translations=examples)
+def _build_llm_prompt_from_cached_prompt(data: Json[List[Dict]]) -> LLMPrompt:
+    """Instantiate an LLM Prompt from parsed Cached prompt."""
+    nl_prompts = [CachedPrompt.parse_obj(obj) for obj in data]
+    body = ""
+    for c_prompt in nl_prompts:
+        for case in [c_prompt.utterance, *c_prompt.paraphrases]:
+            for declare in c_prompt.declare:
+                body += f"\nNL: {case}\n"
+                body += f"PATTERN: {declare.pattern}\n"
+                body += f"SYMBOLS: {', '.join(declare.symbols)}\n\n"
+    return LLMPrompt(prompt=body)
 
 
 def _parse_prompt_data(prompt_path: Path) -> LLMPrompt:
-    """Parses a prompt from a given path."""
+    """Parses a Cached prompt from a given path."""
     with open(prompt_path, "r") as f:
         data = json.load(f)
-    prompt: LLMPrompt = _prompt_from_dict(data)
+    prompt: LLMPrompt = _build_llm_prompt_from_cached_prompt(data)
     return prompt
 
 
 def prompt_builder(prompt_path: Path) -> str:
-    """Builds a Json prompt from a given path."""
+    """Builds the LLM prompt given the path to a Cached prompt."""
     header = (
         "Translate natural language sentences into patterns.\n\n"
         "ALLOWED_PATTERN_NAMES: Existence, Absence,"
-        "Response, ChainResponse, RespondedExistence, Precedence\n"
+        "Response, ChainResponse, Precedence\n"
     )
-    prompt: LLMPrompt = _parse_prompt_data(prompt_path)
-    body = ""
-    for example in prompt.example_translations:
-        body += f"\nNL: {example.utterance}\n"
-        body += f"PATTERN: {example.declare}\n"
-        body += f"SYMBOLS: {', '.join(example.symbols)}\n\n"
-    return json.dumps({"prompt": header + body})
+    llm_prompt: LLMPrompt = _parse_prompt_data(prompt_path)
+    return json.dumps({"prompt": header + llm_prompt.prompt})

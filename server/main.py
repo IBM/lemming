@@ -223,7 +223,10 @@ def generate_nl2ltl_integration(
 
 
 @app.post("/nl2ltl", response_model=None)
-def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+    if request.utterance is None:
+        raise HTTPException(status_code=400, detail="Bad Request")
+
     domain_name = request.domain_name
     if domain_name:
         custom_prompt = prompt_builder(
@@ -246,6 +249,9 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
         utterance, matched_formulas
     )
+    if not ltl_formulas:
+        raise HTTPException(status_code=422, detail="Unprocessable Utterance")
+
     return ltl_formulas
 
 
@@ -253,6 +259,13 @@ def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler
 ) -> LemmingTask:
+    if (
+        request.domain is None
+        or request.problem is None
+        or request.formulas is None
+    ):
+        raise HTTPException(status_code=400, detail="Bad Request")
+
     domain_parser = DomainParser()
     problem_parser = ProblemParser()
 

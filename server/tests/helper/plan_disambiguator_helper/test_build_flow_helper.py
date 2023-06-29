@@ -28,6 +28,11 @@ class TestBuildFlowHelper(unittest.TestCase):
     gripper_landmarks: List[Landmark]
     planner_response_model: PlannerResponseModel
 
+    toy_domain: str
+    toy_problem: str
+    toy_landmarks: List[Landmark]
+    toy_planner_response_model: PlannerResponseModel
+
     @classmethod
     def setUpClass(cls) -> None:
         TestBuildFlowHelper.gripper_domain = read_str_from_file(

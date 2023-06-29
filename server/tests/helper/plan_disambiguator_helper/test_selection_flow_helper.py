@@ -32,7 +32,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
 
     travel_domain: str
     travel_problem: str
-    travel_landmark: List[Landmark]
+    travel_landmarks: List[Landmark]
     travel_planner_response_model: PlannerResponseModel
 
     @classmethod

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from copy import deepcopy
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
 import pydot
 from networkx import Graph, nx_pydot, set_node_attributes
 from networkx.readwrite import json_graph
@@ -32,9 +34,9 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Optional[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Iterable[Any]:
     if len(g.nodes) == 0:
-        return None
+        return []
     degrees = g.in_degree() if is_forward else g.out_degree()
     root = [n for n, d in degrees if d == 0]
     return root
@@ -108,7 +110,7 @@ def get_landmarks_in_edges(
     g: Graph,
     edges: List[Any],
     landmarks: List[Landmark],
-) -> List[Landmark]:
+) -> Tuple[List[Any], Dict[str, Tuple[str, str]]]:
     # TODO TEST THIS
     edge_label_landmark_dict: Dict[str, List[Landmark]] = dict()
     for landmark in landmarks:
@@ -194,7 +196,10 @@ def get_graph_upto_nodes(
 
 def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
-) -> Tuple[Dict[str, List[str]], Dict[Tuple[Any, Any], List[str]]]:
+) -> (
+    Tuple[Dict[str, List[str]], Dict[Tuple[Any, Any], List[str]]]
+    | Dict[Any, Any]
+):
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
@@ -218,8 +223,9 @@ def get_node_edge_name_plan_hash_list(
             plan_hashes_for_node: Set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
-                edge_label = edge_label.strip()
-                edge_label = edge_label.lower()
+                if edge_label is not None:
+                    edge_label = edge_label.strip()
+                    edge_label = edge_label.lower()
                 for plan in plans:
                     if depth < len(plan.actions):
                         if edge_label in plan.actions[depth]:

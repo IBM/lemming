@@ -30,6 +30,11 @@ class TestSelectionFlowHelper(unittest.TestCase):
     gripper_landmarks: List[Landmark]
     planner_response_model: PlannerResponseModel
 
+    travel_domain: str
+    travel_problem: str
+    travel_landmark: List[Landmark]
+    travel_planner_response_model: PlannerResponseModel
+
     @classmethod
     def setUpClass(cls) -> None:
         TestSelectionFlowHelper.toy_domain = read_str_from_file(
@@ -94,6 +99,37 @@ class TestSelectionFlowHelper(unittest.TestCase):
         )
         TestSelectionFlowHelper.planner_response_model.set_plan_hashes()
 
+        TestSelectionFlowHelper.travel_domain = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("travel/domain"))
+        )
+        TestSelectionFlowHelper.travel_problem = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("travel/problem"))
+        )
+        TestSelectionFlowHelper.travel_landmarks = (
+            get_landmarks_by_landmark_category(
+                PlanningTask(
+                    domain=TestSelectionFlowHelper.travel_domain,
+                    problem=TestSelectionFlowHelper.travel_problem,
+                ),
+                LandmarkCategory.RWH.value,
+            )
+        )
+        TestSelectionFlowHelper.travel_planner_response_model = (
+            PlannerResponseModel.parse_obj(
+                asdict(
+                    get_plan_topq(
+                        PlanningTask(
+                            domain=TestSelectionFlowHelper.travel_domain,
+                            problem=TestSelectionFlowHelper.travel_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
+                    )
+                )
+            )
+        )
+        TestSelectionFlowHelper.travel_planner_response_model.set_plan_hashes()
+
     def test_get_selection_flow_output_no_selected_landmarks(self) -> None:
         selected_landmark_0 = SelelctionInfo(
             selected_first_achiever="pick ball2 rooma right",
@@ -126,6 +162,24 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.toy_planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
+        self.assertEqual(len(selection_flow_output.choice_infos), 2)
+        self.assertEqual(len(selection_flow_output.networkx_graph), 5)
+
+    def test_get_selection_flow_output_no_selected_landmarks_travel(
+        self,
+    ) -> None:
+        selected_landmark_0 = SelelctionInfo(
+            selected_first_achiever="",
+            selected_plan_hashes=[],
+        )
+        selection_flow_output = get_selection_flow_output(
+            [selected_landmark_0],
+            TestSelectionFlowHelper.travel_landmarks,
+            TestSelectionFlowHelper.travel_domain,
+            TestSelectionFlowHelper.travel_problem,
+            TestSelectionFlowHelper.travel_planner_response_model.plans,
+        )
+        self.assertEqual(len(selection_flow_output.plans), 1)
         self.assertEqual(len(selection_flow_output.choice_infos), 3)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 

@@ -190,9 +190,7 @@ class TestGraphHelper(unittest.TestCase):
         #     edges_traversed,
         # )
 
-        nodes = get_first_node_with_multiple_out_edges(
-            g, first_achiever_plan_idx_dict, True
-        )
+        nodes = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
             nodes[0][1],
@@ -211,9 +209,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
-        res = get_first_node_with_multiple_out_edges(
-            g, first_achiever_plan_idx_dict, True
-        )
+        res = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(
             res,
             [
@@ -236,9 +232,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
-        res = get_first_node_with_multiple_out_edges(
-            g, first_achiever_plan_idx_dict, False
-        )
+        res = get_first_node_with_multiple_out_edges(g, False)
         self.assertEqual(
             res,
             [

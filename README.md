@@ -54,7 +54,7 @@ user:~$ python -m build
 
 6. Change a virtual environment to the one for `Lemming`.
 
-7. Download watson-core version `1.25.0rc3` from [here](https://na.artifactory.swg-devops.com/ui/packages/pypi:%2F%2Fwatson-core/1.25.0rc3?name=watson-core&type=packages). 
+7. Download watson-core version `1.25.0rc3` from [here](https://na.artifactory.swg-devops.com/ui/packages/pypi:%2F%2Fwatson-core/1.25.0rc3?name=watson-core&type=packages).
 
 8. Install the downloaded python package.
 

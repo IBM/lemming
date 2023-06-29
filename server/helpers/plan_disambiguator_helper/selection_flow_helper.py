@@ -39,7 +39,7 @@ def get_selection_flow_output(
 
     if len(selected_plans) > 1 and len(choice_infos) == 0:  # manual selection
         nodes_with_multiple_edges = get_first_node_with_multiple_out_edges(
-            g, dict(), True
+            g, True
         )
         return PlanDisambiguatorOutput(
             plans=selected_plans,

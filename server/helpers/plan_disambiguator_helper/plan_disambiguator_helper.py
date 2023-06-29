@@ -103,7 +103,7 @@ def split_plans_with_actions(
     action_name_list_plan_hash: Dict[str, List[str]] = dict()
     plan_hashes_for_action: Set[str] = set()
     for plan_set_idx, plan_set in enumerate(plan_sets):
-        for action_name in action_names:
+        for action_name in action_names:  # first achievers
             if action_name in plan_set:
                 if action_name not in action_name_list_plan_idx:
                     action_name_list_plan_idx[action_name] = list()
@@ -218,6 +218,7 @@ def get_split_by_actions(
                     max_num_plans=max_num_plans_with_first_achiever,
                     action_name_plan_idx_map=action_name_plan_idx_list,
                     action_name_plan_hash_map=action_name_plan_hash_list,
+                    is_available_for_choice=len(action_name_plan_idx_list) > 0,
                 )
             )
 

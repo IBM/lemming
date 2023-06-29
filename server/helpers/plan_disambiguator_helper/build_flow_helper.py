@@ -52,10 +52,7 @@ def get_build_flow_output(
             },
         )
 
-    first_achiever_plan_idx_dict = get_merged_first_achievers_dict(choice_infos)
-    node_search_results = get_first_node_with_multiple_out_edges(
-        g, first_achiever_plan_idx_dict, is_forward
-    )
+    node_search_results = get_first_node_with_multiple_out_edges(g, is_forward)
 
     if len(node_search_results) == 0:  # no selection needed
         return PlanDisambiguatorOutput(

@@ -61,6 +61,35 @@ class TestBuildFlowHelper(unittest.TestCase):
         )
         TestBuildFlowHelper.planner_response_model.set_plan_hashes()
 
+        TestBuildFlowHelper.toy_domain = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
+        )
+        TestBuildFlowHelper.toy_problem = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/problem"))
+        )
+        TestBuildFlowHelper.toy_landmarks = get_landmarks_by_landmark_category(
+            PlanningTask(
+                domain=TestBuildFlowHelper.toy_domain,
+                problem=TestBuildFlowHelper.toy_problem,
+            ),
+            LandmarkCategory.RWH.value,
+        )
+        TestBuildFlowHelper.toy_planner_response_model = (
+            PlannerResponseModel.parse_obj(
+                asdict(
+                    get_plan_topq(
+                        PlanningTask(
+                            domain=TestBuildFlowHelper.toy_domain,
+                            problem=TestBuildFlowHelper.toy_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
+                    )
+                )
+            )
+        )
+        TestBuildFlowHelper.toy_planner_response_model.set_plan_hashes()
+
     def test_get_build_forward_flow_output_no_selection_info_no_landmark(
         self,
     ) -> None:
@@ -94,6 +123,42 @@ class TestBuildFlowHelper(unittest.TestCase):
                 ].action_name_plan_hash_map
             ),
             4,
+        )
+        self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
+
+    def test_get_build_forward_flow_output_no_selection_info_no_landmark_toy(
+        self,
+    ) -> None:
+        build_forward_flow_output = get_build_flow_output(
+            [],
+            [],
+            TestBuildFlowHelper.toy_domain,
+            TestBuildFlowHelper.toy_problem,
+            TestBuildFlowHelper.toy_planner_response_model.plans,
+            True,
+        )
+        self.assertEqual(len(build_forward_flow_output.plans), 2)
+        self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
+        self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
+        self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].max_num_plans
+        )
+        self.assertIsNone(
+            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        )
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[
+                0
+            ].node_with_multiple_out_edges,
+            "node1",
+        )
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_hash_map
+            ),
+            2,
         )
         self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
 

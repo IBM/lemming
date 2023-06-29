@@ -39,10 +39,16 @@ def get_goal_formula(
 ) -> Formula:
     """Get the goal formula from the list of formulas."""
     if tool == ToolCompiler.P4P:
+        if isinstance(reachability_goal, And):
+            reachability_formula = (
+                f"O({' & '.join(str(op) for op in reachability_goal.operands)})"
+            )
+        else:
+            reachability_formula = f"O({reachability_goal})"
         constraints_formula = " & ".join(
             [f"({formula.formula_ppltl})" for formula in formulas]
         )
-        return parse_pltl(f"(O({reachability_goal})) & {constraints_formula}")
+        return parse_pltl(f"({reachability_formula}) & {constraints_formula}")
     assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
     # TODO: remove pylogics strong next X[!] for LF2F
     return And()

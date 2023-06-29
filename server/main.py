@@ -50,6 +50,8 @@ from nl2ltl.engines.gpt.core import GPTEngine, Models
 from pddl.parser.domain import DomainParser
 from pddl.parser.problem import ProblemParser
 
+from planners.symk import SymKPlanner
+
 app = FastAPI(
     title="Lemming",
     description=app_description,
@@ -310,7 +312,10 @@ async def ltl_compile(
         domain=domain_to_string(compiled_domain),
         problem=problem_to_string(compiled_problem),
     )
-    planning_result = await get_plans(planning_task)
+
+    # Planning with SymK planner
+    symk_planner = SymKPlanner()
+    planning_result = symk_planner.plan(planning_task)
     lemming_task = LemmingTask(
         planning_task=planning_task, plans=planning_result.plans
     )

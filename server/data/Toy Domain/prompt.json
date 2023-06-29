@@ -20,22 +20,22 @@
       {
         "pattern": "Response",
         "symbols": [
-          "has_done_e",
-          "has_done_d"
+          "hasDoneE",
+          "hasDoneD"
         ]
       },
       {
         "pattern": "ChainResponse",
         "symbols": [
-          "has_done_e",
-          "has_done_d"
+          "hasDoneE",
+          "hasDoneD"
         ]
       },
       {
         "pattern": "Precedence",
         "symbols": [
-          "has_done_d",
-          "has_done_e"
+          "hasDoneD",
+          "hasDoneE"
         ]
       }
     ]
@@ -54,7 +54,7 @@
       {
         "pattern": "Existence",
         "symbols": [
-          "has_done_b_alt"
+          "hasDoneBalt"
         ]
       }
     ]
@@ -73,7 +73,7 @@
       {
         "pattern": "Absence",
         "symbols": [
-          "has_done_b_main"
+          "hasDoneBmain"
         ]
       }
     ]
@@ -91,7 +91,7 @@
       {
         "pattern": "Existence",
         "symbols": [
-          "has_done_g"
+          "hasDoneG"
         ]
       }
     ]
@@ -110,22 +110,22 @@
       {
         "pattern": "Response",
         "symbols": [
-          "has_done_b_main",
-          "has_done_e"
+          "hasDoneBmain",
+          "hasDoneE"
         ]
       },
       {
         "pattern": "ChainResponse",
         "symbols": [
-          "has_done_b_main",
-          "has_done_e"
+          "hasDoneBmain",
+          "hasDoneE"
         ]
       },
       {
         "pattern": "Precedence",
         "symbols": [
-          "has_done_e",
-          "has_done_b_main"
+          "hasDoneE",
+          "hasDoneBmain"
         ]
       }
     ]

@@ -34,12 +34,15 @@ def compile_instance(
     return compiled_domain, compiled_problem
 
 
-def get_goal_formula(formulas: List[LTLFormula], tool: ToolCompiler) -> Formula:
+def get_goal_formula(
+    formulas: List[LTLFormula], reachability_goal: Formula, tool: ToolCompiler
+) -> Formula:
     """Get the goal formula from the list of formulas."""
     if tool == ToolCompiler.P4P:
-        return parse_pltl(
-            " & ".join([f"({formula.formula_ppltl})" for formula in formulas])
+        constraints_formula = " & ".join(
+            [f"({formula.formula_ppltl})" for formula in formulas]
         )
+        return parse_pltl(f"(O({reachability_goal})) & {constraints_formula}")
     assert tool == ToolCompiler.LF2F, "Invalid planning compiler."
     # TODO: remove pylogics strong next X[!] for LF2F
     return And()

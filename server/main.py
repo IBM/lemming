@@ -271,7 +271,7 @@ async def ltl_compile(
 
     domain = domain_parser(request.domain)
     problem = problem_parser(request.problem)
-    goal = get_goal_formula(request.formulas, tool)
+    goal = get_goal_formula(request.formulas, problem.goal, tool)
 
     compiled_domain, compiled_problem = compile_instance(
         domain, problem, goal, tool

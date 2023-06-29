@@ -94,8 +94,8 @@
 
     (:predicates
         (has_done ?x1 - agent)
-	(goal-achieved)
-	(done)
+	    (goal-achieved)
+	    (done)
         (failed ?x1 - agent)
         (known ?x1 - generic)
         (is_slotfillable ?x1 - generic)

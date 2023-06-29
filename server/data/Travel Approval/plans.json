@@ -1,115 +1,338 @@
-[
+                                    [
     {
-        "cost": 11,
         "actions": [
-            "pick ball1 rooma left",
-            "pick ball2 rooma right",
-            "move rooma roomb",
-            "drop ball2 roomb right",
-            "drop ball1 roomb left",
-            "move roomb rooma",
-            "pick ball3 rooma right",
-            "pick ball4 rooma left",
-            "move rooma roomb",
-            "drop ball4 roomb left",
-            "drop ball3 roomb right"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "arranged_travel"
+        ],
+        "cost": 204,
+        "plan_hash": "a806b73208e6dba6a7b5868463d83842"
     },
     {
-        "cost": 11,
         "actions": [
-            "pick ball1 rooma left",
-            "pick ball2 rooma right",
-            "move rooma roomb",
-            "drop ball2 roomb right",
-            "drop ball1 roomb left",
-            "move roomb rooma",
-            "pick ball4 rooma right",
-            "pick ball3 rooma left",
-            "move rooma roomb",
-            "drop ball3 roomb left",
-            "drop ball4 roomb right"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "get_trip_estimate",
+            "arranged_travel"
+        ],
+        "cost": 205,
+        "plan_hash": "c584e4cb3e678d932841f53f1975452c"
     },
     {
-        "cost": 11,
         "actions": [
-            "pick ball2 rooma left",
-            "pick ball1 rooma right",
-            "move rooma roomb",
-            "drop ball1 roomb right",
-            "drop ball2 roomb left",
-            "move roomb rooma",
-            "pick ball3 rooma right",
-            "pick ball4 rooma left",
-            "move rooma roomb",
-            "drop ball4 roomb left",
-            "drop ball3 roomb right"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "arranged_travel"
+        ],
+        "cost": 206,
+        "plan_hash": "8fd16c0991f23b76ea4c465be8e46346"
     },
     {
-        "cost": 11,
         "actions": [
-            "pick ball1 rooma right",
-            "pick ball2 rooma left",
-            "move rooma roomb",
-            "drop ball2 roomb left",
-            "drop ball1 roomb right",
-            "move roomb rooma",
-            "pick ball3 rooma left",
-            "pick ball4 rooma right",
-            "move rooma roomb",
-            "drop ball4 roomb right",
-            "drop ball3 roomb left"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "slot-filler---paper_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 254,
+        "plan_hash": "f1de0f704da971743481a970e4b0610c"
     },
     {
-        "cost": 11,
         "actions": [
-            "pick ball1 rooma left",
-            "pick ball3 rooma right",
-            "move rooma roomb",
-            "drop ball3 roomb right",
-            "drop ball1 roomb left",
-            "move roomb rooma",
-            "pick ball4 rooma right",
-            "pick ball2 rooma left",
-            "move rooma roomb",
-            "drop ball2 roomb left",
-            "drop ball4 roomb right"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 254,
+        "plan_hash": "32fc394d1ef3c2eed4dcd16bcabed57f"
     },
     {
-        "cost": 11,
         "actions": [
-            "pick ball3 rooma left",
-            "pick ball1 rooma right",
-            "move rooma roomb",
-            "drop ball1 roomb right",
-            "drop ball3 roomb left",
-            "move roomb rooma",
-            "pick ball2 rooma right",
-            "pick ball4 rooma left",
-            "move rooma roomb",
-            "drop ball4 roomb left",
-            "drop ball2 roomb right"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "get_trip_estimate",
+            "slot-filler---paper_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 255,
+        "plan_hash": "530ed1864e18418c416c29ac8f3f1016"
     },
     {
-        "cost": 12,
         "actions": [
-            "pick ball1 rooma left",
-            "pick ball2 rooma right",
-            "move rooma roomb",
-            "drop ball1 roomb left",
-            "drop ball2 roomb right",
-            "move roomb rooma",
-            "pick ball3 rooma left",
-            "pick ball4 rooma right",
-            "move rooma roomb",
-            "drop ball3 roomb left",
-            "drop ball4 roomb right",
-            "move roomb rooma"
-        ]
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "get_trip_estimate",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 255,
+        "plan_hash": "0e58be39084e14228b4abd704fbb2295"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---paper_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 256,
+        "plan_hash": "b8a7c873686a78fac27f7e8e832d1031"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 256,
+        "plan_hash": "dbd3c3cc95677e7ddb4abc8081f01b70"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "slot-filler---paper_to_be_verified",
+            "get_paper_details",
+            "pre_approval_conference",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "arranged_travel"
+        ],
+        "cost": 256,
+        "plan_hash": "bca321923eda49ce2db07042ed6c0a9d"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "slot-filler---client_to_be_verified",
+            "get_client_name",
+            "pre_approval_client",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "arranged_travel"
+        ],
+        "cost": 256,
+        "plan_hash": "34b8862c30914a7a6a908bcc5e47e7aa"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---paper_to_be_verified",
+            "get_paper_details",
+            "arranged_travel"
+        ],
+        "cost": 257,
+        "plan_hash": "e090a86816fa22bfa399e48617f0af16"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---client_to_be_verified",
+            "get_client_name",
+            "arranged_travel"
+        ],
+        "cost": 257,
+        "plan_hash": "41589c885e2aa48181ab289c7beb6857"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "slot-filler---paper_to_be_verified",
+            "get_paper_details",
+            "pre_approval_conference",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "arranged_travel"
+        ],
+        "cost": 257,
+        "plan_hash": "70612fdd0d37e0601641b1c116a74b10"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "slot-filler---client_to_be_verified",
+            "get_client_name",
+            "pre_approval_client",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "arranged_travel"
+        ],
+        "cost": 257,
+        "plan_hash": "63319f6c8aa1bd4acaee82f2e5d02244"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---paper_to_be_verified",
+            "get_paper_details",
+            "pre_approval_conference",
+            "arranged_travel"
+        ],
+        "cost": 258,
+        "plan_hash": "caed02a9a35553fb9315d8c849d105f0"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---client_to_be_verified",
+            "get_client_name",
+            "pre_approval_client",
+            "arranged_travel"
+        ],
+        "cost": 258,
+        "plan_hash": "0bbaec6ad3e1dfd65d41a382487e584f"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "slot-filler---paper_to_be_verified",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 304,
+        "plan_hash": "3144679aa2994debab539346d98cb46f"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_personal",
+            "book_flight_personal",
+            "book_hotel_personal",
+            "get_trip_estimate",
+            "slot-filler---paper_to_be_verified",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 305,
+        "plan_hash": "b33053907020594a82887894b08c9614"
+    },
+    {
+        "actions": [
+            "slot-filler---start_date",
+            "slot-filler---origin",
+            "slot-filler---end_date",
+            "slot-filler---des",
+            "get_trip_type_bis",
+            "get_trip_estimate",
+            "approval_blanket_pre_approval",
+            "book_flight_bis",
+            "book_hotel_bis",
+            "slot-filler---paper_to_be_verified",
+            "slot-filler---client_to_be_verified",
+            "arranged_travel"
+        ],
+        "cost": 306,
+        "plan_hash": "6a26170e84300041899d7ab3f55be43e"
     }
 ]

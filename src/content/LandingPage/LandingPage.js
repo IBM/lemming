@@ -5,19 +5,19 @@ import { Document, LogoGithub } from '@carbon/icons-react';
 import { PlanArea } from '../../components/BasicElement';
 import { generateURL } from '../../components/Info';
 import {
-  Button,
-  ButtonSet,
-  CodeSnippet,
-  Link,
-  ToastNotification,
-  Accordion,
-  AccordionItem,
-  Grid,
-  Column,
-  StructuredListWrapper,
-  StructuredListBody,
-  StructuredListRow,
-  StructuredListCell,
+    Button,
+    ButtonSet,
+    CodeSnippet,
+    Link,
+    ToastNotification,
+    Accordion,
+    AccordionItem,
+    Grid,
+    Column,
+    StructuredListWrapper,
+    StructuredListBody,
+    StructuredListRow,
+    StructuredListCell,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -109,8 +109,8 @@ class LandingPage extends React.Component {
                                 href={item.link}
                                 kind="ghost"
                                 hasIconOnly
-                                iconDescription={item.name}
-                                renderIcon={Document}></Button>
+                                iconDescription={item.name
+                                }renderIcon={Document}></Button>
                             </StructuredListCell>
                             <StructuredListCell>
                               {item.name}{' '}
@@ -119,8 +119,8 @@ class LandingPage extends React.Component {
                                 | {item.venue}
                               </span>
                             </StructuredListCell>
-                          </StructuredListRow>
-                        ))}
+                          </StructuredListRow>)
+                        )}
                       </StructuredListBody>
                     </StructuredListWrapper>
                   </AccordionItem>

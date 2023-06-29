@@ -7,20 +7,20 @@ import { Route, Switch } from 'react-router-dom';
 import LandingPage from './content/LandingPage';
 
 class App extends Component {
-  render() {
-    return (
-      <>
-        <Theme theme="white">
-          <Content>
-            <Switch>
-              <Route exact path="/" component={LandingPage} />
-              <Route exact path="/home" component={LandingPage} />
-            </Switch>
-          </Content>
-        </Theme>
-      </>
-    );
-  }
+    render() {
+        return (
+            <>
+                <Theme theme="white">
+                    <Content>
+                        <Switch>
+                            <Route exact path="/" component={LandingPage} />
+                            <Route exact path="/home" component={LandingPage} />
+                        </Switch>
+                    </Content>
+                </Theme>
+            </>
+        );
+    }
 }
 
 export default App;

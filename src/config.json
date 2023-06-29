@@ -34,7 +34,8 @@
     "default_view": "Select View",
     "views": [
         {
-            "name": "Select View"
+            "name": "Select View",
+            "selection_priority": "MAX_PLANS"
         },
         {
             "name": "Build Forward"

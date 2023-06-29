@@ -81,7 +81,12 @@ user:~$ cd server/
 user:~$ pip install -e .
 ```
 
-11. Start a server. The Swagger page is shown at http://localhost:8000/docs. The OpenAPI spec can be obtained from the swagger page.
+11. For the NL2LTL integration, download the apptainer image of the SymK planner.
+```bash
+user:~$ apptainer pull symk.sif oras://ghcr.io/speckdavid/symk:latest
+```
+
+12. Start a server. The Swagger page is shown at http://localhost:8000/docs. The OpenAPI spec can be obtained from the swagger page.
 
 ```bash
 user:~$ python -m uvicorn main:app --reload

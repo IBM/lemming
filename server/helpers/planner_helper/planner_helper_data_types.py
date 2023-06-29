@@ -25,6 +25,14 @@ class SelectionInfo(BaseModel):
     selected_plan_hashes: Optional[List[str]] = []
 
 
+class SelectionPriority(Enum):
+    MAX_PLANS = "MAX_PLANS"
+    MIN_PLANS = "MIN_PLANS"
+    RANDOM = "RANDOM"
+    INIT_FORWARD = "INIT_FORWARD"
+    GOAL_BACKWARD = "GOAL_BACKWARD"
+
+
 class LandmarkCategory(Enum):
     EXHAUST = "exhaust"
     H1 = "h1"
@@ -54,11 +62,13 @@ class ChoiceInfo(BaseModel):
     max_num_plans: Optional[int] = None
     action_name_plan_idx_map: Optional[Dict[str, List[int]]] = None
     action_name_plan_hash_map: Optional[Dict[str, List[str]]] = None
-    node_with_multiple_out_edges: Optional[str] = None
+    node_with_multiple_out_edges: Optional[str] = None  # TODO: Depercate
+    nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
 
 
 class PlanDisambiguatorInput(BaseModel):
+    selection_priority: str
     selection_infos: List[SelectionInfo] = []
     landmarks: List[Landmark] = []
     plans: List[Plan]

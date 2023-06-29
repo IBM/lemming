@@ -1,4 +1,5 @@
 from copy import deepcopy
+import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 import pydot
 from networkx import Graph, nx_pydot, set_node_attributes
@@ -10,9 +11,21 @@ from helpers.planner_helper.planner_helper_data_types import (
 )
 
 
+def edit_edge_labels(g: Graph) -> Graph:
+    new_graph = g.copy()
+    for edge in new_graph.edges:
+        edge_data = new_graph.get_edge_data(edge[0], edge[1])
+        edge_data[0]["label"] = (
+            re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+        )
+
+    return new_graph
+
+
 def convert_dot_str_to_networkx_graph(dot_str: str) -> Graph:
     graphs = pydot.graph_from_dot_data(dot_str)  # convert to Pydot Objects
-    return nx_pydot.from_pydot(graphs[0])
+    networkx_grapg = nx_pydot.from_pydot(graphs[0])
+    return edit_edge_labels(networkx_grapg)
 
 
 def get_dict_from_graph(g: Graph) -> Any:
@@ -44,7 +57,6 @@ def get_edge_label(g: Graph, edge: Any) -> Optional[str]:
 
 def get_first_node_with_multiple_out_edges(
     g: Graph,
-    first_achiever_plan_idx_dict: Dict[Any, List[Any]],
     is_forward: bool = True,
 ) -> List[Tuple[Any, List[Any], List[Any]]]:
     """

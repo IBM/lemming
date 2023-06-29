@@ -19,6 +19,11 @@ Read more about it [here]().
 
 ### Server
 
+0. Clone the repository and its submodules
+```bash
+user:~$ git clone git@github.ibm.com:Tathagata-Chakraborti/lemming.git --recursive
+```
+
 1. Clone `watson-ai-planning` repo at an arbitrary folder
 
 ```bash
@@ -81,9 +86,10 @@ user:~$ cd server/
 user:~$ pip install -e .
 ```
 
-11. For the NL2LTL integration, download the apptainer image of the SymK planner.
+11. For the NL2LTL integration, build submodules
+
 ```bash
-user:~$ apptainer pull symk.sif oras://ghcr.io/speckdavid/symk:latest
+user:~$ ./scripts/build_submodules.sh
 ```
 
 12. Start a server. The Swagger page is shown at http://localhost:8000/docs. The OpenAPI spec can be obtained from the swagger page.

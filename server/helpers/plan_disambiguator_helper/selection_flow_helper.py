@@ -37,7 +37,18 @@ def get_selection_flow_output(
     )
     networkx_graph = get_dict_from_graph(g)
 
-    if len(selected_plans) > 1 and len(choice_infos) == 0:  # manual selection
+    if (
+        len(selected_plans) > 1
+        and len(
+            list(
+                filter(
+                    lambda choice_info: choice_info.is_available_for_choice,
+                    choice_infos,
+                )
+            )
+        )
+        == 0
+    ):  # manual selection
         nodes_with_multiple_edges = get_first_node_with_multiple_out_edges(
             g, True
         )
@@ -64,7 +75,6 @@ def get_selection_flow_output(
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
         )
-
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=append_landmarks_not_avialable_for_choice(

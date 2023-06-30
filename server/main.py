@@ -164,30 +164,30 @@ def generate_select_view(
 
     # TODO: Fold this into logic for generating payload
     payload = handle_flow_output(flow_output)
-    if (
-        plan_disambiguator_input.selection_priority
-        == SelectionPriority.MAX_PLANS.value
-    ):
-        payload.choice_infos.sort(
-            key=lambda x: sum(
-                [len(plans) for plans in x.action_name_plan_hash_map.values()]
-            )
-        )
+    # if (
+    #     plan_disambiguator_input.selection_priority
+    #     == SelectionPriority.MAX_PLANS.value
+    # ):
+    #     payload.choice_infos.sort(
+    #         key=lambda x: sum(
+    #             [len(plans) for plans in x.action_name_plan_hash_map.values()]
+    #         )
+    #     )
 
-        for i, item in enumerate(payload.choice_infos):
-            payload.choice_infos[i].is_available_for_choice = i == 0
+    #     for i, item in enumerate(payload.choice_infos):
+    #         payload.choice_infos[i].is_available_for_choice = i == 0
 
-            for edge in payload.choice_infos[i].action_name_plan_hash_map:
-                links_with_this_edge = filter(
-                    lambda x: edge == x["label"],
-                    payload.networkx_graph.get("links", []),
-                )
-                payload.choice_infos[i].nodes_with_multiple_out_edges = list(
-                    map(lambda x: x["source"], links_with_this_edge)
-                )
-    else:
-        # TODO: Implement the other schemes
-        raise NotImplementedError
+    #         for edge in payload.choice_infos[i].action_name_plan_hash_map:
+    #             links_with_this_edge = filter(
+    #                 lambda x: edge == x["label"],
+    #                 payload.networkx_graph.get("links", []),
+    #             )
+    #             payload.choice_infos[i].nodes_with_multiple_out_edges = list(
+    #                 map(lambda x: x["source"], links_with_this_edge)
+    #             )
+    # else:
+    #     # TODO: Implement the other schemes
+    #     raise NotImplementedError
 
     return payload
 

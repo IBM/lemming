@@ -202,7 +202,9 @@ class TestSelectionFlowHelper(unittest.TestCase):
             0,
         )
         self.assertEqual(
-            selection_flow_output.choice_infos[0].node_with_multiple_out_edges,
+            selection_flow_output.choice_infos[0].nodes_with_multiple_out_edges[
+                0
+            ],
             "node0",
         )
         self.assertEqual(

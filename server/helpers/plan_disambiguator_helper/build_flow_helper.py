@@ -31,7 +31,7 @@ def get_build_flow_output(
 ) -> PlanDisambiguatorOutput:
     (
         selected_plans,
-        choice_infos,
+        _,
         g,
         _,
         node_plan_hashes_dict,
@@ -93,7 +93,7 @@ def get_build_flow_output(
     networkx_graph = get_dict_from_graph(
         get_graph_upto_nodes(g, nodes_to_end, is_forward)
     )
-    selectable_landmarks, first_achiever_edge_dict = get_landmarks_in_edges(
+    _, first_achiever_edge_dict = get_landmarks_in_edges(
         g, list(edges_to_traverse_to_remove_from_graph), landmarks
     )
     return PlanDisambiguatorOutput(

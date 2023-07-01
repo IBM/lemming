@@ -118,7 +118,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node0",
         )
         self.assertEqual(
@@ -159,7 +159,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node1",
         )
         self.assertEqual(
@@ -207,7 +207,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node0",
         )
         self.assertEqual(
@@ -248,7 +248,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node11",
         )
         self.assertEqual(
@@ -296,7 +296,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node11",
         )
         self.assertEqual(

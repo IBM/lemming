@@ -162,7 +162,6 @@ def generate_select_view(
         plan_disambiguator_input.plans,
     )
 
-    # TODO: Fold this into logic for generating payload
     payload = handle_flow_output(flow_output)
     payload.choice_infos = process_selection_priority(
         payload.choice_infos,

@@ -71,7 +71,6 @@ class ChoiceInfo(BaseModel):
     ] = (
         dict()
     )  # keys are first-achievers (or edges) available fore the next choice
-    node_with_multiple_out_edges: Optional[str] = None  # TODO: Depercate
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
 

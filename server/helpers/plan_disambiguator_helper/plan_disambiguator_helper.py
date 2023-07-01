@@ -286,7 +286,7 @@ def get_choice_info_multiple_edges_without_landmark(
     is_forward: bool,
 ) -> ChoiceInfo:
     return ChoiceInfo(
-        node_with_multiple_out_edges=node_with_multiple_edges,
+        nodes_with_multiple_out_edges=[node_with_multiple_edges],
         action_name_plan_hash_map=get_edge_label_plan_hashes_dict(
             edges_traversed, plans, is_forward
         ),

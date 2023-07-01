@@ -1,9 +1,12 @@
-from typing import List, Optional
+import random
+from typing import Any, Dict, List, Optional
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
     SelelctionInfo,
     PlanDisambiguatorOutput,
+    SelectionPriority,
+    ChoiceInfo,
 )
 from helpers.graph_helper.graph_helper import get_dict_from_graph
 from helpers.common_helper.exception_handler import planner_exception_handler
@@ -14,6 +17,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
+    get_nodes_with_multiple_edges,
 )
 
 
@@ -87,3 +91,33 @@ def get_selection_flow_output(
             for label, plan_hashes in edge_plan_hash_dict.items()
         },
     )
+
+
+def process_selection_priority(
+    choice_infos_input: List[ChoiceInfo],
+    networkx_graph: Dict[str, Any],
+    selection_priority: SelectionPriority,
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+    )
+    if selection_priority == SelectionPriority.MAX_PLANS.value:
+        choice_infos.sort(
+            key=lambda x: sum(
+                [len(plans) for plans in x.action_name_plan_hash_map.values()]
+            ),
+            reverse=False,
+        )
+    elif selection_priority == SelectionPriority.MIN_PLANS.value:
+        choice_infos.sort(
+            key=lambda x: sum(
+                [len(plans) for plans in x.action_name_plan_hash_map.values()]
+            ),
+            reverse=True,
+        )
+    elif selection_priority == SelectionPriority.RANDOM.value:
+        random.shuffle(choice_infos)
+    else:
+        # TODO: Implement the other schemes (INIT_FORWARD & GOAL_BACKWARD)
+        raise NotImplementedError
+    return get_nodes_with_multiple_edges(choice_infos, networkx_graph)

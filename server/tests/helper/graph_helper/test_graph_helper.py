@@ -78,6 +78,7 @@ class TestGraphHelper(unittest.TestCase):
             TestGraphHelper.test_graph,
             _,
             _,
+            _,
         ) = get_plan_disambiguator_output_filtered_by_selection_infos(
             [],
             TestGraphHelper.gripper_landmarks,

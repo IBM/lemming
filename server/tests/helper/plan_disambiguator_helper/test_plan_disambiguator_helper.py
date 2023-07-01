@@ -26,7 +26,6 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plan_idx_edge_dict,
     get_edge_label_plan_hashes_dict,
     append_landmarks_not_avialable_for_choice,
-    filterout_actions_with_no_value_in_disambiguating_plans,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -98,18 +97,21 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             "drop ball1 roomb left": [0, 1, 4],
             "drop ball1 roomb right": [2, 3, 5],
         }
-        expected_dict_1 = {"move roomb rooma": [0, 1, 2, 3, 4, 5]}
+        expected_dict_1 = {
+            "pick ball4 rooma left": [0, 2, 5],
+            "pick ball4 rooma right": [1, 3, 4],
+        }
         landmark_infos = get_split_by_actions(
             TestPlanDisambiguatorHelper.gripper_landmarks,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
             {},
         )
-        self.assertEqual(len(landmark_infos), 10)
+        self.assertEqual(len(landmark_infos), 8)
         self.assertEqual(landmark_infos[0].max_num_plans, 3)
         self.assertEqual(
             landmark_infos[0].action_name_plan_idx_map, expected_dict_0
         )
-        self.assertEqual(landmark_infos[-1].max_num_plans, 6)
+        self.assertEqual(landmark_infos[-1].max_num_plans, 3)
         self.assertEqual(
             landmark_infos[-1].action_name_plan_idx_map, expected_dict_1
         )
@@ -136,7 +138,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selected_plans), 1)
-        self.assertEqual(len(landmark_infos), 9)
+        self.assertEqual(len(landmark_infos), 0)
         self.assertEqual(g.name, "G")
 
     def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(self):
@@ -239,16 +241,3 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(new_choice_infos), 2)
         self.assertTrue(new_choice_infos[0].is_available_for_choice)
         self.assertFalse(new_choice_infos[1].is_available_for_choice)
-
-    def test_filterout_actions_with_no_value_in_disambiguating_plans(self):
-        plans = [Plan()]
-        action_name_list_plan_hash = {"a": ["a_0"]}
-        action_name_list_plan_idx = {"a": [0]}
-        (
-            action_name_list_plan_hash_res,
-            action_name_list_plan_idx_res,
-        ) = filterout_actions_with_no_value_in_disambiguating_plans(
-            action_name_list_plan_hash, action_name_list_plan_idx, plans
-        )
-        self.assertEqual(len(action_name_list_plan_hash_res), 0)
-        self.assertEqual(len(action_name_list_plan_idx_res), 0)

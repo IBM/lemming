@@ -149,16 +149,12 @@ def get_split_by_actions(
         if (
             num_plans_in_actions > 0
         ):  # only consider landmarks shown in given plans
-            new_landmark = landmark.copy(deep=True)
-            new_landmark.first_achievers = list(
-                action_name_plan_hash_list.keys()
-            )
             choice_infos.append(
                 ChoiceInfo(
-                    landmark=new_landmark,
+                    landmark=landmark.copy(deep=True),
                     max_num_plans=num_plans_in_actions,
-                    action_name_plan_idx_map=action_name_plan_idx_list,
-                    action_name_plan_hash_map=action_name_plan_hash_list,
+                    action_name_plan_idx_map=action_name_plan_idx_list,  # keys are first-achievers available fore the next choice
+                    action_name_plan_hash_map=action_name_plan_hash_list,  # keys are first-achievers available fore the next choice
                     is_available_for_choice=num_plans_in_actions > 0,
                 )
             )
@@ -342,11 +338,9 @@ def append_landmarks_not_avialable_for_choice(
             tuple(landmark.facts) not in facts_set
             and len(landmark.first_achievers) >= 2
         ):
-            new_landmark = landmark.copy(deep=True)
-            new_landmark.first_achievers = []
             choice_infos_with_not_available_landmarks.append(
                 ChoiceInfo(
-                    landmark=new_landmark,
+                    landmark=landmark.copy(deep=True),
                     is_available_for_choice=False,
                 )
             )

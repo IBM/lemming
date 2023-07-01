@@ -196,9 +196,10 @@ class TestSelectionFlowHelper(unittest.TestCase):
         self.assertEqual(len(selection_flow_output.plans), 12)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)
         self.assertIsNone(selection_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(selection_flow_output.choice_infos[0].max_num_plans)
-        self.assertIsNone(
-            selection_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(selection_flow_output.choice_infos[0].max_num_plans, 0)
+        self.assertEqual(
+            len(selection_flow_output.choice_infos[0].action_name_plan_idx_map),
+            0,
         )
         self.assertEqual(
             selection_flow_output.choice_infos[0].node_with_multiple_out_edges,

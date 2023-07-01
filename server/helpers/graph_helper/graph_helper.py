@@ -2,12 +2,13 @@ from copy import deepcopy
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 import pydot
-from networkx import Graph, nx_pydot, set_node_attributes, set_edge_attributes
+from networkx import Graph, nx_pydot, set_node_attributes
 from networkx.readwrite import json_graph
 from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
+    ChoiceInfo,
 )
 
 
@@ -15,9 +16,10 @@ def edit_edge_labels(g: Graph) -> Graph:
     new_graph = g.copy()
     for edge in new_graph.edges:
         edge_data = new_graph.get_edge_data(edge[0], edge[1])
-        edge_data[0]["label"] = (
-            re.sub("\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
-        )
+        if "label" in edge_data[0]:
+            edge_data[0]["label"] = (
+                re.sub("\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+            )
 
     return new_graph
 
@@ -259,3 +261,23 @@ def get_graph_with_number_of_plans_label(
     set_node_attributes(graph_with_new_attributes, node_attributes)
 
     return graph_with_new_attributes
+
+
+def get_nodes_with_multiple_edges(
+    choice_infos_input: List[ChoiceInfo], networkx_graph: Dict[str, Any]
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+    )
+    for i in range(len(choice_infos)):
+        choice_infos[i].is_available_for_choice = i == 0
+
+        for edge in choice_infos[i].action_name_plan_hash_map:
+            links_with_this_edge = filter(
+                lambda x: edge == x["label"],
+                networkx_graph.get("links", []),
+            )
+            choice_infos[i].nodes_with_multiple_out_edges = list(
+                map(lambda x: x["source"], links_with_this_edge)
+            )
+    return choice_infos

@@ -101,19 +101,22 @@ def process_selection_priority(
     choice_infos = list(
         map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
     )
-    if selection_priority == SelectionPriority.MAX_PLANS.value:
-        choice_infos.sort(
-            key=lambda x: sum(
-                [len(plans) for plans in x.action_name_plan_hash_map.values()]
-            ),
-            reverse=False,
+
+    def get_total_num_plans(choice_info: ChoiceInfo) -> int:
+        return sum(
+            [
+                len(plans)
+                for plans in choice_info.action_name_plan_hash_map.values()
+            ]
         )
-    elif selection_priority == SelectionPriority.MIN_PLANS.value:
+
+    if (
+        selection_priority == SelectionPriority.MAX_PLANS.value
+        or selection_priority == SelectionPriority.MIN_PLANS.value
+    ):
         choice_infos.sort(
-            key=lambda x: sum(
-                [len(plans) for plans in x.action_name_plan_hash_map.values()]
-            ),
-            reverse=True,
+            key=lambda choice_info: get_total_num_plans(choice_info),
+            reverse=(selection_priority == SelectionPriority.MIN_PLANS.value),
         )
     elif selection_priority == SelectionPriority.RANDOM.value:
         random.shuffle(choice_infos)

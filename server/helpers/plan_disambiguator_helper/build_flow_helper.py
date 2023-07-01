@@ -10,7 +10,6 @@ from helpers.planner_helper.planner_helper_data_types import (
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
     get_plan_disambiguator_output_filtered_by_selection_infos,
-    get_merged_first_achievers_dict,
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,

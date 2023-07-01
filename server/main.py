@@ -160,6 +160,7 @@ def generate_select_view(
         plan_disambiguator_input.domain,
         plan_disambiguator_input.problem,
         plan_disambiguator_input.plans,
+        plan_disambiguator_input.selection_priority,
     )
 
     return handle_flow_output(flow_output)

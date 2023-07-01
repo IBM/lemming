@@ -93,6 +93,12 @@ def get_selection_flow_output(
     )
 
 
+def get_total_num_plans(choice_info: ChoiceInfo) -> int:
+    return sum(
+        [len(plans) for plans in choice_info.action_name_plan_hash_map.values()]
+    )
+
+
 def process_selection_priority(
     choice_infos_input: List[ChoiceInfo],
     networkx_graph: Dict[str, Any],
@@ -101,14 +107,6 @@ def process_selection_priority(
     choice_infos = list(
         map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
     )
-
-    def get_total_num_plans(choice_info: ChoiceInfo) -> int:
-        return sum(
-            [
-                len(plans)
-                for plans in choice_info.action_name_plan_hash_map.values()
-            ]
-        )
 
     if (
         selection_priority == SelectionPriority.MAX_PLANS.value

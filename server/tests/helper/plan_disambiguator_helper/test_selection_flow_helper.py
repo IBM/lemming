@@ -59,8 +59,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
                         PlanningTask(
                             domain=TestSelectionFlowHelper.toy_domain,
                             problem=TestSelectionFlowHelper.toy_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
+                            num_plans=10,
+                            quality_bound=1.2,
                         )
                     )
                 )
@@ -90,8 +90,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
                         PlanningTask(
                             domain=TestSelectionFlowHelper.gripper_domain,
                             problem=TestSelectionFlowHelper.gripper_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
+                            num_plans=10,
+                            quality_bound=1.2,
                         )
                     )
                 )
@@ -121,8 +121,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
                         PlanningTask(
                             domain=TestSelectionFlowHelper.travel_domain,
                             problem=TestSelectionFlowHelper.travel_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
+                            num_plans=10,
+                            quality_bound=1.2,
                         )
                     )
                 )
@@ -146,7 +146,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
-        self.assertEqual(len(selection_flow_output.choice_infos), 14)
+        self.assertEqual(len(selection_flow_output.choice_infos), 12)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_selected_landmarks_toy(self) -> None:
@@ -161,8 +161,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.toy_problem,
             TestSelectionFlowHelper.toy_planner_response_model.plans,
         )
-        self.assertEqual(len(selection_flow_output.plans), 2)
-        self.assertEqual(len(selection_flow_output.choice_infos), 7)
+        self.assertEqual(len(selection_flow_output.plans), 4)
+        self.assertEqual(len(selection_flow_output.choice_infos), 2)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_selected_landmarks_travel(
@@ -179,8 +179,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.travel_problem,
             TestSelectionFlowHelper.travel_planner_response_model.plans,
         )
-        self.assertEqual(len(selection_flow_output.plans), 1)
-        self.assertEqual(len(selection_flow_output.choice_infos), 8)
+        self.assertEqual(len(selection_flow_output.plans), 3)
+        self.assertEqual(len(selection_flow_output.choice_infos), 3)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_landmarks_no_selection_info(
@@ -193,7 +193,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
         )
-        self.assertEqual(len(selection_flow_output.plans), 6)
+        self.assertEqual(len(selection_flow_output.plans), 12)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)
         self.assertIsNone(selection_flow_output.choice_infos[0].landmark)
         self.assertIsNone(selection_flow_output.choice_infos[0].max_num_plans)

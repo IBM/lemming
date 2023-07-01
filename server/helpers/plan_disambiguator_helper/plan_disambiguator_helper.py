@@ -51,6 +51,13 @@ def split_plans_with_actions(
                     plans[plan_set_idx].plan_hash
                 )
                 plan_hashes_for_action.add(plans[plan_set_idx].plan_hash)
+        if action_name in action_name_list_plan_idx and len(
+            action_name_list_plan_idx[action_name]
+        ) == len(
+            plans
+        ):  # remove an action, which cannot disambiguate plans
+            action_name_list_plan_idx.pop(action_name, None)
+            action_name_list_plan_hash.pop(action_name, None)
 
     num_remaining_plans = (
         0

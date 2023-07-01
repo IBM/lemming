@@ -16,7 +16,11 @@ def edit_edge_labels(g: Graph) -> Graph:
     new_graph = g.copy()
     for edge in new_graph.edges:
         edge_data = new_graph.get_edge_data(edge[0], edge[1])
-        if "label" in edge_data[0]:
+        if (
+            edge_data is not None
+            and len(edge_data) > 0
+            and "label" in edge_data[0]
+        ):
             edge_data[0]["label"] = (
                 re.sub("\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
             )

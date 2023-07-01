@@ -162,14 +162,7 @@ def generate_select_view(
         plan_disambiguator_input.plans,
     )
 
-    payload = handle_flow_output(flow_output)
-    payload.choice_infos = process_selection_priority(
-        payload.choice_infos,
-        payload.networkx_graph,
-        plan_disambiguator_input.selection_priority,
-    )
-
-    return payload
+    return handle_flow_output(flow_output)
 
 
 @app.post("/generate_build_forward")

@@ -15,6 +15,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     PlanningTask,
     Landmark,
+    SelectionPriority,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
@@ -144,6 +145,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
         self.assertEqual(len(selection_flow_output.choice_infos), 12)
@@ -160,6 +162,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.toy_domain,
             TestSelectionFlowHelper.toy_problem,
             TestSelectionFlowHelper.toy_planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
         self.assertEqual(len(selection_flow_output.plans), 4)
         self.assertEqual(len(selection_flow_output.choice_infos), 2)
@@ -178,6 +181,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.travel_domain,
             TestSelectionFlowHelper.travel_problem,
             TestSelectionFlowHelper.travel_planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
         self.assertEqual(len(selection_flow_output.plans), 3)
         self.assertEqual(len(selection_flow_output.choice_infos), 3)
@@ -192,6 +196,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
         self.assertEqual(len(selection_flow_output.plans), 12)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)

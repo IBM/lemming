@@ -21,6 +21,37 @@ from helpers.graph_helper.graph_helper import (
 )
 
 
+def get_total_num_plans(choice_info: ChoiceInfo) -> int:
+    return sum(
+        [len(plans) for plans in choice_info.action_name_plan_hash_map.values()]
+    )
+
+
+def process_selection_priority(
+    choice_infos_input: List[ChoiceInfo],
+    networkx_graph: Dict[str, Any],
+    selection_priority: SelectionPriority,
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+    )
+
+    if (
+        selection_priority == SelectionPriority.MAX_PLANS.value
+        or selection_priority == SelectionPriority.MIN_PLANS.value
+    ):
+        choice_infos.sort(
+            key=lambda choice_info: get_total_num_plans(choice_info),
+            reverse=(selection_priority == SelectionPriority.MIN_PLANS.value),
+        )
+    elif selection_priority == SelectionPriority.RANDOM.value:
+        random.shuffle(choice_infos)
+    else:
+        # TODO: Implement the other schemes (INIT_FORWARD & GOAL_BACKWARD)
+        raise NotImplementedError
+    return get_nodes_with_multiple_edges(choice_infos, networkx_graph)
+
+
 @planner_exception_handler
 def get_selection_flow_output(
     selection_infos: Optional[List[SelelctionInfo]],
@@ -28,6 +59,7 @@ def get_selection_flow_output(
     domain: str,
     problem: str,
     plans: List[Plan],
+    selection_priority: SelectionPriority,
 ) -> PlanDisambiguatorOutput:
     (
         selected_plans,
@@ -79,6 +111,13 @@ def get_selection_flow_output(
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
         )
+    choice_infos = append_landmarks_not_avialable_for_choice(
+        landmarks, choice_infos
+    )
+    choice_infos = process_selection_priority(
+        choice_infos, networkx_graph, selection_priority
+    )
+
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=append_landmarks_not_avialable_for_choice(
@@ -91,34 +130,3 @@ def get_selection_flow_output(
             for label, plan_hashes in edge_plan_hash_dict.items()
         },
     )
-
-
-def get_total_num_plans(choice_info: ChoiceInfo) -> int:
-    return sum(
-        [len(plans) for plans in choice_info.action_name_plan_hash_map.values()]
-    )
-
-
-def process_selection_priority(
-    choice_infos_input: List[ChoiceInfo],
-    networkx_graph: Dict[str, Any],
-    selection_priority: SelectionPriority,
-) -> List[ChoiceInfo]:
-    choice_infos = list(
-        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
-    )
-
-    if (
-        selection_priority == SelectionPriority.MAX_PLANS.value
-        or selection_priority == SelectionPriority.MIN_PLANS.value
-    ):
-        choice_infos.sort(
-            key=lambda choice_info: get_total_num_plans(choice_info),
-            reverse=(selection_priority == SelectionPriority.MIN_PLANS.value),
-        )
-    elif selection_priority == SelectionPriority.RANDOM.value:
-        random.shuffle(choice_infos)
-    else:
-        # TODO: Implement the other schemes (INIT_FORWARD & GOAL_BACKWARD)
-        raise NotImplementedError
-    return get_nodes_with_multiple_edges(choice_infos, networkx_graph)

@@ -35,6 +35,9 @@ def get_build_flow_output(
         _,
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
+        node_dist_from_initial_state,
+        node_dist_from_end_state,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
         selection_infos, landmarks, domain, problem, plans
     )

@@ -1,4 +1,5 @@
 from copy import deepcopy
+import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
 from networkx import Graph
 from helpers.planner_helper.planner_helper_data_types import (
@@ -14,7 +15,41 @@ from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
     get_node_edge_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
+    get_node_distance_from_terminal_node,
 )
+
+
+def get_min_dist_between_nodes_from_terminal_node(
+    edge_labels: List[str],
+    edge_label_nodes_dict: Dict[str, List[str]],
+    node_dist_from_terminal_state: Dict[str, int],
+):
+    min_dist = sys.maxsize
+    for edge_label in edge_labels:
+        if edge_label in edge_label_nodes_dict:
+            for node in edge_label_nodes_dict[edge_label]:
+                if node in node_dist_from_terminal_state:
+                    if node_dist_from_terminal_state[node] < min_dist:
+                        min_dist = node_dist_from_terminal_state[node]
+    return min_dist
+
+
+def set_nodes_with_multiple_edges(
+    choice_infos_input: List[ChoiceInfo],
+    edge_label_nodes: Dict[str, List[str]],
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+    )
+    for i in range(len(choice_infos)):
+        nodes_with_target_edges: Set[str] = set()
+        for edge_label in choice_infos[i].action_name_plan_hash_map.keys():
+            if edge_label in edge_label_nodes:
+                nodes_with_target_edges.update(edge_label_nodes[edge_label])
+        choice_infos[i].nodes_with_multiple_out_edges = list(
+            nodes_with_target_edges
+        )
+    return choice_infos
 
 
 def get_first_achievers(landmarks: Optional[List[Landmark]]) -> List[List[str]]:
@@ -198,6 +233,9 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
     str,
     Dict[str, List[str]],
     Dict[Tuple[str, str], List[str]],
+    Dict[str, List[str]],
+    Dict[str, int],
+    Dict[str, int],
 ]:
     """
     returns 1) filtered plans, 2) filtered and sorted landmarks,
@@ -211,9 +249,12 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         ),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
+    node_dist_from_initial_state = get_node_distance_from_terminal_node(g, True)
+    node_dist_from_end_state = get_node_distance_from_terminal_node(g, False)
     (
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
     ) = get_node_edge_name_plan_hash_list(g, selected_plans, True)
     g = get_graph_with_number_of_plans_label(g, node_plan_hashes_dict)
     choices = get_split_by_actions(landmarks, selected_plans, selection_infos)
@@ -224,6 +265,9 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         dot_str,
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
+        node_dist_from_initial_state,
+        node_dist_from_end_state,
     )
 
 

@@ -34,15 +34,20 @@ function generateEdges(state) {
 }
 
 function getBasisNodes(state) {
-    var basis_nodes = []
+    var basis_nodes = [];
 
     if (state.choice_infos.length > 0) {
-       var transform = state.choice_infos.filter(item => item.is_available_for_choice);
+        var transform = state.choice_infos.filter(
+            item => item.is_available_for_choice
+        );
 
-       if ( transform.length > 0 ) {
-          transform = transform[0];
-          basis_nodes = transform.nodes_with_multiple_out_edges.reduce((bag, item) => bag.concat(item), []);
-       }
+        if (transform.length > 0) {
+            transform = transform[0];
+            basis_nodes = transform.nodes_with_multiple_out_edges.reduce(
+                (bag, item) => bag.concat(item),
+                []
+            );
+        }
     }
 
     return basis_nodes;

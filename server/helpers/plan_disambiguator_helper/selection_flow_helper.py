@@ -108,9 +108,10 @@ def get_selection_flow_output(
         )
         == 0
     ):  # manual selection
-        nodes_with_multiple_edges = get_first_node_with_multiple_out_edges(
-            g, True
-        )
+        (
+            nodes_with_multiple_edges,
+            nodes_traversed,
+        ) = get_first_node_with_multiple_out_edges(g, True)
         return PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=append_landmarks_not_avialable_for_choice(

@@ -53,7 +53,10 @@ def get_build_flow_output(
             },
         )
 
-    node_search_results = get_first_node_with_multiple_out_edges(g, is_forward)
+    (
+        node_search_results,
+        nodes_traversed,
+    ) = get_first_node_with_multiple_out_edges(g, is_forward)
 
     if len(node_search_results) == 0:  # no selection needed
         return PlanDisambiguatorOutput(
@@ -92,7 +95,7 @@ def get_build_flow_output(
         )
     )
     networkx_graph = get_dict_from_graph(
-        get_graph_upto_nodes(g, nodes_to_end, is_forward)
+        get_graph_upto_nodes(g, nodes_to_end, nodes_traversed, is_forward)
     )
     return PlanDisambiguatorOutput(
         plans=selected_plans,

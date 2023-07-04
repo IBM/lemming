@@ -8,7 +8,6 @@ from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
-    ChoiceInfo,
 )
 
 
@@ -81,13 +80,15 @@ def get_first_node_with_multiple_out_edges(
     while len(queue) > 0:
         new_queue: List[Any] = list()
         for node, edges_traversed in queue:
+            if node in nodes_visited:
+                continue
             edges = (
                 list(g.out_edges(node))
                 if is_forward
                 else list(g.in_edges(node))
             )
 
-            if len(edges) > 1 and node not in nodes_visited:
+            if len(edges) > 1:
                 nodes_with_multiple_edges.append(
                     (
                         deepcopy(node),
@@ -97,7 +98,7 @@ def get_first_node_with_multiple_out_edges(
                 )
                 nodes_visited.add(node)
                 continue
-            for edge in edges:
+            for edge in edges:  # only one edge can be here
                 edge_label = get_edge_label(g, edge)
                 edges_traversed_so_far = edges_traversed + [edge_label]
                 new_queue.append(
@@ -174,9 +175,10 @@ def get_nodes_to_exclude(
         return set()
     nodes_to_remove: List[Set[Any]] = list()
     for node_start in nodes_to_start:
-        nodes_to_remove.append(
-            get_all_nodes_coming_from_node(g, node_start, set(), is_forward)
+        nodes_from_a_node = get_all_nodes_coming_from_node(
+            g, node_start, nodes_to_start, is_forward
         )
+        nodes_to_remove.append(nodes_from_a_node)
 
     merger: Set[Any] = merge_sets(nodes_to_remove)
     return merger

@@ -15,7 +15,6 @@ from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
     get_dict_from_graph,
     get_graph_upto_nodes,
-    get_landmarks_in_edges,
 )
 
 
@@ -95,14 +94,11 @@ def get_build_flow_output(
     networkx_graph = get_dict_from_graph(
         get_graph_upto_nodes(g, nodes_to_end, is_forward)
     )
-    _, first_achiever_edge_dict = get_landmarks_in_edges(
-        g, list(edges_to_traverse_to_remove_from_graph), landmarks
-    )
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=new_choice_infos,
         networkx_graph=networkx_graph,
-        first_achiever_edge_dict=first_achiever_edge_dict,
+        first_achiever_edge_dict={},
         node_plan_hashes_dict=node_plan_hashes_dict,
         edge_plan_hashes_dict={
             f"{label[0]}_{label[1]}": plan_hashes

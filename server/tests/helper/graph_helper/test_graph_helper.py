@@ -78,6 +78,10 @@ class TestGraphHelper(unittest.TestCase):
             TestGraphHelper.test_graph,
             _,
             _,
+            _,
+            edge_label_nodes_dict,
+            node_dist_from_initial_state,
+            node_dist_from_end_state,
         ) = get_plan_disambiguator_output_filtered_by_selection_infos(
             [],
             TestGraphHelper.gripper_landmarks,

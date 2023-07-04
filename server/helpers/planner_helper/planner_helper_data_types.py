@@ -57,11 +57,20 @@ class LandmarksResponseModel(BaseModel):
 
 
 class ChoiceInfo(BaseModel):
-    landmark: Optional[Landmark] = None
-    max_num_plans: Optional[int] = None
-    action_name_plan_idx_map: Optional[Dict[str, List[int]]] = None
-    action_name_plan_hash_map: Optional[Dict[str, List[str]]] = None
-    node_with_multiple_out_edges: Optional[str] = None  # TODO: Depercate
+    landmark: Optional[Landmark] = None  # landmark
+    max_num_plans: Optional[
+        int
+    ] = 0  # the maximum number of plans included in a first achiever
+    action_name_plan_idx_map: Optional[
+        Dict[str, List[int]]
+    ] = (
+        dict()
+    )  # keys are first-achievers (or edges) available fore the next choice
+    action_name_plan_hash_map: Optional[
+        Dict[str, List[str]]
+    ] = (
+        dict()
+    )  # keys are first-achievers (or edges) available fore the next choice
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
 

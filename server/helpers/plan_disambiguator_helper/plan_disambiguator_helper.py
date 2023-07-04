@@ -1,4 +1,5 @@
 from copy import deepcopy
+import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
 from networkx import Graph
 from helpers.planner_helper.planner_helper_data_types import (
@@ -14,47 +15,41 @@ from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
     get_node_edge_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
+    get_node_distance_from_terminal_node,
 )
 
 
-# def get_filtered_out_selection_infos_by_selection_infos(
-#     landmarks: List[Landmark], selection_infos: List[SelelctionInfo]
-# ) -> List[Landmark]:
-#     selected_first_achievers = (
-#         set(
-#             map(
-#                 lambda selection_info: selection_info.selected_first_achiever[
-#                     :
-#                 ],
-#                 selection_infos,
-#             )
-#         )
-#         if selection_infos is not None
-#         else set()
-#     )
-#     selected_facts = (
-#         set(
-#             map(
-#                 lambda selection_info: tuple(selection_info.facts),
-#                 selection_infos,
-#             )
-#         )
-#         if selection_infos is not None
-#         else set()
-#     )
-#     filtered_landmarks: List[Landmark] = list()
-#     for landmark in landmarks:
-#         if tuple(landmark.facts) in selected_facts:
-#             continue
-#         filtered_first_achievers: Set[str] = set()
-#         for first_achiever in landmark.first_achievers:
-#             if first_achiever not in selected_first_achievers:
-#                 filtered_first_achievers.add(first_achiever[:])
-#         if len(filtered_first_achievers) > 1:
-#             filtered_landmark = landmark.copy(deep=True)
-#             filtered_landmark.first_achievers = list(filtered_first_achievers)
-#             filtered_landmarks.append(filtered_landmark)
-#     return filtered_landmarks
+def get_min_dist_between_nodes_from_terminal_node(
+    edge_labels: List[str],
+    edge_label_nodes_dict: Dict[str, List[str]],
+    node_dist_from_terminal_state: Dict[str, int],
+):
+    min_dist = sys.maxsize
+    for edge_label in edge_labels:
+        if edge_label in edge_label_nodes_dict:
+            for node in edge_label_nodes_dict[edge_label]:
+                if node in node_dist_from_terminal_state:
+                    if node_dist_from_terminal_state[node] < min_dist:
+                        min_dist = node_dist_from_terminal_state[node]
+    return min_dist
+
+
+def set_nodes_with_multiple_edges(
+    choice_infos_input: List[ChoiceInfo],
+    edge_label_nodes: Dict[str, List[str]],
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+    )
+    for i in range(len(choice_infos)):
+        nodes_with_target_edges: Set[str] = set()
+        for edge_label in choice_infos[i].action_name_plan_hash_map.keys():
+            if edge_label in edge_label_nodes:
+                nodes_with_target_edges.update(edge_label_nodes[edge_label])
+        choice_infos[i].nodes_with_multiple_out_edges = list(
+            nodes_with_target_edges
+        )
+    return choice_infos
 
 
 def get_first_achievers(landmarks: Optional[List[Landmark]]) -> List[List[str]]:
@@ -63,37 +58,11 @@ def get_first_achievers(landmarks: Optional[List[Landmark]]) -> List[List[str]]:
     return list(map(lambda landmark: landmark.first_achievers, landmarks))
 
 
-# def get_filtered_in_landmark_by_selection_info(
-#     selection_info: SelelctionInfo, landmarks: List[Landmark]
-# ) -> List[Landmark]:
-#     return list(
-#         map(
-#             lambda filtered_landmark: filtered_landmark.copy(deep=True),
-#             filter(
-#                 lambda landmark: landmark.facts == selection_info.facts,
-#                 landmarks,
-#             ),
-#         )
-#     )
-
-
-# def get_filtered_out_landmark_by_selection_info(
-#     selection_info: SelelctionInfo, landmarks: List[Landmark]
-# ) -> List[Landmark]:
-#     return list(
-#         map(
-#             lambda filtered_landmark: filtered_landmark.copy(deep=True),
-#             filter(
-#                 lambda landmark: landmark.facts != selection_info.facts,
-#                 landmarks,
-#             ),
-#         )
-#     )
-
-
 def split_plans_with_actions(
-    action_names: List[str], plans: List[Plan]
-) -> Tuple[Dict[str, List[int]], Dict[str, List[str]], int, int]:
+    action_names: List[str],
+    plans: List[Plan],
+    previous_selected_actions: Set[str],
+) -> Tuple[Dict[str, List[int]], Dict[str, List[str]], int]:
     """
     returns a tuple of 1) a dictionary of first_achiever names and lists of plan indices
     and 2) the maximum number of plans with a first achiever
@@ -102,9 +71,13 @@ def split_plans_with_actions(
     action_name_list_plan_idx: Dict[str, List[int]] = dict()
     action_name_list_plan_hash: Dict[str, List[str]] = dict()
     plan_hashes_for_action: Set[str] = set()
-    for plan_set_idx, plan_set in enumerate(plan_sets):
-        for action_name in action_names:  # first achievers
-            if action_name in plan_set:
+
+    for action_name in action_names:  # first achievers
+        for plan_set_idx, plan_set in enumerate(plan_sets):
+            if (
+                action_name in plan_set
+                and action_name not in previous_selected_actions
+            ):
                 if action_name not in action_name_list_plan_idx:
                     action_name_list_plan_idx[action_name] = list()
                     action_name_list_plan_hash[action_name] = list()
@@ -113,6 +86,14 @@ def split_plans_with_actions(
                     plans[plan_set_idx].plan_hash
                 )
                 plan_hashes_for_action.add(plans[plan_set_idx].plan_hash)
+        if action_name in action_name_list_plan_idx and len(
+            action_name_list_plan_idx[action_name]
+        ) == len(
+            plans
+        ):  # remove an action, which cannot disambiguate plans
+            action_name_list_plan_idx.pop(action_name, None)
+            action_name_list_plan_hash.pop(action_name, None)
+
     num_remaining_plans = (
         0
         if len(action_name_list_plan_idx) == 0
@@ -123,11 +104,11 @@ def split_plans_with_actions(
             ]
         )
     )
+
     return (
         action_name_list_plan_idx,
         action_name_list_plan_hash,
         num_remaining_plans,
-        len(plan_hashes_for_action),
     )
 
 
@@ -154,23 +135,6 @@ def get_plans_with_selection_info(
     """
     return get_plans_filetered_by_selected_plan_hashes(selection_info, plans)
 
-    # if len(filtered_plans) < len(plans):
-    #     return filtered_plans
-
-    # selected_landmarks = get_filtered_in_landmark_by_selection_info(
-    #     selection_info, landmarks
-    # )
-    # action_name_list_plan_idx, _, _, _ = split_plans_with_actions(
-    #     selected_landmarks[0].first_achievers, plans
-    # )
-
-    # return [
-    #     plans[idx].copy(deep=True)
-    #     for idx in action_name_list_plan_idx[
-    #         selection_info.selected_first_achiever
-    #     ]
-    # ]
-
 
 def get_plans_with_selection_infos(
     selection_infos: Optional[List[SelelctionInfo]],
@@ -193,32 +157,40 @@ def get_plans_with_selection_infos(
 
 
 def get_split_by_actions(
-    landmarks: List[Landmark], plans: List[Plan]
+    landmarks: List[Landmark],
+    plans: List[Plan],
+    selection_infos: List[SelelctionInfo],
 ) -> List[ChoiceInfo]:
     """
     return a list of landmark infos
     (1) a landmark, 2) the maximum number of plans including a first achiever,
     and 3) a dictionary of first achiever name and a list of plan indices)
     """
+    previous_selected_actions = set(
+        map(
+            lambda selection_info: selection_info.selected_first_achiever,
+            selection_infos,
+        )
+    )
     choice_infos: List[ChoiceInfo] = list()
     for landmark in landmarks:
         (
             action_name_plan_idx_list,
             action_name_plan_hash_list,
-            max_num_plans_with_first_achiever,
             num_plans_in_actions,
-        ) = split_plans_with_actions(landmark.first_achievers, plans)
+        ) = split_plans_with_actions(
+            landmark.first_achievers, plans, previous_selected_actions
+        )
         if (
-            max_num_plans_with_first_achiever > 0
-            and len(landmark.first_achievers) >= 2
+            num_plans_in_actions > 0
         ):  # only consider landmarks shown in given plans
             choice_infos.append(
                 ChoiceInfo(
                     landmark=landmark.copy(deep=True),
-                    max_num_plans=max_num_plans_with_first_achiever,
-                    action_name_plan_idx_map=action_name_plan_idx_list,
-                    action_name_plan_hash_map=action_name_plan_hash_list,
-                    is_available_for_choice=len(action_name_plan_idx_list) > 0,
+                    max_num_plans=num_plans_in_actions,
+                    action_name_plan_idx_map=action_name_plan_idx_list,  # keys are first-achievers available fore the next choice
+                    action_name_plan_hash_map=action_name_plan_hash_list,  # keys are first-achievers available fore the next choice
+                    is_available_for_choice=num_plans_in_actions > 0,
                 )
             )
 
@@ -261,6 +233,9 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
     str,
     Dict[str, List[str]],
     Dict[Tuple[str, str], List[str]],
+    Dict[str, List[str]],
+    Dict[str, int],
+    Dict[str, int],
 ]:
     """
     returns 1) filtered plans, 2) filtered and sorted landmarks,
@@ -274,12 +249,15 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         ),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
+    node_dist_from_initial_state = get_node_distance_from_terminal_node(g, True)
+    node_dist_from_end_state = get_node_distance_from_terminal_node(g, False)
     (
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
     ) = get_node_edge_name_plan_hash_list(g, selected_plans, True)
     g = get_graph_with_number_of_plans_label(g, node_plan_hashes_dict)
-    choices = get_split_by_actions(landmarks, selected_plans)
+    choices = get_split_by_actions(landmarks, selected_plans, selection_infos)
     return (
         selected_plans,
         choices,
@@ -287,6 +265,9 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         dot_str,
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
+        node_dist_from_initial_state,
+        node_dist_from_end_state,
     )
 
 
@@ -349,7 +330,7 @@ def get_choice_info_multiple_edges_without_landmark(
     is_forward: bool,
 ) -> ChoiceInfo:
     return ChoiceInfo(
-        node_with_multiple_out_edges=node_with_multiple_edges,
+        nodes_with_multiple_out_edges=[node_with_multiple_edges],
         action_name_plan_hash_map=get_edge_label_plan_hashes_dict(
             edges_traversed, plans, is_forward
         ),

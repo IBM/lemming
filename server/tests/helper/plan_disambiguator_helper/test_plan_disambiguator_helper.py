@@ -25,6 +25,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plan_idx_edge_dict,
     get_edge_label_plan_hashes_dict,
     append_landmarks_not_avialable_for_choice,
+    get_min_dist_between_nodes_from_terminal_node,
 )
 
 my_dir = os.path.dirname(__file__)
@@ -103,6 +104,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         landmark_infos = get_split_by_actions(
             TestPlanDisambiguatorHelper.gripper_landmarks,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
+            {},
         )
         self.assertEqual(len(landmark_infos), 8)
         self.assertEqual(landmark_infos[0].max_num_plans, 3)
@@ -128,6 +130,9 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             _,
             node_plan_hashes_dict,
             edge_plan_hash_dict,
+            edge_label_nodes_dict,
+            node_dist_from_initial_state,
+            node_dist_from_end_state,
         ) = get_plan_disambiguator_output_filtered_by_selection_infos(
             [selected_landmark_0],
             TestPlanDisambiguatorHelper.gripper_landmarks,
@@ -136,7 +141,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
         self.assertEqual(len(selected_plans), 1)
-        self.assertEqual(len(landmark_infos), 8)
+        self.assertEqual(len(landmark_infos), 0)
         self.assertEqual(g.name, "G")
 
     def test_get_plans_filetered_by_selected_plan_hashes_no_plan_hash(self):
@@ -239,3 +244,22 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(new_choice_infos), 2)
         self.assertTrue(new_choice_infos[0].is_available_for_choice)
         self.assertFalse(new_choice_infos[1].is_available_for_choice)
+
+    def test_get_min_dist_between_nodes_from_terminal_node(self):
+        label_a = "label_a"
+        label_b = "label_b"
+        edge_labels = [label_a, label_b]
+        node_0 = "node_0"
+        node_1 = "node_1"
+        node_2 = "node_2"
+        edge_label_nodes_dict = {label_a: [node_0, node_1], label_b: [node_2]}
+        min_val = 11
+        node_dist_from_terminal_state = {
+            node_0: 111,
+            node_1: min_val,
+            node_2: 1111,
+        }
+        res = get_min_dist_between_nodes_from_terminal_node(
+            edge_labels, edge_label_nodes_dict, node_dist_from_terminal_state
+        )
+        self.assertEqual(res, min_val)

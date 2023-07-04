@@ -10,7 +10,6 @@ from helpers.planner_helper.planner_helper_data_types import (
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
     get_plan_disambiguator_output_filtered_by_selection_infos,
-    get_merged_first_achievers_dict,
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
@@ -31,11 +30,14 @@ def get_build_flow_output(
 ) -> PlanDisambiguatorOutput:
     (
         selected_plans,
-        choice_infos,
+        _,
         g,
         _,
         node_plan_hashes_dict,
         edge_plan_hash_dict,
+        edge_label_nodes_dict,
+        node_dist_from_initial_state,
+        node_dist_from_end_state,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
         selection_infos, landmarks, domain, problem, plans
     )
@@ -93,7 +95,7 @@ def get_build_flow_output(
     networkx_graph = get_dict_from_graph(
         get_graph_upto_nodes(g, nodes_to_end, is_forward)
     )
-    selectable_landmarks, first_achiever_edge_dict = get_landmarks_in_edges(
+    _, first_achiever_edge_dict = get_landmarks_in_edges(
         g, list(edges_to_traverse_to_remove_from_graph), landmarks
     )
     return PlanDisambiguatorOutput(

@@ -104,16 +104,21 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(len(build_forward_flow_output.plans), 6)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
         self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].max_num_plans
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[0].max_num_plans, 0
         )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_idx_map
+            ),
+            0,
         )
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node0",
         )
         self.assertEqual(
@@ -140,16 +145,21 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(len(build_forward_flow_output.plans), 2)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
         self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].max_num_plans
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[0].max_num_plans, 0
         )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_idx_map
+            ),
+            0,
         )
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node1",
         )
         self.assertEqual(
@@ -183,16 +193,21 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(len(build_forward_flow_output.plans), 2)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
         self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].max_num_plans
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[0].max_num_plans, 0
         )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_idx_map
+            ),
+            0,
         )
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node0",
         )
         self.assertEqual(
@@ -219,16 +234,21 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(len(build_forward_flow_output.plans), 6)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
         self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].max_num_plans
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[0].max_num_plans, 0
         )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_idx_map
+            ),
+            0,
         )
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node11",
         )
         self.assertEqual(
@@ -262,16 +282,21 @@ class TestBuildFlowHelper(unittest.TestCase):
         self.assertEqual(len(build_forward_flow_output.plans), 2)
         self.assertEqual(len(build_forward_flow_output.choice_infos), 1)
         self.assertIsNone(build_forward_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].max_num_plans
+        self.assertEqual(
+            build_forward_flow_output.choice_infos[0].max_num_plans, 0
         )
-        self.assertIsNone(
-            build_forward_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(
+            len(
+                build_forward_flow_output.choice_infos[
+                    0
+                ].action_name_plan_idx_map
+            ),
+            0,
         )
         self.assertEqual(
             build_forward_flow_output.choice_infos[
                 0
-            ].node_with_multiple_out_edges,
+            ].nodes_with_multiple_out_edges[0],
             "node11",
         )
         self.assertEqual(

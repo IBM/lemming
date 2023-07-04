@@ -76,7 +76,7 @@ class ChoiceInfo(BaseModel):
 
 
 class PlanDisambiguatorInput(BaseModel):
-    selection_priority: str
+    selection_priority: Optional[str]
     selection_infos: List[SelelctionInfo] = []
     landmarks: List[Landmark] = []
     plans: List[Plan]

@@ -418,14 +418,20 @@ class PlanArea extends React.Component {
         })
             .then(res => res.json())
             .then(data => {
-                const unselected_landmarks =
-                    this.state.turn > 0
-                        ? this.state.unselected_landmarks
-                        : data.choice_infos.reduce(
-                              (choices, item) =>
-                                  choices.concat(item.landmark.first_achievers),
-                              []
-                          );
+                console.log(666, data);
+                var unselected_landmarks = [];
+
+                if (this.state.active_view === 'Select View')
+                    unselected_landmarks =
+                        this.state.turn > 0
+                            ? this.state.unselected_landmarks
+                            : data.choice_infos.reduce(
+                                  (choices, item) =>
+                                      choices.concat(
+                                          item.landmark.first_achievers
+                                      ),
+                                  []
+                              );
 
                 this.setState({
                     ...this.state,

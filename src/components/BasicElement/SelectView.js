@@ -34,12 +34,18 @@ function generateEdges(state) {
 }
 
 function getBasisNodes(state) {
-    const transform = state.choice_infos
-        .filter(item => item.is_available_for_choice)
-        .map(item => item.nodes_with_multiple_out_edges)
-        .reduce((bag, item) => bag.concat(item), []);
+    var basis_nodes = []
 
-    return transform.length === 0 ? null : transform;
+    if (state.choice_infos.length > 0) {
+       var transform = state.choice_infos.filter(item => item.is_available_for_choice);
+
+       if ( transform.length > 0 ) {
+          transform = transform[0];
+          basis_nodes = transform.nodes_with_multiple_out_edges.reduce((bag, item) => bag.concat(item), []);
+       }
+    }
+
+    return basis_nodes;
 }
 
 function getActiveNodes(state) {

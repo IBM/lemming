@@ -15,6 +15,7 @@ from watson_ai_planning.planner.utils import (
     parse_planning_result,
 )
 
+from helpers.common_helper.str_helper import format_plans
 from helpers.planner_helper.planner_helper_data_types import PlanningTask
 from server.planners.base import Planner
 
@@ -112,7 +113,7 @@ class SymKPlanner(Planner):
 
             for plan in result["plans"]:
                 plan["cost"] = int(plan["cost"])
-            return parse_planning_result(result)
+            return format_plans(parse_planning_result(result))
 
     def _call_planner(
         self,

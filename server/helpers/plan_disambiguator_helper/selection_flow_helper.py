@@ -136,7 +136,7 @@ def get_selection_flow_output(
         )
     choice_infos = process_selection_priority(
         set_nodes_with_multiple_edges(
-            append_landmarks_not_avialable_for_choice(landmarks, choice_infos),
+            append_landmarks_not_available_for_choice(landmarks, choice_infos),
             edge_label_nodes_dict,
         ),
         selection_priority,

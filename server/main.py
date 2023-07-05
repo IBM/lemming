@@ -16,7 +16,11 @@ from helpers.nl2plan_helper.ltl2plan_helper import (
 from helpers.nl2plan_helper.manage_formulas import (
     get_formulas_from_matched_formulas,
 )
-from helpers.nl2plan_helper.nl2ltl_helper import NL2LTLRequest, prompt_builder
+from helpers.nl2plan_helper.nl2ltl_helper import (
+    NL2LTLRequest,
+    prompt_builder,
+    LTLFormula,
+)
 from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
@@ -30,9 +34,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
     ToolCompiler,
     Plan,
-    LTLFormula,
     LTL2PDDLRequest,
-    SelectionPriority,
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,

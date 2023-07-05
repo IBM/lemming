@@ -16,10 +16,12 @@ from watson_ai_planning.planner.utils import (
     parse_planning_result,
 )
 
-from helpers.planner_helper.planner_helper_data_types import PlanningTask
-from planners.base import Planner
+from server.helpers.planner_helper.planner_helper_data_types import PlanningTask
+from server.planners.base import Planner
 
-PLANNERS_ROOT = Path(inspect.getframeinfo(inspect.currentframe()).filename).parent  # type: ignore
+PLANNERS_ROOT = Path(
+    inspect.getframeinfo(inspect.currentframe()).filename
+).parent
 SERVER_ROOT = PLANNERS_ROOT.parent
 
 DEFAULT_BIN_SYMK_PATH = (
@@ -31,7 +33,7 @@ DEFAULT_HEURISTIC = f"(plan_selection=top_k(num_plans={str(DEFAULT_K)},dump_plan
 DEFAULT_SEARCH = f"symq-bd({DEFAULT_HEURISTIC})"
 
 
-def create_plan_from_file(plan_file: Path):
+def create_plan_from_file(plan_file: Path) -> Dict[Any, Any]:
     with open(plan_file) as f:
         content = f.readlines()
     content = [x.strip() for x in content]
@@ -51,8 +53,8 @@ def _parse_planning_result(plan_file: Path) -> Dict[Any, Any]:
 
     unique_plans = set()
     plans = []
-    for plan_file in plan_files:
-        plan = create_plan_from_file(plan_file)
+    for fplan in plan_files:
+        plan = create_plan_from_file(Path(fplan))
         if plan is not None:
             actions_tuple = tuple(plan["actions"])
             if actions_tuple not in unique_plans:
@@ -92,7 +94,8 @@ class SymKPlanner(Planner):
         :return: the plan.
         """
         with tempfile.NamedTemporaryFile() as plan_temp, tempfile.NamedTemporaryFile() as domain_temp, tempfile.NamedTemporaryFile() as problem_temp:
-            # We have to read and write to files because the planner is CLI oriented.
+            # We have to read and write to files because the planner is CLI
+            # oriented.
             plan_file = Path(tempfile.gettempdir()) / plan_temp.name
             domain_file = Path(tempfile.gettempdir()) / domain_temp.name
             problem_file = Path(tempfile.gettempdir()) / problem_temp.name

@@ -6,11 +6,11 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
 import pydot
 from networkx import Graph, nx_pydot, set_node_attributes
 from networkx.readwrite import json_graph
-from helpers.common_helper.data_type_helper import merge_sets
-from helpers.planner_helper.planner_helper_data_types import (
+
+from server.helpers.common_helper.data_type_helper import merge_sets
+from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
-    ChoiceInfo,
 )
 
 
@@ -239,10 +239,10 @@ def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
 ) -> (
     Tuple[
-    Dict[str, List[str]],
-    Dict[Tuple[Any, Any], List[str]],
-    Dict[str, List[str]],
-]
+        Dict[str, List[str]],
+        Dict[Tuple[Any, Any], List[str]],
+        Dict[str, List[str]],
+    ]
     | Dict[Any, Any]
 ):
     """

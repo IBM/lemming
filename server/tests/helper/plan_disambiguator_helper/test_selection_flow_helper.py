@@ -36,6 +36,11 @@ class TestSelectionFlowHelper(unittest.TestCase):
     travel_landmarks: List[Landmark]
     travel_planner_response_model: PlannerResponseModel
 
+    toy_domain: str
+    toy_problem: str
+    toy_landmarks: List[Landmark]
+    toy_planner_response_model: PlannerResponseModel
+
     @classmethod
     def setUpClass(cls) -> None:
         TestSelectionFlowHelper.toy_domain = read_str_from_file(

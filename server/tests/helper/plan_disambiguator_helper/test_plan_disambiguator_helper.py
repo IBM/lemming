@@ -251,7 +251,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertTrue(new_choice_infos[0].is_available_for_choice)
         self.assertFalse(new_choice_infos[1].is_available_for_choice)
 
-    def test_get_min_dist_between_nodes_from_terminal_node(self):
+    def test_get_min_dist_between_nodes_from_terminal_node(self) -> None:
         label_a = "label_a"
         label_b = "label_b"
         edge_labels = [label_a, label_b]

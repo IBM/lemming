@@ -99,16 +99,25 @@ def get_build_flow_output(
     networkx_graph = get_dict_from_graph(
         get_graph_upto_nodes(g, nodes_to_end, nodes_traversed, is_forward)
     )
-    new_choice_infos = set_distance_to_terminal_nodes(
-        sort_choice_info_by_distance_to_terminal_nodes(
-            new_choice_infos,
-            node_dist_from_initial_state
-            if is_forward
-            else node_dist_from_end_state,
-        ),
-        node_dist_from_initial_state,
-        node_dist_from_end_state,
+
+    new_choice_infos = sort_choice_info_by_distance_to_terminal_nodes(
+        new_choice_infos,
+        node_dist_from_initial_state
+        if is_forward
+        else node_dist_from_end_state,
     )
+
+    new_choice_infos = list(
+        map(
+            lambda choice_info: set_distance_to_terminal_nodes(
+                choice_info,
+                node_dist_from_initial_state,
+                node_dist_from_end_state,
+            ),
+            new_choice_infos,
+        )
+    )
+
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=new_choice_infos,

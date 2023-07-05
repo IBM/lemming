@@ -2,7 +2,7 @@
     "metadata": {
         "name": "Lemming",
         "title_text": "A Guided Disambiguation Tool for Plan Selection",
-        "citation_text": "@inproceedings{lemming, \n title={{Lemming: A Guided Disambiguation Tool\n\t for Plan Selection}}, \n author={Michael Katz and Jungkoo Kang and \n\t Tathagata Chakraborti and Francesco\n\t Fuggitti and Shirin Sohrabi}, \n booktitle={ICAPS 2023 Demonstration Track}, \n year={2023}}",
+        "citation_text": "@inproceedings{lemming, \n title={{Lemming: A Guided Disambiguation Tool\n\t for Plan Selection}}, \n author={Jungkoo Kang and Tathagata Chakraborti \n\t and Michael Katz and Shirin Sohrabi\n\t and Francesco Fuggitti}, \n booktitle={ICAPS 2023 Demonstration Track}, \n year={2023}}",
         "link_to_code": "https://github.com/IBM/lemming",
         "primary_link": "lemming",
         "secondary_links": [
@@ -42,10 +42,6 @@
         },
         {
             "name": "Build Backward"
-        },
-        {
-            "name": "Landmarks View",
-            "disabled": true
         },
         {
             "name": "NL2LTL Integration"

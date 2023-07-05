@@ -96,10 +96,12 @@ user:~$ yarn start
 
 ## Citing our work
 
+[`paper`](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf)
+
 ```
 @inproceedings{lemming,
 title={{Lemming: A Guided Disambiguation Tool for Plan Selection}},
-author={Michael Katz and Jungkoo Kang and Tathagata Chakraborti and Francesco Fuggitti and Shirin Sohrabi},
+author={Jungkoo Kang and Tathagata Chakraborti and Michael Katz and Shirin Sohrabi and Francesco Fuggitti},
 booktitle={ICAPS System Demonstration Track},
 year={2023}}
 ```

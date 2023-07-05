@@ -11,6 +11,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
     get_plan_disambiguator_output_filtered_by_selection_infos,
     sort_choice_info_by_distance_to_terminal_nodes,
+    set_distance_to_terminal_nodes,
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
@@ -35,7 +36,7 @@ def get_build_flow_output(
         _,
         node_plan_hashes_dict,
         edge_plan_hash_dict,
-        edge_label_nodes_dict,
+        _,
         node_dist_from_initial_state,
         node_dist_from_end_state,
     ) = get_plan_disambiguator_output_filtered_by_selection_infos(
@@ -98,14 +99,19 @@ def get_build_flow_output(
     networkx_graph = get_dict_from_graph(
         get_graph_upto_nodes(g, nodes_to_end, nodes_traversed, is_forward)
     )
-    return PlanDisambiguatorOutput(
-        plans=selected_plans,
-        choice_infos=sort_choice_info_by_distance_to_terminal_nodes(
+    new_choice_infos = set_distance_to_terminal_nodes(
+        sort_choice_info_by_distance_to_terminal_nodes(
             new_choice_infos,
             node_dist_from_initial_state
             if is_forward
             else node_dist_from_end_state,
         ),
+        node_dist_from_initial_state,
+        node_dist_from_end_state,
+    )
+    return PlanDisambiguatorOutput(
+        plans=selected_plans,
+        choice_infos=new_choice_infos,
         networkx_graph=networkx_graph,
         first_achiever_edge_dict={},
         node_plan_hashes_dict=node_plan_hashes_dict,

@@ -24,7 +24,7 @@ from helpers.graph_helper.graph_helper import (
 def get_min_dist_between_nodes_from_terminal_node_by_node(
     nodes: List[str],
     node_dist_from_terminal_state: Dict[str, int],
-):
+) -> int:
     min_dist = sys.maxsize
     for node in nodes:
         if node in node_dist_from_terminal_state:
@@ -411,7 +411,11 @@ def get_total_num_plans(choice_info: ChoiceInfo) -> int:
         [len(plans) for plans in choice_info.action_name_plan_hash_map.values()]
     )
 
-def sort_choice_info_by_distance_to_terminal_nodes(choice_infos_input: List[ChoiceInfo], node_dist_from_terminal_node: Dict[str, int]):
+
+def sort_choice_info_by_distance_to_terminal_nodes(
+    choice_infos_input: List[ChoiceInfo],
+    node_dist_from_terminal_node: Dict[str, int],
+):
     choice_infos = list(
         map(
             lambda choice_info: choice_info.copy(deep=True),
@@ -426,6 +430,28 @@ def sort_choice_info_by_distance_to_terminal_nodes(choice_infos_input: List[Choi
     )
 
     return choice_infos
+
+
+def set_distance_to_terminal_nodes(
+    choice_info_input: ChoiceInfo,
+    node_dist_from_initial_state: Dict[str, int],
+    node_dist_from_end_state: Dict[str, int],
+) -> ChoiceInfo:
+    choice_info = choice_info_input.copy(deep=True)
+    choice_info.distance_to_init = (
+        get_min_dist_between_nodes_from_terminal_node_by_node(
+            choice_info.nodes_with_multiple_out_edges,
+            node_dist_from_initial_state,
+        )
+    )
+    choice_info.distance_to_end = (
+        get_min_dist_between_nodes_from_terminal_node_by_node(
+            choice_info.nodes_with_multiple_out_edges,
+            node_dist_from_end_state,
+        )
+    )
+    return choice_info
+
 
 def process_selection_priority(
     choice_infos_input: List[ChoiceInfo],

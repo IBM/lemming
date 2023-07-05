@@ -14,6 +14,7 @@ from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     append_landmarks_not_avialable_for_choice,
     set_nodes_with_multiple_edges,
     process_selection_priority,
+    set_distance_to_terminal_nodes,
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
@@ -62,19 +63,23 @@ def get_selection_flow_output(
         ) = get_first_node_with_multiple_out_edges(g, True)
         return PlanDisambiguatorOutput(
             plans=selected_plans,
-            choice_infos=append_landmarks_not_avialable_for_choice(
-                landmarks,
-                list(
-                    map(
-                        lambda payload: get_choice_info_multiple_edges_without_landmark(
-                            node_with_multiple_edges=payload[0],
-                            edges_traversed=payload[2],
-                            plans=selected_plans,
-                            is_forward=True,
-                        ),
-                        nodes_with_multiple_edges,
-                    )
+            choice_infos=set_distance_to_terminal_nodes(
+                append_landmarks_not_avialable_for_choice(
+                    landmarks,
+                    list(
+                        map(
+                            lambda payload: get_choice_info_multiple_edges_without_landmark(
+                                node_with_multiple_edges=payload[0],
+                                edges_traversed=payload[2],
+                                plans=selected_plans,
+                                is_forward=True,
+                            ),
+                            nodes_with_multiple_edges,
+                        )
+                    ),
                 ),
+                node_dist_from_initial_state,
+                node_dist_from_end_state,
             ),
             networkx_graph=networkx_graph,
             node_plan_hashes_dict=node_plan_hashes_dict,
@@ -83,10 +88,16 @@ def get_selection_flow_output(
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
         )
-    choice_infos = process_selection_priority(
-        set_nodes_with_multiple_edges(
-            append_landmarks_not_avialable_for_choice(landmarks, choice_infos),
-            edge_label_nodes_dict,
+    choice_infos = set_distance_to_terminal_nodes(
+        process_selection_priority(
+            set_nodes_with_multiple_edges(
+                append_landmarks_not_avialable_for_choice(
+                    landmarks, choice_infos
+                ),
+                edge_label_nodes_dict,
+            ),
+            node_dist_from_initial_state,
+            node_dist_from_end_state,
         ),
         selection_priority,
         edge_label_nodes_dict,

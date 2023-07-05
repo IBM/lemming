@@ -1,4 +1,5 @@
 from copy import deepcopy
+import random
 import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -9,6 +10,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     PlanningTask,
     SelectionInfo,
+    SelectionPriority,
 )
 from networkx import Graph
 from helpers.planner_helper.planner_helper import get_dot_graph_str
@@ -18,6 +20,18 @@ from helpers.graph_helper.graph_helper import (
     get_graph_with_number_of_plans_label,
     get_node_distance_from_terminal_node,
 )
+
+
+def get_min_dist_between_nodes_from_terminal_node_by_node(
+    nodes: List[str],
+    node_dist_from_terminal_state: Dict[str, int],
+) -> int:
+    min_dist = sys.maxsize
+    for node in nodes:
+        if node in node_dist_from_terminal_state:
+            if node_dist_from_terminal_state[node] < min_dist:
+                min_dist = node_dist_from_terminal_state[node]
+    return min_dist
 
 
 def get_min_dist_between_nodes_from_terminal_node(
@@ -391,3 +405,94 @@ def append_landmarks_not_available_for_choice(
             )
 
     return choice_infos_with_not_available_landmarks
+
+
+def get_total_num_plans(choice_info: ChoiceInfo) -> int:
+    return sum(
+        [len(plans) for plans in choice_info.action_name_plan_hash_map.values()]
+    )
+
+
+def sort_choice_info_by_distance_to_terminal_nodes(
+    choice_infos_input: List[ChoiceInfo],
+    node_dist_from_terminal_node: Dict[str, int],
+):
+    choice_infos = list(
+        map(
+            lambda choice_info: choice_info.copy(deep=True),
+            choice_infos_input,
+        )
+    )
+    choice_infos.sort(
+        key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node_by_node(
+            list(choice_info.nodes_with_multiple_out_edges),
+            node_dist_from_terminal_node,
+        )
+    )
+
+    return choice_infos
+
+
+def set_distance_to_terminal_nodes(
+    choice_info_input: ChoiceInfo,
+    node_dist_from_initial_state: Dict[str, int],
+    node_dist_from_end_state: Dict[str, int],
+) -> ChoiceInfo:
+    choice_info = choice_info_input.copy(deep=True)
+    choice_info.distance_to_init = (
+        get_min_dist_between_nodes_from_terminal_node_by_node(
+            choice_info.nodes_with_multiple_out_edges,
+            node_dist_from_initial_state,
+        )
+    )
+    choice_info.distance_to_end = (
+        get_min_dist_between_nodes_from_terminal_node_by_node(
+            choice_info.nodes_with_multiple_out_edges,
+            node_dist_from_end_state,
+        )
+    )
+    return choice_info
+
+
+def process_selection_priority(
+    choice_infos_input: List[ChoiceInfo],
+    selection_priority: SelectionPriority,
+    edge_label_nodes_dict: Dict[str, List[str]],
+    node_dist_from_initial_state: Dict[str, int],
+    node_dist_from_end_state: Dict[str, int],
+) -> List[ChoiceInfo]:
+    choice_infos = list(
+        map(
+            lambda choice_info: choice_info.copy(deep=True),
+            choice_infos_input,
+        )
+    )
+
+    if (
+        selection_priority == SelectionPriority.MAX_PLANS.value
+        or selection_priority == SelectionPriority.MIN_PLANS.value
+    ):
+        choice_infos.sort(
+            key=lambda choice_info: get_total_num_plans(choice_info),
+            reverse=(selection_priority == SelectionPriority.MIN_PLANS.value),
+        )
+    elif selection_priority == SelectionPriority.RANDOM.value:
+        random.shuffle(choice_infos)
+    elif selection_priority == SelectionPriority.INIT_FORWARD.value:
+        choice_infos.sort(
+            key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node(
+                list(choice_info.action_name_plan_hash_map.keys()),
+                edge_label_nodes_dict,
+                node_dist_from_initial_state,
+            )
+        )
+    elif selection_priority == SelectionPriority.GOAL_BACKWARD.value:
+        choice_infos.sort(
+            key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node(
+                list(choice_info.action_name_plan_hash_map.keys()),
+                edge_label_nodes_dict,
+                node_dist_from_end_state,
+            )
+        )
+
+    return choice_infos

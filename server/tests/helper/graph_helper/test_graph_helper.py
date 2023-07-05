@@ -194,7 +194,7 @@ class TestGraphHelper(unittest.TestCase):
         #     edges_traversed,
         # )
 
-        nodes = get_first_node_with_multiple_out_edges(g, True)
+        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
             nodes[0][1],
@@ -213,7 +213,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         # first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
-        res = get_first_node_with_multiple_out_edges(g, True)
+        res, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(
             res,
             [
@@ -236,7 +236,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         # first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
-        res = get_first_node_with_multiple_out_edges(g, False)
+        res, nodes_traversed = get_first_node_with_multiple_out_edges(g, False)
         self.assertEqual(
             res,
             [
@@ -269,7 +269,9 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         nodes_to_start = "node2"
-        nodes_to_exclude = get_nodes_to_exclude(g, {nodes_to_start}, True)
+        nodes_to_exclude = get_nodes_to_exclude(
+            g, {nodes_to_start}, set(), True
+        )
         self.assertEqual(len(nodes_to_exclude), 13)
 
     def test_get_graph_with_number_of_plans_label(self) -> None:

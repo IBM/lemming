@@ -1,7 +1,6 @@
 import React from 'react';
 import { BuildForward } from './BuildForward';
 import { BuildBackward } from './BuildBackward';
-import { LandmarksView } from './LandmarksView';
 import { SelectView } from './SelectView';
 import { NL2LTLIntegration } from './NL2LTLIntegration';
 import { IMPORT_OPTIONS } from './data/ImportOptions';
@@ -38,7 +37,6 @@ const link_to_server = config.link_to_server;
 const components = {
     BuildForward: BuildForward,
     BuildBackward: BuildBackward,
-    LandmarksView: LandmarksView,
     SelectView: SelectView,
     NL2LTLIntegration: NL2LTLIntegration,
 };
@@ -222,10 +220,14 @@ class PlanArea extends React.Component {
 
     logViewChange(e) {
         this.props.changeView(e);
-    this.setState({
-      active_view: e.name,
-    });
-  }
+    this.setState(
+      {active_view: e.name,
+    },
+  () => {
+                this.generateViz();
+            }
+        );
+    }
 
     changeTab(tabIndex) {
         this.setState({
@@ -426,7 +428,11 @@ class PlanArea extends React.Component {
                         ? this.state.unselected_landmarks
                         : data.choice_infos.reduce(
                               (choices, item) =>
-                                  choices.concat(item.landmark.first_achievers),
+                                  item.landmark
+                                      ? choices.concat(
+                                            item.landmark.first_achievers
+                                        )
+                                      : [],
                               []
                           );
 

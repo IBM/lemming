@@ -1,5 +1,6 @@
 from __future__ import annotations
 from enum import Enum
+import sys
 from typing import Dict, List, Optional, Any
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
@@ -74,10 +75,12 @@ class ChoiceInfo(BaseModel):
     )  # keys are first-achievers (or edges) available fore the next choice
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
+    distance_to_init: int = sys.maxsize
+    distance_to_end: int = sys.maxsize
 
 
 class PlanDisambiguatorInput(BaseModel):
-    selection_priority: str
+    selection_priority: Optional[str]
     selection_infos: List[SelectionInfo] = []
     landmarks: List[Landmark] = []
     plans: List[Plan]

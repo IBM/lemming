@@ -4,7 +4,8 @@
 [![Carbon](https://img.shields.io/badge/python-3.10-green)](https://www.carbondesignsystem.com)
 
 <br/>
-<img src="https://media.github.ibm.com/user/93001/files/c843e2f5-b515-4c1a-bcb2-988ca0bf40e7" width="40%" height="auto"/>
+<img src="https://user-images.githubusercontent.com/4764242/250650534-868a817a-38b2-425b-aaa4-b30721ae3698.png" width="30%" height="auto" />
+
 
 This repository hosts the source code for **Lemming: A Guided Disambiguation Tool for Plan Selection**.
 Lemming makes use of landmarks to proactively guide the user to select a plan from a set of plans

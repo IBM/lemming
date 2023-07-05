@@ -10,6 +10,7 @@ from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
+    ChoiceInfo,
 )
 
 
@@ -17,9 +18,14 @@ def edit_edge_labels(g: Graph) -> Graph:
     new_graph = g.copy()
     for edge in new_graph.edges:
         edge_data = new_graph.get_edge_data(edge[0], edge[1])
-        edge_data[0]["label"] = (
-            re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
-        )
+        if (
+            edge_data is not None
+            and len(edge_data) > 0
+            and "label" in edge_data[0]
+        ):
+            edge_data[0]["label"] = (
+                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+            )
 
     return new_graph
 
@@ -53,7 +59,7 @@ def get_edge_label(g: Graph, edge: Any) -> Optional[str]:
     if len(g.nodes) == 0:
         return None
     edge_data = g.get_edge_data(edge[0], edge[1])
-    edge_label: str = edge_data[0]["label"].replace('"', "")
+    edge_label: str = edge_data[0]["label"].replace('"', "").strip().lower()
     return edge_label
 
 
@@ -194,21 +200,63 @@ def get_graph_upto_nodes(
     return remove_nodes_from_graph(g, nodes_to_exclude)
 
 
+def get_node_distance_from_terminal_node(
+    g: Graph, is_forward: bool
+) -> Dict[str, int]:
+    """
+    returns a dictionary of node names (keys) and lists of plan hashes
+    """
+    node_distance_from_terminal_node_dict: Dict[str] = dict()
+
+    if len(g.nodes) == 0:
+        return node_distance_from_terminal_node_dict
+
+    start_nodes = get_root_node_in_digraph(g, is_forward)
+    queue: List[Any] = list()
+    queue.extend(start_nodes)
+    depth = 0
+
+    while len(queue) > 0:
+        new_queue: List[Any] = list()
+        for node in queue:
+            edges = (
+                list(g.out_edges(node))
+                if is_forward
+                else list(g.in_edges(node))
+            )
+            if node not in node_distance_from_terminal_node_dict:
+                node_distance_from_terminal_node_dict[node] = depth
+            for edge in edges:
+                target_node = edge[1] if is_forward else edge[0]
+                new_queue.append(target_node)
+        depth += 1
+        queue = new_queue
+
+    return node_distance_from_terminal_node_dict
+
+
 def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
 ) -> (
-    Tuple[Dict[str, List[str]], Dict[Tuple[Any, Any], List[str]]]
+    Tuple[
+    Dict[str, List[str]],
+    Dict[Tuple[Any, Any], List[str]],
+    Dict[str, List[str]],
+]
     | Dict[Any, Any]
 ):
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
     if len(g.nodes) == 0:
-        return dict()
+        return {}, {}, {}
 
     start_nodes = get_root_node_in_digraph(g, is_forward)
     node_list_plan_hash_dict: Dict[str, List[str]] = dict()
     edge_list_plan_hash_dict: Dict[Tuple[Any, Any], List[str]] = dict()
+    edge_label_nodes_set_dict: Dict[
+        str, Set[str]
+    ] = dict()  # a Dictionary of edge labels and sets of nodes
     queue: List[Any] = list()
     queue.extend(start_nodes)
     depth = 0
@@ -223,9 +271,10 @@ def get_node_edge_name_plan_hash_list(
             plan_hashes_for_node: Set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
-                if edge_label is not None:
-                    edge_label = edge_label.strip()
-                    edge_label = edge_label.lower()
+                if edge_label not in edge_label_nodes_set_dict:
+                    edge_label_nodes_set_dict[edge_label] = set()
+                edge_label_nodes_set_dict[edge_label].add(node)
+
                 for plan in plans:
                     if depth < len(plan.actions):
                         if edge_label in plan.actions[depth]:
@@ -240,7 +289,15 @@ def get_node_edge_name_plan_hash_list(
             node_list_plan_hash_dict[node] = list(plan_hashes_for_node)
         depth += 1
         queue = new_queue
-    return node_list_plan_hash_dict, edge_list_plan_hash_dict
+
+    return (
+        node_list_plan_hash_dict,
+        edge_list_plan_hash_dict,
+        {
+            edge_label: list(nodes)
+            for edge_label, nodes in edge_label_nodes_set_dict.items()
+        },
+    )
 
 
 def get_graph_with_number_of_plans_label(

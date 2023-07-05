@@ -15,6 +15,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     PlanningTask,
     Landmark,
+    SelectionPriority,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
@@ -37,6 +38,37 @@ class TestSelectionFlowHelper(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        TestSelectionFlowHelper.toy_domain = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
+        )
+        TestSelectionFlowHelper.toy_problem = read_str_from_file(
+            os.path.join(my_dir, rel_pddl_path.format("toy/problem"))
+        )
+        TestSelectionFlowHelper.toy_landmarks = (
+            get_landmarks_by_landmark_category(
+                PlanningTask(
+                    domain=TestSelectionFlowHelper.toy_domain,
+                    problem=TestSelectionFlowHelper.toy_problem,
+                ),
+                LandmarkCategory.RWH.value,
+            )
+        )
+        TestSelectionFlowHelper.toy_planner_response_model = (
+            PlannerResponseModel.parse_obj(
+                asdict(
+                    get_plan_topq(
+                        PlanningTask(
+                            domain=TestSelectionFlowHelper.toy_domain,
+                            problem=TestSelectionFlowHelper.toy_problem,
+                            num_plans=10,
+                            quality_bound=1.2,
+                        )
+                    )
+                )
+            )
+        )
+        TestSelectionFlowHelper.toy_planner_response_model.set_plan_hashes()
+
         TestSelectionFlowHelper.gripper_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
@@ -59,8 +91,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
                         PlanningTask(
                             domain=TestSelectionFlowHelper.gripper_domain,
                             problem=TestSelectionFlowHelper.gripper_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
+                            num_plans=10,
+                            quality_bound=1.2,
                         )
                     )
                 )
@@ -90,8 +122,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
                         PlanningTask(
                             domain=TestSelectionFlowHelper.travel_domain,
                             problem=TestSelectionFlowHelper.travel_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
+                            num_plans=10,
+                            quality_bound=1.2,
                         )
                     )
                 )
@@ -113,6 +145,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
         self.assertEqual(len(selection_flow_output.plans), 2)
         self.assertEqual(len(selection_flow_output.choice_infos), 12)
@@ -129,8 +162,9 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
-        self.assertEqual(len(selection_flow_output.plans), 6)
+        self.assertEqual(len(selection_flow_output.plans), 4)
         self.assertEqual(len(selection_flow_output.choice_infos), 2)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
@@ -147,8 +181,9 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.travel_domain,
             TestSelectionFlowHelper.travel_problem,
             TestSelectionFlowHelper.travel_planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
-        self.assertEqual(len(selection_flow_output.plans), 1)
+        self.assertEqual(len(selection_flow_output.plans), 3)
         self.assertEqual(len(selection_flow_output.choice_infos), 3)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
@@ -161,16 +196,20 @@ class TestSelectionFlowHelper(unittest.TestCase):
             TestSelectionFlowHelper.gripper_domain,
             TestSelectionFlowHelper.gripper_problem,
             TestSelectionFlowHelper.planner_response_model.plans,
+            SelectionPriority.MAX_PLANS.value,
         )
-        self.assertEqual(len(selection_flow_output.plans), 6)
+        self.assertEqual(len(selection_flow_output.plans), 12)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)
         self.assertIsNone(selection_flow_output.choice_infos[0].landmark)
-        self.assertIsNone(selection_flow_output.choice_infos[0].max_num_plans)
-        self.assertIsNone(
-            selection_flow_output.choice_infos[0].action_name_plan_idx_map
+        self.assertEqual(selection_flow_output.choice_infos[0].max_num_plans, 0)
+        self.assertEqual(
+            len(selection_flow_output.choice_infos[0].action_name_plan_idx_map),
+            0,
         )
         self.assertEqual(
-            selection_flow_output.choice_infos[0].node_with_multiple_out_edges,
+            selection_flow_output.choice_infos[0].nodes_with_multiple_out_edges[
+                0
+            ],
             "node0",
         )
         self.assertEqual(

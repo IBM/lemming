@@ -101,7 +101,10 @@ def get_build_flow_output(
     return PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=sort_choice_info_by_distance_to_terminal_nodes(
-            new_choice_infos, node_dist_from_initial_state
+            new_choice_infos,
+            node_dist_from_initial_state
+            if is_forward
+            else node_dist_from_end_state,
         ),
         networkx_graph=networkx_graph,
         first_achiever_edge_dict={},

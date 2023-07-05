@@ -6,7 +6,6 @@
 <br/>
 <img src="https://user-images.githubusercontent.com/4764242/250650534-868a817a-38b2-425b-aaa4-b30721ae3698.png" width="30%" height="auto" />
 
-
 This repository hosts the source code for **Lemming: A Guided Disambiguation Tool for Plan Selection**.
 Lemming makes use of landmarks to proactively guide the user to select a plan from a set of plans
 while greedily minimizing for the number of disambiguation points. It also provides multiple views into the set of
@@ -97,10 +96,12 @@ user:~$ yarn start
 
 ## Citing our work
 
+[`paper`](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf)
+
 ```
 @inproceedings{lemming,
 title={{Lemming: A Guided Disambiguation Tool for Plan Selection}},
-author={Michael Katz and Jungkoo Kang and Tathagata Chakraborti and Francesco Fuggitti and Shirin Sohrabi},
+author={Jungkoo Kang and Tathagata Chakraborti and Michael Katz and Shirin Sohrabi and Francesco Fuggitti},
 booktitle={ICAPS System Demonstration Track},
 year={2023}}
 ```

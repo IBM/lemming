@@ -8,7 +8,6 @@ from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
-    ChoiceInfo,
 )
 
 
@@ -64,9 +63,9 @@ def get_edge_label(g: Graph, edge: Any) -> Optional[str]:
 def get_first_node_with_multiple_out_edges(
     g: Graph,
     is_forward: bool = True,
-) -> List[Tuple[Any, List[Any], List[Any]]]:
+) -> Tuple[List[Tuple[Any, List[Any], List[Any]]], Set[Any]]:
     """
-    returns a list of tuples of 1) node with multiple out edges, 2) first achiever in the node, 3) out edges from the node, and 4) edges traversed up to the node
+    returns a list of tuples of 1) node with multiple out edges, 2) out edges from the node, 3) edges traversed up to the node, nodes traversed
     """
     if len(g.nodes) == 0:
         return None
@@ -75,29 +74,53 @@ def get_first_node_with_multiple_out_edges(
     roots = get_root_node_in_digraph(g, is_forward)
     queue: List[Tuple[Any, List[Any]]] = list()
     queue.extend(list(map(lambda root: (root, []), roots)))
-    # edges_traversed: List[Any] = list()
     nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
     nodes_visited: Set[Any] = set()
     while len(queue) > 0:
         new_queue: List[Any] = list()
         for node, edges_traversed in queue:
+            if node in nodes_visited:
+                continue
+            out_edges = list(g.out_edges(node))  # this is for backward
             edges = (
                 list(g.out_edges(node))
                 if is_forward
                 else list(g.in_edges(node))
             )
-
-            if len(edges) > 1 and node not in nodes_visited:
-                nodes_with_multiple_edges.append(
-                    (
-                        deepcopy(node),
-                        deepcopy(edges),
-                        deepcopy(edges_traversed),
+            if is_forward:
+                if len(edges) > 1:
+                    nodes_with_multiple_edges.append(
+                        (
+                            deepcopy(node),
+                            deepcopy(edges),
+                            deepcopy(edges_traversed),
+                        )
                     )
-                )
-                nodes_visited.add(node)
-                continue
-            for edge in edges:
+                    nodes_visited.add(node)
+                    continue
+            else:  # backward
+                if len(out_edges) > 1 or len(edges) > 1:
+                    if len(out_edges) > 1:
+                        nodes_with_multiple_edges.append(
+                            (
+                                deepcopy(node),
+                                deepcopy(out_edges),
+                                deepcopy(edges_traversed),
+                            )
+                        )
+                        nodes_visited.add(node)
+                    if len(edges) > 1:
+                        nodes_with_multiple_edges.append(
+                            (
+                                deepcopy(node),
+                                deepcopy(edges),
+                                deepcopy(edges_traversed),
+                            )
+                        )
+                        nodes_visited.add(node)
+                    continue
+            if edges is not None and len(edges) == 1:
+                edge = edges[0]  # only one edge can be here
                 edge_label = get_edge_label(g, edge)
                 edges_traversed_so_far = edges_traversed + [edge_label]
                 new_queue.append(
@@ -108,7 +131,7 @@ def get_first_node_with_multiple_out_edges(
 
             nodes_visited.add(node)
         queue = new_queue
-    return nodes_with_multiple_edges
+    return nodes_with_multiple_edges, nodes_visited
 
 
 def get_landmarks_in_edges(
@@ -168,15 +191,19 @@ def get_all_nodes_coming_from_node(
 
 
 def get_nodes_to_exclude(
-    g: Graph, nodes_to_start: Set[Any], is_forward: bool
+    g: Graph,
+    nodes_to_start: Set[Any],
+    nodes_traversed: Set[Any],
+    is_forward: bool,
 ) -> Set[Any]:
     if len(g.nodes) == 0:
         return set()
     nodes_to_remove: List[Set[Any]] = list()
     for node_start in nodes_to_start:
-        nodes_to_remove.append(
-            get_all_nodes_coming_from_node(g, node_start, set(), is_forward)
+        nodes_from_a_node = get_all_nodes_coming_from_node(
+            g, node_start, nodes_traversed.union(nodes_to_start), is_forward
         )
+        nodes_to_remove.append(nodes_from_a_node)
 
     merger: Set[Any] = merge_sets(nodes_to_remove)
     return merger
@@ -191,11 +218,16 @@ def remove_nodes_from_graph(g: Graph, nodes_to_remove: Set[Any]) -> Graph:
 
 
 def get_graph_upto_nodes(
-    g: Graph, nodes_to_end: Set[Any], is_forward: bool
+    g: Graph,
+    nodes_to_end: Set[Any],
+    nodes_traversed: Set[Any],
+    is_forward: bool,
 ) -> Graph:
     if len(g.nodes) == 0:
         return g.copy()
-    nodes_to_exclude = get_nodes_to_exclude(g, nodes_to_end, is_forward)
+    nodes_to_exclude = get_nodes_to_exclude(
+        g, nodes_to_end, nodes_traversed, is_forward
+    )
     return remove_nodes_from_graph(g, nodes_to_exclude)
 
 

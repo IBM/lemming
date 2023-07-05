@@ -2,8 +2,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Dict, List, Optional, Any
 from dacite import from_dict
-from server.helpers.common_helper.hash_helper import get_list_hash
-from server.helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
+from helpers.common_helper.hash_helper import get_list_hash
+from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 from pydantic import BaseModel, validator
 from watson_ai_planning.data_model.planning_types import PlanningResult
 

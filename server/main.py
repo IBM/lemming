@@ -292,8 +292,7 @@ async def ltl_compile(
     # Planning with SymK planner
     symk_planner = SymKPlanner()
     planning_result = symk_planner.plan(planning_task)
-    lemming_task = LemmingTask(
-        planning_task=planning_task, plans=planning_result.plans
-    )
+    plans = get_planner_response_model_with_hash(planning_result).plans
+    lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
 
     return lemming_task

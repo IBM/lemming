@@ -15,7 +15,7 @@ from watson_ai_planning.planner.utils import (
     parse_planning_result,
 )
 
-from server.helpers.planner_helper.planner_helper_data_types import PlanningTask
+from helpers.planner_helper.planner_helper_data_types import PlanningTask
 from server.planners.base import Planner
 
 PLANNERS_ROOT = Path(
@@ -45,7 +45,7 @@ def create_plan_from_file(plan_file: Path) -> Dict[Any, Any]:
     return ret
 
 
-def _parse_planning_result(plan_file_prefix_name: str):
+def _parse_planning_result(plan_file_prefix_name: str) -> str:
     """Parse plans and create a json."""
     plan_file_name = f"{plan_file_prefix_name}*"
     plan_files = glob.glob(plan_file_name)

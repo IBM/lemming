@@ -8,8 +8,8 @@ import {
     getBasisNodes,
     rawNodeTransform,
 } from '../../components/Info';
-import { GraphCanvas, lightTheme } from 'reagraph';
-import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
+import { GraphCanvas } from 'reagraph';
+import { Grid, Column, Button, Tile } from '@carbon/react';
 
 const init_feedback =
     "Build a plan backward from the goal. Right click on the nodes and edges to find what's in them. Click on an edge to enforce all plans with that action.";
@@ -20,48 +20,11 @@ const BuildForward = props => {
     const actives = getActiveNodes(props.state);
 
     const ref = useRef(null);
-    const [commits] = useState([]);
-
-    const [commit_mode, setCommitMode] = useState(false);
     const [feedback_text, setFeedbackText] = useState(init_feedback);
-
-    const setCommits = edge => {
-        if (!edge) {
-            commits.splice(0, commits.length);
-        } else {
-            const indexOf = commits.indexOf(edge);
-
-            if (indexOf > -1) {
-                commits.splice(indexOf, 1);
-            } else {
-                commits.push(edge);
-            }
-        }
-
-        if (commits.length > 0) {
-            const commit_msg =
-                'Selected edges: <strong>' +
-                commits.join(', ') +
-                "</strong>. Don't forget to commit!";
-            setFeedbackText(commit_msg);
-        } else {
-            setFeedbackText(init_feedback);
-        }
-    };
 
     const onEdgeClick = edge => {
         const label = parseEdgeName(edge.label);
-
-        if (commit_mode) {
-            setCommits(label);
-        } else {
-            props.onEdgeClick(label);
-        }
-    };
-
-    const commitChanges = e => {
-        if (commits.length > 0) props.commitChanges(commits);
-        setCommits();
+        props.onEdgeClick(label);
     };
 
     const onFocus = e => {
@@ -88,19 +51,6 @@ const BuildForward = props => {
             <Column lg={16} md={8} sm={4}>
                 {nodes.length > 0 && !props.no_feedback && (
                     <div className="hover-zone">
-                        <Toggle
-                            aria-label="toggle commitm mode"
-                            id="toggle-commit-mode"
-                            size="sm"
-                            labelText=""
-                            labelA="Commit Mode OFF"
-                            labelB="Commit Mode ON"
-                            toggled={commit_mode}
-                            onClick={() => setCommitMode(!commit_mode)}
-                        />
-                        <br />
-                        <br />
-
                         <Tile className="hover-zone-tile">
                             <div
                                 dangerouslySetInnerHTML={{
@@ -116,16 +66,6 @@ const BuildForward = props => {
                             onClick={onFocus}>
                             Focus
                         </Button>
-
-                        {commit_mode && (
-                            <Button
-                                style={{ marginLeft: '10px', width: '100px' }}
-                                kind="tertiary"
-                                size="sm"
-                                onClick={commitChanges}>
-                                Commit
-                            </Button>
-                        )}
                     </div>
                 )}
 
@@ -133,10 +73,6 @@ const BuildForward = props => {
                     {nodes.length > 0 && (
                         <GraphCanvas
                             ref={ref}
-                            theme={{
-                                ...lightTheme,
-                                canvas: { background: 'white' },
-                            }}
                             labelType="edges"
                             edgeLabelPosition="inline"
                             layoutType="hierarchicalTd"

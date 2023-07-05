@@ -1,117 +1,23 @@
 import React, { useRef, useState } from 'react';
-import { generateDescription, parseEdgeName } from '../../components/Info';
+import {
+    generateDescription,
+    parseEdgeName,
+    generateNodes,
+    generateEdges,
+    getActiveNodes,
+    getBasisNodes,
+    rawNodeTransform,
+} from '../../components/Info';
 import { GraphCanvas, lightTheme } from 'reagraph';
 import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
 
-function rawNodeTransform(raw_node) {
-    return {
-        ...raw_node,
-        label: '',
-        description: raw_node.label,
-        data: { description: raw_node.label },
-    };
-}
-
-function getDanglyNodes(state) {
-    var node_names = state.graph.nodes.map(item => item.id);
-    node_names = new Set(node_names);
-
-    for (var i = 0; i < state.graph.links.length; i++) {
-        var target = state.graph.links[i].target;
-        if (node_names.has(target)) node_names.delete(target);
-    }
-
-    return node_names;
-}
-
-function generateNodes(state) {
-    if (!state.graph || !state.graph.nodes) return [];
-
-    var dangly_nodes = getDanglyNodes(state);
-    var transformed_nodes = state.graph.nodes.map((item, id) => {
-        return rawNodeTransform(item);
-    });
-
-    if (dangly_nodes.size > 1)
-        transformed_nodes.push({
-            id: 'MORE',
-            label: 'MORE',
-            description: 'MORE',
-            data: { description: 'MORE' },
-        });
-
-    return transformed_nodes;
-}
-
-function generateEdges(state) {
-    if (!state.graph || !state.graph.links) return [];
-
-    var edges = state.graph.links.map((item, id) => {
-        return {
-            ...item,
-            id: id,
-            size: 2,
-        };
-    });
-
-    var dangly_nodes = getDanglyNodes(state);
-    var dangly_edges = [];
-
-    if (dangly_nodes.size > 1)
-        dangly_edges = Array.from(dangly_nodes).map((item, i) => {
-            return {
-                id: state.graph.links.length + i,
-                key: 0,
-                label: 'BUILD',
-                size: 2,
-                source: 'MORE',
-                target: item,
-            };
-        });
-
-    edges = edges.concat(dangly_edges);
-    return edges;
-}
-
-function getBasisNodes(state) {
-    var basis_nodes = [];
-
-    if (state.choice_infos.length > 0) {
-        var transform = state.choice_infos.filter(
-            item => item.is_available_for_choice
-        );
-
-        if (transform.length > 0) {
-            transform = transform[0];
-            basis_nodes = transform.nodes_with_multiple_out_edges.reduce(
-                (bag, item) => bag.concat(item),
-                []
-            );
-        }
-    }
-
-    return basis_nodes;
-}
-
-function getActiveNodes(state) {
-    if (!state.graph || !state.graph.nodes) return [];
-
-    const basis_nodes = getBasisNodes(state);
-    return basis_nodes === null
-        ? []
-        : state.graph.links
-              .filter(item => basis_nodes.indexOf(item.source) > -1)
-              .map(item => item.target)
-              .concat(basis_nodes);
-}
-
 const init_feedback =
-    "Right click on the nodes and edges to find what's in them. Click on an edge to enforce all plans with that action. Use commit mode to commit multiple selections together.";
+    "Build a plan forward from the initial state. Right click on the nodes and edges to find what's in them. Click on an edge to enforce all plans with that action.";
 
 const BuildBackward = props => {
     const nodes = generateNodes(props.state);
     const edges = generateEdges(props.state);
-    const actives = getActiveNodes(props.state);
+    const actives = getActiveNodes(props.state, true);
 
     const ref = useRef(null);
     const [commits] = useState([]);
@@ -227,10 +133,6 @@ const BuildBackward = props => {
                     {nodes.length > 0 && (
                         <GraphCanvas
                             ref={ref}
-                            theme={{
-                                ...lightTheme,
-                                canvas: { background: 'white' },
-                            }}
                             labelType="edges"
                             edgeLabelPosition="inline"
                             layoutType="hierarchicalTd"

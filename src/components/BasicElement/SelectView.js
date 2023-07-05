@@ -1,69 +1,15 @@
 import React, { useRef, useState } from 'react';
-import { generateDescription, parseEdgeName } from '../../components/Info';
+import {
+    generateDescription,
+    parseEdgeName,
+    generateNodes,
+    generateEdges,
+    getActiveNodes,
+    getBasisNodes,
+    rawNodeTransform,
+} from '../../components/Info';
 import { GraphCanvas, lightTheme } from 'reagraph';
 import { Grid, Column, Button, Tile, Toggle } from '@carbon/react';
-
-function rawNodeTransform(raw_node) {
-    return {
-        ...raw_node,
-        label: '',
-        description: raw_node.label,
-        data: { description: raw_node.label },
-    };
-}
-
-function generateNodes(state) {
-    if (!state.graph || !state.graph.nodes) return [];
-    return state.graph.nodes.map((item, id) => {
-        return rawNodeTransform(item);
-    });
-}
-
-function generateEdges(state) {
-    if (!state.graph || !state.graph.links) return [];
-
-    const edges = state.graph.links.map((item, id) => {
-        return {
-            ...item,
-            id: id,
-            size: 2,
-        };
-    });
-
-    return edges;
-}
-
-function getBasisNodes(state) {
-    var basis_nodes = [];
-
-    if (state.choice_infos.length > 0) {
-        var transform = state.choice_infos.filter(
-            item => item.is_available_for_choice
-        );
-
-        if (transform.length > 0) {
-            transform = transform[0];
-            basis_nodes = transform.nodes_with_multiple_out_edges.reduce(
-                (bag, item) => bag.concat(item),
-                []
-            );
-        }
-    }
-
-    return basis_nodes;
-}
-
-function getActiveNodes(state) {
-    if (!state.graph || !state.graph.nodes) return [];
-
-    const basis_nodes = getBasisNodes(state);
-    return basis_nodes === null
-        ? []
-        : state.graph.links
-              .filter(item => basis_nodes.indexOf(item.source) > -1)
-              .map(item => item.target)
-              .concat(basis_nodes);
-}
 
 const init_feedback =
     "Right click on the nodes and edges to find what's in them. Click on an edge to enforce all plans with that action. Use commit mode to commit multiple selections together.";

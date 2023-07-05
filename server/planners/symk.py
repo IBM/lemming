@@ -18,9 +18,7 @@ from watson_ai_planning.planner.utils import (
 from helpers.planner_helper.planner_helper_data_types import PlanningTask
 from server.planners.base import Planner
 
-PLANNERS_ROOT = Path(
-    inspect.getframeinfo(inspect.currentframe()).filename
-).parent
+PLANNERS_ROOT = Path(inspect.getframeinfo(inspect.currentframe()).filename).parent  # type: ignore[arg-type]
 SERVER_ROOT = PLANNERS_ROOT.parent
 
 DEFAULT_BIN_SYMK_PATH = (
@@ -134,4 +132,4 @@ class SymKPlanner(Planner):
             "--search",
             f"symq-bd(plan_selection=top_k(num_plans={str(num_plans)},dump_plans=false),quality={str(quality)})",
         ]
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd)  # type: ignore

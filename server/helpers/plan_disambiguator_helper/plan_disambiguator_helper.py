@@ -24,7 +24,7 @@ def get_min_dist_between_nodes_from_terminal_node(
     edge_labels: List[str],
     edge_label_nodes_dict: Dict[str, List[str]],
     node_dist_from_terminal_state: Dict[str, int],
-):
+) -> int:
     min_dist = sys.maxsize
     for edge_label in edge_labels:
         if edge_label in edge_label_nodes_dict:

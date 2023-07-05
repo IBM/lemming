@@ -1,7 +1,6 @@
 """Wrapper to the SymK planner."""
 import glob
 import json
-import os
 import re
 import subprocess
 import tempfile
@@ -46,10 +45,10 @@ def create_plan_from_file(plan_file: Path) -> Dict[Any, Any]:
     return ret
 
 
-def _parse_planning_result(plan_file: Path) -> Dict[Any, Any]:
-    """Parse plans and create a json file."""
-    plan_file_name = f"{plan_file}*"
-    plan_files = glob.glob(os.path.join(plan_file_name))
+def _parse_planning_result(plan_file_prefix_name: str):
+    """Parse plans and create a json."""
+    plan_file_name = f"{plan_file_prefix_name}*"
+    plan_files = glob.glob(plan_file_name)
 
     unique_plans = set()
     plans = []
@@ -60,7 +59,7 @@ def _parse_planning_result(plan_file: Path) -> Dict[Any, Any]:
             if actions_tuple not in unique_plans:
                 unique_plans.add(actions_tuple)
                 plans.append(plan)
-    return {"plans": plans}
+    return json.dumps({"plans": plans})
 
 
 class SymKPlanner(Planner):
@@ -93,7 +92,9 @@ class SymKPlanner(Planner):
         :param options: options for the planner.
         :return: the plan.
         """
-        with tempfile.NamedTemporaryFile() as plan_temp, tempfile.NamedTemporaryFile() as domain_temp, tempfile.NamedTemporaryFile() as problem_temp:
+        with tempfile.NamedTemporaryFile(
+            delete=False
+        ) as plan_temp, tempfile.NamedTemporaryFile() as domain_temp, tempfile.NamedTemporaryFile() as problem_temp:
             # We have to read and write to files because the planner is CLI
             # oriented.
             plan_file = Path(tempfile.gettempdir()) / plan_temp.name
@@ -108,14 +109,12 @@ class SymKPlanner(Planner):
                 planning_task.quality_bound,
                 plan_file,
             )
+            json_plans = _parse_planning_result(str(plan_file))
+            result: PlanningResultDict = json.loads(str(json_plans))
 
-        json_plans = _parse_planning_result(plan_file)
-
-        result: PlanningResultDict = json.loads(json_plans)
-
-        for plan in result["plans"]:
-            plan["cost"] = int(plan["cost"])
-        return parse_planning_result(result)
+            for plan in result["plans"]:
+                plan["cost"] = int(plan["cost"])
+            return parse_planning_result(result)
 
     def _call_planner(
         self,

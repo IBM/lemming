@@ -12,17 +12,41 @@ function rawNodeTransform(raw_node) {
     };
 }
 
+function getDanglyNodes(state) {
+    var node_names = state.graph.nodes.map(item => item.id);
+    node_names = new Set(node_names);
+
+    for (var i = 0; i < state.graph.links.length; i++) {
+        var target = state.graph.links[i].target;
+        if (node_names.has(target)) node_names.delete(target);
+    }
+
+    return node_names;
+}
+
 function generateNodes(state) {
     if (!state.graph || !state.graph.nodes) return [];
-    return state.graph.nodes.map((item, id) => {
+
+    var dangly_nodes = getDanglyNodes(state);
+    var transformed_nodes = state.graph.nodes.map((item, id) => {
         return rawNodeTransform(item);
     });
+
+    if (dangly_nodes.size > 1)
+        transformed_nodes.push({
+            id: 'MORE',
+            label: 'MORE',
+            description: 'MORE',
+            data: { description: 'MORE' },
+        });
+
+    return transformed_nodes;
 }
 
 function generateEdges(state) {
     if (!state.graph || !state.graph.links) return [];
 
-    const edges = state.graph.links.map((item, id) => {
+    var edges = state.graph.links.map((item, id) => {
         return {
             ...item,
             id: id,
@@ -30,6 +54,22 @@ function generateEdges(state) {
         };
     });
 
+    var dangly_nodes = getDanglyNodes(state);
+    var dangly_edges = [];
+
+    if (dangly_nodes.size > 1)
+        dangly_edges = Array.from(dangly_nodes).map((item, i) => {
+            return {
+                id: state.graph.links.length + i,
+                key: 0,
+                label: 'BUILD',
+                size: 2,
+                source: 'MORE',
+                target: item,
+            };
+        });
+
+    edges = edges.concat(dangly_edges);
     return edges;
 }
 

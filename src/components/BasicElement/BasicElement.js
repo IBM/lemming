@@ -418,7 +418,6 @@ class PlanArea extends React.Component {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(666, data);
                 var unselected_landmarks = [];
 
                 if (this.state.active_view === 'Select View')

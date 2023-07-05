@@ -10,6 +10,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
     get_plan_disambiguator_output_filtered_by_selection_infos,
+    sort_choice_info_by_distance_to_terminal_nodes,
 )
 from helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
@@ -99,7 +100,9 @@ def get_build_flow_output(
     )
     return PlanDisambiguatorOutput(
         plans=selected_plans,
-        choice_infos=new_choice_infos,
+        choice_infos=sort_choice_info_by_distance_to_terminal_nodes(
+            new_choice_infos, node_dist_from_initial_state
+        ),
         networkx_graph=networkx_graph,
         first_achiever_edge_dict={},
         node_plan_hashes_dict=node_plan_hashes_dict,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from enum import Enum
+import sys
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, validator
 from dacite import from_dict
@@ -73,8 +74,8 @@ class ChoiceInfo(BaseModel):
     )  # keys are first-achievers (or edges) available fore the next choice
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
-    distance_to_init: int = -1
-    distance_to_end: int = -1
+    distance_to_init: int = sys.maxsize
+    distance_to_end: int = sys.maxsize
 
 
 class PlanDisambiguatorInput(BaseModel):

@@ -257,6 +257,8 @@ class PlanArea extends React.Component {
         if (cached_formulas.indexOf(new_formula) === -1)
             cached_formulas.push(new_formula);
 
+          console.log(123, planner_payload)
+
         this.setState(
             {
                 ...this.state,

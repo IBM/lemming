@@ -85,7 +85,7 @@ class NL2LTLIntegration extends React.Component {
         var cached_formulas = this.state.cached_formulas;
         cached_formulas.push(new_formula);
 
-        fetch(link_to_server + '/ltl_compile', {
+        fetch(link_to_server + '/ltl_compile/p4p', {
             method: 'POST',
             body: JSON.stringify({
                 domain: this.state.domain,

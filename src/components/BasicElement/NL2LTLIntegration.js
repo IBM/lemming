@@ -23,42 +23,46 @@ const default_state = {
     text_input: '',
     ltl_formulas: [],
     suggestions: [],
-  selected_formula: 0,
+    selected_formula: 0,
 };
 
 const getCachedSuggestions = nl_prompts => {
-  return nl_prompts
-    .map(item => item.paraphrases.concat([item.utterance]))
-    .reduce((options, item) => options.concat(item), []);
+    return nl_prompts
+        .map(item => item.paraphrases.concat([item.utterance]))
+        .reduce((options, item) => options.concat(item), []);
 };
 
 const getInitState = state => {
-  return {
-    ...default_state,
-    ...state,
-    domain_name: state.domain_name,
-    domain: state.domain,
-    problem: state.problem,
-    plans: state.plans,
-    cached_suggestions: getCachedSuggestions(state.nl_prompts),
-    suggestions: [],
-  };
+    return {
+        ...default_state,
+        ...state,
+        domain_name: state.domain_name,
+        domain: state.domain,
+        problem: state.problem,
+        plans: state.plans,
+        cached_suggestions: getCachedSuggestions(state.nl_prompts),
+        suggestions: [],
+    };
 };
 
 class NL2LTLIntegration extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = getInitState(props.state);
-  }
+    constructor(props) {
+        super(props);
+        this.state = getInitState(props.state);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState(getInitState(nextProps.state));
+    }
 
     handleKeyDown(e) {
         if (e.key === 'Enter') {
             fetch(link_to_server + '/nl2ltl', {
                 method: 'POST',
                 body: JSON.stringify({
-          domain_name: this.state.domain_name,
-          utterance: this.state.text_input,
-        }),
+                    domain_name: this.state.domain_name,
+                    utterance: this.state.text_input,
+                }),
                 headers: { 'Content-Type': 'application/json' },
             })
                 .then(res => res.json())

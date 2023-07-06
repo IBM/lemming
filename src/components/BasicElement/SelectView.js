@@ -59,11 +59,11 @@ const SelectView = props => {
         }
     };
 
-  const commitChanges = e => {
-    if (commits.length > 0) props.commitChanges(commits);
+    const commitChanges = e => {
+        if (commits.length > 0) props.commitChanges(commits);
 
-    setCommits();
-  };
+        setCommits();
+    };
 
     const onFocus = e => {
         const basis_nodes = getBasisNodes(props.state);

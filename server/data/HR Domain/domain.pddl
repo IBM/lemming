@@ -48,7 +48,7 @@
     )
 
     (:constants
-        WO__Update_JR_Details WO__approve_jrs_approve_jrs_post WO__createNewJobRequisitionExisting WO__getJobRequisitions WO__getJobRequisitions_selector WO__getJobRequisitions_selector_multi WO__postJobs data-mapper error_handler fallback slot-filler slot_filler_for_planner slot_filler_form_agent - agent
+        WO__postJobsLinkedIn WO__postJobsIndeed WO__showApprovedJRs WO__Update_JR_Details WO__approve_jrs_approve_jrs_post WO__createNewJobRequisitionExisting WO__getJobRequisitions WO__getJobRequisitions_selector WO__getJobRequisitions_selector_multi WO__postJobs data-mapper error_handler fallback slot-filler slot_filler_for_planner slot_filler_form_agent - agent
         job_requisitions - get_jrs_job_requisitions
         job_requisitions_filter_list - get_jrs_job_requisitions_filter_list
         job_requisitions_list - get_jrs_job_requisitions_list
@@ -94,8 +94,8 @@
 
     (:predicates
         (has_done ?x1 - agent)
-	    (goal-achieved)
-	    (done)
+	(goal-achieved)
+	(done)
         (failed ?x1 - agent)
         (known ?x1 - generic)
         (is_slotfillable ?x1 - generic)
@@ -107,9 +107,20 @@
         (affinity ?x1 - generic ?x2 - generic) - number
     )
 
-    
 
-    
+    (:action WO__showApprovedJRs
+     :parameters ()
+     :precondition (and (not (goal-achieved)) (not (has_done WO__getJobRequisitions)) (not (has_done WO__showApprovedJRs)) (not (failed WO__showApprovedJRs)) (known status_in_query_get_jrs))
+     :effect (and
+        (has_done WO__showApprovedJRs)
+        (known instances)
+        (known job_requisitions_list)
+	(done)
+        (increase (total-cost ) 1))
+    )
+
+
+
     (:action WO__getJobRequisitions_selector
      :parameters ()
      :precondition (and (not (goal-achieved)) (not (has_done WO__getJobRequisitions_selector)) (not (failed WO__getJobRequisitions_selector)) (known job_requisitions_list))
@@ -168,7 +179,7 @@
 
     (:action WO__approve_jrs_approve_jrs_post
      :parameters ()
-     :precondition (and (not (goal-achieved)) (not (has_done WO__approve_jrs_approve_jrs_post)) (not (failed WO__approve_jrs_approve_jrs_post)) (known jobReqId) (known hiringManagerNote) (known jobProfile) (known hiringManager))
+     :precondition (and (not (goal-achieved)) (not (has_done WO__approve_jrs_approve_jrs_post)) (not (failed WO__approve_jrs_approve_jrs_post))  (known jobReqId) (known hiringManagerNote) (known jobProfile) (known hiringManager))
      :effect (and
         (has_done WO__approve_jrs_approve_jrs_post)
         (known jobReqId)
@@ -218,15 +229,29 @@
     )
 
 
-    (:action WO__postJobs
+    (:action WO__postJobsIndeed
      :parameters ()
-     :precondition (and (not (goal-achieved)) (not (has_done WO__postJobs)) (not (failed WO__postJobs)) (known jobReqId) (known jobProfile) (known channelName))
+     :precondition (and (not (goal-achieved)) (not (has_done WO__postJobsIndeed)) (not (failed WO__postJobsIndeed)) (known jobReqId) (known jobProfile) (known channelName))
      :effect (and
         (has_done WO__postJobs)
+	(has_done WO__postJobsIndeed)
         (known response)
 	(done) (goal-achieved)
         (increase (total-cost ) 1))
     )
+
+
+   (:action WO__postJobsLinkedIn
+     :parameters ()
+     :precondition (and (not (goal-achieved)) (not (has_done WO__postJobsLinkedIn)) (not (failed WO__postJobsLinkedIn)) (known jobReqId) (known jobProfile) (known channelName))
+     :effect (and
+        (has_done WO__postJobsLinkedIn)
+	(has_done WO__postJobs)
+        (known response)
+	(done) (goal-achieved)
+        (increase (total-cost ) 1))
+    )
+
 
 
     (:action WO__Update_JR_Details
@@ -300,392 +325,6 @@
         (increase (total-cost ) 1))
     )
 
-
-    (:action data-mapper_type__of__salRateType
-     :parameters (?x - type__of__salRateType ?y - type__of__salRateType)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__competency_type
-     :parameters (?x - type__of__competency_type ?y - type__of__competency_type)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__competency_id
-     :parameters (?x - type__of__competency_id ?y - type__of__competency_id)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__recruiter
-     :parameters (?x - type__of__recruiter ?y - type__of__recruiter)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__department
-     :parameters (?x - type__of__department ?y - type__of__department)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__HiringManager
-     :parameters (?x - type__of__HiringManager ?y - type__of__HiringManager)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__status_in_query_get_jrs
-     :parameters (?x - type__of__status_in_query_get_jrs ?y - type__of__status_in_query_get_jrs)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__location
-     :parameters (?x - type__of__location ?y - type__of__location)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__state
-     :parameters (?x - type__of__state ?y - type__of__state)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__status
-     :parameters (?x - type__of__status ?y - type__of__status)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__candidateProgress
-     :parameters (?x - type__of__candidateProgress ?y - type__of__candidateProgress)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobReqId
-     :parameters (?x - type__of__jobReqId ?y - type__of__jobReqId)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_get_jrs_job_requisitions
-     :parameters (?x - get_jrs_job_requisitions ?y - get_jrs_job_requisitions)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__createdDateTime
-     :parameters (?x - type__of__createdDateTime ?y - type__of__createdDateTime)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__status_in_query_create_jr
-     :parameters (?x - type__of__status_in_query_create_jr ?y - type__of__status_in_query_create_jr)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__list_of_signature_item_spec
-     :parameters (?x - type__of__list_of_signature_item_spec ?y - type__of__list_of_signature_item_spec)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__closedDateTime
-     :parameters (?x - type__of__closedDateTime ?y - type__of__closedDateTime)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__city
-     :parameters (?x - type__of__city ?y - type__of__city)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__costOfHire
-     :parameters (?x - type__of__costOfHire ?y - type__of__costOfHire)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__channelName
-     :parameters (?x - type__of__channelName ?y - type__of__channelName)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__slot_fill_form_title
-     :parameters (?x - type__of__slot_fill_form_title ?y - type__of__slot_fill_form_title)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobProfile_in_query_create_jr
-     :parameters (?x - type__of__jobProfile_in_query_create_jr ?y - type__of__jobProfile_in_query_create_jr)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__country
-     :parameters (?x - type__of__country ?y - type__of__country)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__competency_description
-     :parameters (?x - type__of__competency_description ?y - type__of__competency_description)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_get_jrs_job_requisitions_filter_list
-     :parameters (?x - get_jrs_job_requisitions_filter_list ?y - get_jrs_job_requisitions_filter_list)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__Recruiter
-     :parameters (?x - type__of__Recruiter ?y - type__of__Recruiter)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__original_error
-     :parameters (?x - type__of__original_error ?y - type__of__original_error)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobReqId_in_response_in_create_jr
-     :parameters (?x - type__of__jobReqId_in_response_in_create_jr ?y - type__of__jobReqId_in_response_in_create_jr)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobStartDate
-     :parameters (?x - type__of__jobStartDate ?y - type__of__jobStartDate)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_get_jrs_job_requisitions_list
-     :parameters (?x - get_jrs_job_requisitions_list ?y - get_jrs_job_requisitions_list)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__currency
-     :parameters (?x - type__of__currency ?y - type__of__currency)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__division
-     :parameters (?x - type__of__division ?y - type__of__division)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__salaryBase
-     :parameters (?x - type__of__salaryBase ?y - type__of__salaryBase)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__sf_context
-     :parameters (?x - type__of__sf_context ?y - type__of__sf_context)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__hiringManager
-     :parameters (?x - type__of__hiringManager ?y - type__of__hiringManager)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__hiringManagerNote
-     :parameters (?x - type__of__hiringManagerNote ?y - type__of__hiringManagerNote)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__location_in_query_create_jr
-     :parameters (?x - type__of__location_in_query_create_jr ?y - type__of__location_in_query_create_jr)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobProfile
-     :parameters (?x - type__of__jobProfile ?y - type__of__jobProfile)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__workExperience
-     :parameters (?x - type__of__workExperience ?y - type__of__workExperience)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__data_objects
-     :parameters (?x - type__of__data_objects ?y - type__of__data_objects)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__jobDescription
-     :parameters (?x - type__of__jobDescription ?y - type__of__jobDescription)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__instances
-     :parameters (?x - type__of__instances ?y - type__of__instances)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
-
-
-    (:action data-mapper_type__of__response
-     :parameters (?x - type__of__response ?y - type__of__response)
-     :precondition (and (known ?x) (not (known ?y)))
-     :effect (and
-        (known ?y)
-        (increase (total-cost ) 3))
-    )
 
 
     (:action slot-filler---slot_fill_form_title

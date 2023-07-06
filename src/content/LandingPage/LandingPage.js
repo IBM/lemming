@@ -22,175 +22,211 @@ import {
 
 const config = require('../../config.json');
 class LandingPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      current_view: config.default_view,
-    };
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            current_view: config.default_view,
+        };
+    }
 
-  changeView(e) {
-    this.setState({
-      ...this.state,
-      current_view: e.name,
-    });
-  }
+    changeView(e) {
+        this.setState({
+            ...this.state,
+            current_view: e.name,
+        });
+    }
 
-  render() {
-    return (
-      <Grid>
-        <Column lg={4} md={4} sm={4}>
-          <img
-            alt="A Giant Lemming"
-            src={generateURL('shared', 'lemming', 'png')}
-            className="logo"
-            width="25%"
-          />
-
-          <br />
-          <br />
-          <h4>
-            <span className="text-blue">{config.metadata.name}</span>
-            {this.state.current_view === 'NL2LTL Integration' && (
-              <span className="text-maroon"> ft. NL2LTL</span>
-            )}
-          </h4>
-          <h3>{config.metadata.title_text}</h3>
-
-          <br />
-          <p style={{ fontSize: 'small' }}>{config.metadata.info_text}</p>
-
-          <br />
-          <ButtonSet stacked>
-            <Button
-              kind="tertiary"
-              className="buttonset"
-              size="sm"
-              renderIcon={Document}
-              href={generateURL('shared', config.metadata.primary_link, 'pdf')}
-              target="_blank">
-              Read
-            </Button>
-            <br />
-            <Button
-              kind="tertiary"
-              className="buttonset tertiary-secondary"
-              renderIcon={LogoGithub}
-              size="sm"
-              href={config.metadata.link_to_code}
-              target="_blank">
-              Contribute
-            </Button>
-            <br />
-
+    render() {
+        return (
             <Grid>
-              <Column lg={4} md={4} sm={4}>
-                <Accordion align="start">
-                  <AccordionItem
-                    className="see-also-accordion"
-                    title="See also"
-                    onClick={e => {
-                      window.scrollTo({
-                        top:
-                          e.currentTarget.offsetHeight > e.pageY / 4
-                            ? 0
-                            : e.pageY / 2,
-                        behavior: 'smooth',
-                      });
-                    }}>
-                    <StructuredListWrapper ariaLabel="Structured list">
-                      <StructuredListBody>
-                        {config.metadata.secondary_links.map((item, i) => (
-                          <StructuredListRow key={i}>
-                            <StructuredListCell>
-                              <Button
-                                target="_blank"
-                                size="sm"
-                                href={item.link}
-                                kind="ghost"
-                                hasIconOnly
-                                iconDescription={item.name
-                                }renderIcon={Document}></Button>
-                            </StructuredListCell>
-                            <StructuredListCell>
-                              {item.name}{' '}
-                              <span className="text-secondary">
-                                {' '}
-                                | {item.venue}
-                              </span>
-                            </StructuredListCell>
-                          </StructuredListRow>)
+                <Column lg={4} md={4} sm={4}>
+                    <img
+                        alt="A Giant Lemming"
+                        src={generateURL('shared', 'lemming', 'png')}
+                        className="logo"
+                        width="25%"
+                    />
+
+                    <br />
+                    <br />
+                    <h4>
+                        <span className="text-blue">
+                            {config.metadata.name}
+                        </span>
+                        {this.state.current_view === 'NL2LTL Integration' && (
+                            <span className="text-maroon"> ft. NL2LTL</span>
                         )}
-                      </StructuredListBody>
-                    </StructuredListWrapper>
-                  </AccordionItem>
-                </Accordion>
-              </Column>
-            </Grid>
-          </ButtonSet>
-          <br />
-          <CodeSnippet type="multi">
-            {config.metadata.citation_text}
-          </CodeSnippet>
+                    </h4>
+                    <h3>{config.metadata.title_text}</h3>
 
-          {!isMobile && (
-            <Grid>
-              <Column className="footer" lg={16} md={8} sm={4} style={{padding: '20px', paddingLeft: '0', backgroundColor: 'rgba(255,255,255,0.75'}}>
-                <p
-                  style={{
-                    fontSize: 'small',
-                    marginBottom: '10px',
-                  }}>
-                  Follow us on GitHub. Your love <br /> keeps us going!{' '}
-                  <span role="img" aria-label="hugging face">
-                    &#129303;
-                  </span>
-                </p>
+                    <br />
+                    <p style={{ fontSize: 'small' }}>
+                        {config.metadata.info_text}
+                    </p>
 
-                <GitHubButton
-                  href={config.metadata.link_to_code}
-                  data-size="small"
-                  data-show-count="true"
-                  aria-label="Star repository on GitHub">
-                  Star
-                </GitHubButton>
+                    <br />
+                    <ButtonSet stacked>
+                        <Button
+                            kind="tertiary"
+                            className="buttonset"
+                            size="sm"
+                            renderIcon={Document}
+                            href={generateURL(
+                                'shared',
+                                config.metadata.primary_link,
+                                'pdf'
+                            )}
+                            target="_blank">
+                            Read
+                        </Button>
+                        <br />
+                        <Button
+                            kind="tertiary"
+                            className="buttonset tertiary-secondary"
+                            renderIcon={LogoGithub}
+                            size="sm"
+                            href={config.metadata.link_to_code}
+                            target="_blank">
+                            Contribute
+                        </Button>
+                        <br />
 
-                <div
-                  style={{
-                    marginTop: '20px',
-                    marginBottom: '10px',
-                  }}>
-                  App built by{' '}
-                  <Link href="https://research.ibm.com" target="_blank">
-                    IBM Research
-                  </Link>
-                </div>
-              </Column>
+                        <Grid>
+                            <Column lg={4} md={4} sm={4}>
+                                <Accordion align="start">
+                                    <AccordionItem
+                                        className="see-also-accordion"
+                                        title="See also"
+                                        onClick={e => {
+                                            window.scrollTo({
+                                                top:
+                                                    e.currentTarget
+                                                        .offsetHeight >
+                                                    e.pageY / 4
+                                                        ? 0
+                                                        : e.pageY / 2,
+                                                behavior: 'smooth',
+                                            });
+                                        }}>
+                                        <StructuredListWrapper ariaLabel="Structured list">
+                                            <StructuredListBody>
+                                                {config.metadata.secondary_links.map(
+                                                    (item, i) => (
+                                                        <StructuredListRow
+                                                            key={i}>
+                                                            <StructuredListCell>
+                                                                <Button
+                                                                    target="_blank"
+                                                                    size="sm"
+                                                                    href={
+                                                                        item.link
+                                                                    }
+                                                                    kind="ghost"
+                                                                    hasIconOnly
+                                                                    iconDescription={
+                                                                        item.name
+                                                                    }
+                                                                    renderIcon={
+                                                                        Document
+                                                                    }></Button>
+                                                            </StructuredListCell>
+                                                            <StructuredListCell>
+                                                                {item.name}{' '}
+                                                                <span className="text-secondary">
+                                                                    {' '}
+                                                                    |{' '}
+                                                                    {item.venue}
+                                                                </span>
+                                                            </StructuredListCell>
+                                                        </StructuredListRow>
+                                                    )
+                                                )}
+                                            </StructuredListBody>
+                                        </StructuredListWrapper>
+                                    </AccordionItem>
+                                </Accordion>
+                            </Column>
+                        </Grid>
+                    </ButtonSet>
+                    <br />
+                    <CodeSnippet type="multi">
+                        {config.metadata.citation_text}
+                    </CodeSnippet>
+
+                    {!isMobile && (
+                        <Grid>
+                            <Column
+                                className="footer"
+                                lg={16}
+                                md={8}
+                                sm={4}
+                                style={{
+                                    padding: '20px',
+                                    paddingLeft: '0',
+                                    backgroundColor: 'rgba(255,255,255,0.75',
+                                }}>
+                                <p
+                                    style={{
+                                        fontSize: 'small',
+                                        marginBottom: '10px',
+                                    }}>
+                                    Follow us on GitHub. Your love <br /> keeps
+                                    us going!{' '}
+                                    <span role="img" aria-label="hugging face">
+                                        &#129303;
+                                    </span>
+                                </p>
+
+                                <GitHubButton
+                                    href={config.metadata.link_to_code}
+                                    data-size="small"
+                                    data-show-count="true"
+                                    aria-label="Star repository on GitHub">
+                                    Star
+                                </GitHubButton>
+
+                                <div
+                                    style={{
+                                        marginTop: '20px',
+                                        marginBottom: '10px',
+                                    }}>
+                                    App built by{' '}
+                                    <Link
+                                        href="https://research.ibm.com"
+                                        target="_blank">
+                                        IBM Research
+                                    </Link>
+                                </div>
+                            </Column>
+                        </Grid>
+                    )}
+                </Column>
+                <Column lg={12} md={8} sm={4}>
+                    {isMobile ? (
+                        <ToastNotification
+                            lowContrast
+                            hideCloseButton
+                            type="error"
+                            subtitle={
+                                <span>
+                                    This application only runs on a widescreen.
+                                </span>
+                            }
+                            title="Please switch to widescreen."
+                        />
+                    ) : (
+                        <Grid>
+                            <Column lg={16} md={8} sm={4}>
+                                <PlanArea
+                                    changeView={this.changeView.bind(this)}
+                                />
+                            </Column>
+                        </Grid>
+                    )}
+                </Column>
             </Grid>
-          )}
-        </Column>
-        <Column lg={12} md={8} sm={4}>
-          {isMobile ? (
-            <ToastNotification
-              lowContrast
-              hideCloseButton
-              type="error"
-              subtitle={
-                <span>This application only runs on a widescreen.</span>
-              }
-              title="Please switch to widescreen."
-            />
-          ) : (
-            <Grid>
-              <Column lg={16} md={8} sm={4}>
-                <PlanArea changeView={this.changeView.bind(this)} />
-              </Column>
-            </Grid>
-          )}
-        </Column>
-      </Grid>
-    );
-  }
+        );
+    }
 }
 
 export default LandingPage;

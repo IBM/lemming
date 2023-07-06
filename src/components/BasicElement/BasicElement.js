@@ -48,10 +48,10 @@ function getPlanHashesFromChoice(action_name, plans) {
 }
 
 function getDomainName(domain_string) {
-  const reg = /.*\(domain (.*)\).*/g;
-  const reg_exec = reg.exec(domain_string);
+    const reg = /.*\(domain (.*)\).*/g;
+    const reg_exec = reg.exec(domain_string);
 
-  if (reg_exec !== null && reg_exec.length > 1) return reg_exec[1];
+    if (reg_exec !== null && reg_exec.length > 1) return reg_exec[1];
 }
 
 class PlanArea extends React.Component {
@@ -63,16 +63,17 @@ class PlanArea extends React.Component {
             selectedFile: null,
             selectedFileType: null,
             domain_name: null,
-      domain: null,
-      problem: null,
-      plans: [],
-      nl_prompts: [],
-      cached_formulas: [],
-      graph: null,
-      feedback: 'Welcome to Lemming! Get started by loading a planning task.',
-      cached_landmarks: [],
-      remaining_plans: [],
-      selected_landmarks: new Set(),
+            domain: null,
+            problem: null,
+            plans: [],
+            nl_prompts: [],
+            cached_formulas: [],
+            graph: null,
+            feedback:
+                'Welcome to Lemming! Get started by loading a planning task.',
+            cached_landmarks: [],
+            remaining_plans: [],
+            selected_landmarks: new Set(),
             unselected_landmarks: new Set(),
             choice_infos: [],
             controls: {
@@ -93,14 +94,14 @@ class PlanArea extends React.Component {
     }
 
     onFileChange(file_type, e) {
-    this.setState(
-      {
-        ...this.state,
-        selectedFile: e.target.files[0],
-        selectedFileType: file_type,
-      },
-      () => {
-        if (!this.state.selectedFile) return;
+        this.setState(
+            {
+                ...this.state,
+                selectedFile: e.target.files[0],
+                selectedFileType: file_type,
+            },
+            () => {
+                if (!this.state.selectedFile) return;
 
                 const data = new FormData();
                 data.append('file', this.state.selectedFile);
@@ -114,23 +115,23 @@ class PlanArea extends React.Component {
                         if (this.state.selectedFileType === 'plans') {
                             data = JSON.parse(data);
 
-              this.setState({
-                ...this.state,
-                remaining_plans: data,
-                plans: data,
-              });
-            } else {
-              this.setState({
-                ...this.state,
-                [this.state.selectedFileType]: data,
-                plans: [],
-              });
+                            this.setState({
+                                ...this.state,
+                                remaining_plans: data,
+                                plans: data,
+                            });
+                        } else {
+                            this.setState({
+                                ...this.state,
+                                [this.state.selectedFileType]: data,
+                                plans: [],
+                            });
+                        }
+                    })
+                    .catch(err => console.error(err));
             }
-          })
-          .catch(err => console.error(err));
-      }
-    );
-  }
+        );
+    }
 
     uploadFiles() {
         if (this.state.controls.upload_tab === 0) {
@@ -192,41 +193,39 @@ class PlanArea extends React.Component {
                                 ...this.state,
                                 turn: 0,
                                 domain_name:
-                  IMPORT_OPTIONS[this.state.controls.selected_domain].name,
-                domain: planning_task['domain'],
-                problem: planning_task['problem'],
-                remaining_plans: data['plans'],
-                plans: data['plans'],
-                nl_prompts: data['nl_prompts'],
-                graph: null,
-                cached_landmarks: [],
-                selected_landmarks: [],
-                unselected_landmarks: [],
-                choice_infos: [],
-                controls: {
-                  ...this.state.controls,
-                  modal_open: false,
-                },
-              },
-              () => {
-                this.getLandmarks();
-              }
-            );
-          })
-          .catch(err => console.error(err));
-      }
+                                    IMPORT_OPTIONS[
+                                        this.state.controls.selected_domain
+                                    ].name,
+                                domain: planning_task['domain'],
+                                problem: planning_task['problem'],
+                                remaining_plans: data['plans'],
+                                plans: data['plans'],
+                                nl_prompts: data['nl_prompts'],
+                                graph: null,
+                                cached_landmarks: [],
+                                selected_landmarks: [],
+                                unselected_landmarks: [],
+                                choice_infos: [],
+                                controls: {
+                                    ...this.state.controls,
+                                    modal_open: false,
+                                },
+                            },
+                            () => {
+                                this.getLandmarks();
+                            }
+                        );
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
     }
-  }
 
     logViewChange(e) {
         this.props.changeView(e);
-    this.setState(
-      {active_view: e.name,
-    },
-  () => {
-                this.generateViz();
-            }
-        );
+        this.setState({ active_view: e.name }, () => {
+            this.generateViz();
+        });
     }
 
     changeTab(tabIndex) {
@@ -257,14 +256,13 @@ class PlanArea extends React.Component {
         if (cached_formulas.indexOf(new_formula) === -1)
             cached_formulas.push(new_formula);
 
-          console.log(123, planner_payload)
-
         this.setState(
             {
                 ...this.state,
                 domain: planning_task.domain,
                 problem: planning_task.problem,
                 plans: plans,
+                remaining_plans: plans,
                 cached_formulas: cached_formulas,
             },
             () => {
@@ -470,8 +468,8 @@ class PlanArea extends React.Component {
 
         if (this.state.domain) {
             const domain_name = getDomainName(this.state.domain);
-      feedback += `Have fun with the ${domain_name} domain!`;
-    }
+            feedback += `Have fun with the ${domain_name} domain!`;
+        }
 
         if (this.state.plans.length > 0) {
             const max_cost = this.state.plans.reduce(
@@ -1040,7 +1038,10 @@ class FeedbackArea extends React.Component {
     }
 
     getNumPlans(item) {
-        const plan_hashes = getPlanHashesFromChoice(item, this.state.remaining_plans);
+        const plan_hashes = getPlanHashesFromChoice(
+            item,
+            this.state.remaining_plans
+        );
         return plan_hashes.length;
     }
 

@@ -20,6 +20,7 @@ Read more about it [here]().
 ### Server
 
 0. Clone the repository and its submodules
+
 ```bash
 user:~$ git clone git@github.ibm.com:Tathagata-Chakraborti/lemming.git --recursive
 ```

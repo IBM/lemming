@@ -650,7 +650,7 @@ class PlanArea extends React.Component {
                                             id="num_plans"
                                             invalidText="NaN / Too high."
                                             label=""
-                                            max={20}
+                                            max={50}
                                             min={1}
                                             step={1}
                                             value={

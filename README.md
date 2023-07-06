@@ -13,7 +13,7 @@ plans that need to be disambiguated, reflecting different considerations for the
 information they need to deal with during the disambgiuation process.
 
 The first Lemming appears in the ICAPS 2023 System Demonstration Track in Prague.
-Read more about it [here]().
+Read more about it [here](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf).
 
 ## Setting up locally
 

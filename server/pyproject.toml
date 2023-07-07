@@ -31,7 +31,6 @@ dependencies = [
     "python-multipart==0.0.6",
     "uvicorn[standard] >=0.19.0",
     "plan4past @ git+https://github.com/whitemech/Plan4Past.git",
-    "nl2ltl==0.0.3",
 ]
 
 [tool.setuptools]

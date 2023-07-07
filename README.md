@@ -22,7 +22,7 @@ Read more about it [here](https://icaps23.icaps-conference.org/demos/papers/692_
 0. Clone the repository and its submodules
 
 ```bash
-user:~$ git clone git@github.ibm.com:Tathagata-Chakraborti/lemming.git --recursive
+user:~$ git clone git@github.com:IBM/lemming.git --recursive
 ```
 
 1. Clone `watson-ai-planning` repo at an arbitrary folder
@@ -87,9 +87,12 @@ user:~$ cd server/
 user:~$ pip install -e .
 ```
 
-11. For the NL2LTL integration, build submodules
+11. For the NL2LTL integration, install it without the Rasa dependency and 
+build submodules.
 
 ```bash
+user:~$ pip install nl2ltl --no-deps
+user:~$ pip install pylogics openai==0.27.8
 user:~$ ./scripts/build_submodules.sh
 ```
 

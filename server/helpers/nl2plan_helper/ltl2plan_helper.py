@@ -20,7 +20,8 @@ def compile_instance(
     tool: ToolCompiler,
     mapping: Optional[Dict[Atomic, Predicate]] = None,
 ) -> Tuple[Domain, Problem]:
-    """Compile the PDDL domain and problem files and the LTL/PPLTL goal formula."""
+    """Compile the PDDL domain and problem files and the LTL/PPLTL goal
+    formula."""
     compiled_domain, compiled_problem = Domain("empty"), Problem(
         "p-empty", domain_name="empty"
     )

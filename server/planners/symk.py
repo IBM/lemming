@@ -106,7 +106,7 @@ class SymKPlanner(Planner):
                 problem_file,
                 plan_file,
                 planning_task.num_plans,
-                planning_task.quality_bound
+                planning_task.quality_bound,
             )
             json_plans = _parse_planning_result(str(plan_file))
             result: PlanningResultDict = json.loads(str(json_plans))
@@ -121,7 +121,7 @@ class SymKPlanner(Planner):
         problem_path: Path,
         plans_path: Path,
         num_plans: int = DEFAULT_K,
-        quality: float = DEFAULT_Q
+        quality: float = DEFAULT_Q,
     ) -> None:
         """Call the planner."""
         cmd = [

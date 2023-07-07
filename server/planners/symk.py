@@ -26,8 +26,8 @@ DEFAULT_BIN_SYMK_PATH = (
     SERVER_ROOT / "third_party" / "symk" / "fast-downward.py"
 ).absolute()
 DEFAULT_K = 10
-DEFAULT_QUALITY = 2
-DEFAULT_HEURISTIC = f"(plan_selection=top_k(num_plans={str(DEFAULT_K)},dump_plans=false),quality={str(DEFAULT_QUALITY)})"
+DEFAULT_Q = 2
+DEFAULT_HEURISTIC = f"(plan_selection=top_k(num_plans={str(DEFAULT_K)},dump_plans=false),quality={str(DEFAULT_Q)})"
 DEFAULT_SEARCH = f"symq-bd({DEFAULT_HEURISTIC})"
 
 
@@ -35,7 +35,7 @@ def create_plan_from_file(plan_file: Path) -> Dict[Any, Any]:
     with open(plan_file) as f:
         content = f.readlines()
     content = [x.strip() for x in content]
-    actions = [x[1:-1] for x in content if x.startswith("(")]
+    actions = [x[1:-1].strip() for x in content if x.startswith("(")]
     ret = {"actions": actions}
     cost = [x for x in content if not x.startswith("(") and "cost" in x]
     if len(cost) >= 1:
@@ -104,9 +104,9 @@ class SymKPlanner(Planner):
             self._call_planner(
                 domain_file,
                 problem_file,
-                planning_task.num_plans,
-                planning_task.quality_bound,
                 plan_file,
+                planning_task.num_plans,
+                planning_task.quality_bound
             )
             json_plans = _parse_planning_result(str(plan_file))
             result: PlanningResultDict = json.loads(str(json_plans))
@@ -119,9 +119,9 @@ class SymKPlanner(Planner):
         self,
         domain_path: Path,
         problem_path: Path,
-        num_plans: int,
-        quality: float,
         plans_path: Path,
+        num_plans: int = DEFAULT_K,
+        quality: float = DEFAULT_Q
     ) -> None:
         """Call the planner."""
         cmd = [

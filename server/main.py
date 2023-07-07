@@ -287,6 +287,8 @@ async def ltl_compile(
     planning_task = PlanningTask(
         domain=domain_to_string(compiled_domain),
         problem=problem_to_string(compiled_problem),
+        num_plans=10,
+        quality_bound=1.2
     )
 
     # Planning with SymK planner

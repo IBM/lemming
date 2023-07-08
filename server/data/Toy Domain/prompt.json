@@ -18,24 +18,10 @@
     ],
     "declare": [
       {
-        "pattern": "Response",
-        "symbols": [
-          "hasDoneE",
-          "hasDoneD"
-        ]
-      },
-      {
-        "pattern": "ChainResponse",
-        "symbols": [
-          "hasDoneE",
-          "hasDoneD"
-        ]
-      },
-      {
         "pattern": "Precedence",
         "symbols": [
-          "hasDoneD",
-          "hasDoneE"
+          "hasDoneE",
+          "hasDoneD"
         ]
       }
     ]
@@ -108,24 +94,10 @@
     ],
     "declare": [
       {
-        "pattern": "Response",
-        "symbols": [
-          "hasDoneBmain",
-          "hasDoneE"
-        ]
-      },
-      {
-        "pattern": "ChainResponse",
-        "symbols": [
-          "hasDoneBmain",
-          "hasDoneE"
-        ]
-      },
-      {
         "pattern": "Precedence",
         "symbols": [
-          "hasDoneE",
-          "hasDoneBmain"
+          "hasDoneBmain",
+          "hasDoneE"
         ]
       }
     ]

@@ -1147,12 +1147,7 @@ class FeedbackArea extends React.Component {
                                     {this.state.cached_formulas.map(
                                         (item, i) => (
                                             <StructuredListRow key={item}>
-                                                <StructuredListCell
-                                                    className="text-blue landmark-list-item"
-                                                    onClick={this.deleteUserPrompt.bind(
-                                                        this,
-                                                        item
-                                                    )}>
+                                                <StructuredListCell className="text-blue">
                                                     {item.user_prompt}
                                                 </StructuredListCell>
                                             </StructuredListRow>

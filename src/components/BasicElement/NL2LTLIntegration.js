@@ -16,6 +16,7 @@ import {
     StructuredListCell,
     RadioButton,
     ContainedListItem,
+    Loading,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -26,6 +27,7 @@ const default_state = {
     ltl_formulas: [],
     suggestions: [],
     selected_formula: 0,
+    hold: false,
 };
 
 const shouldRenderSuggestions = e => true;
@@ -61,6 +63,11 @@ class NL2LTLIntegration extends React.Component {
 
     handleKeyDown(e) {
         if (e.key === 'Enter') {
+            this.setState({
+                ...this.state,
+                hold: true,
+            });
+
             fetch(link_to_server + '/nl2ltl', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -74,6 +81,7 @@ class NL2LTLIntegration extends React.Component {
                     this.setState({
                         ...this.state,
                         ltl_formulas: data,
+                        hold: false,
                     });
                 })
                 .catch(err => console.error(err));
@@ -87,39 +95,48 @@ class NL2LTLIntegration extends React.Component {
     onEdgeClick(edge) {}
 
     confirmFormula() {
-        const new_formula = this.state.ltl_formulas[
-            this.state.selected_formula
-        ];
-        var cached_formulas = this.state.cached_formulas;
-        cached_formulas.push(new_formula);
+        this.setState(
+            {
+                ...this.state,
+                hold: true,
+            },
+            () => {
+                const new_formula = this.state.ltl_formulas[
+                    this.state.selected_formula
+                ];
+                var cached_formulas = this.state.cached_formulas;
+                cached_formulas.push(new_formula);
 
-        const planning_task = {
-            domain: this.state.domain,
-            problem: this.state.problem,
-            num_plans: this.state.controls.num_plans,
-            quality_bound: this.state.controls.quality_bound,
-        };
+                const planning_task = {
+                    domain: this.state.domain,
+                    problem: this.state.problem,
+                    num_plans: this.state.controls.num_plans,
+                    quality_bound: this.state.controls.quality_bound,
+                };
 
-        fetch(link_to_server + '/ltl_compile/p4p', {
-            method: 'POST',
-            body: JSON.stringify({
-                planning_task: planning_task,
-                plans: this.state.plans,
-                formulas: cached_formulas,
-            }),
-            headers: { 'Content-Type': 'application/json' },
-        })
-            .then(res => res.json())
-            .then(data => {
-                this.setState(
-                    {
-                        ...this.state,
-                        ...default_state,
-                    },
-                    () => this.update_planner_payload(data, new_formula)
-                );
-            })
-            .catch(err => console.error(err));
+                fetch(link_to_server + '/ltl_compile/p4p', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        planning_task: planning_task,
+                        plans: this.state.plans,
+                        formulas: cached_formulas,
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.setState(
+                            {
+                                ...this.state,
+                                ...default_state,
+                                hold: false,
+                            },
+                            () => this.update_planner_payload(data, new_formula)
+                        );
+                    })
+                    .catch(err => console.error(err));
+            }
+        );
     }
 
     onRequestClose() {
@@ -242,11 +259,26 @@ class NL2LTLIntegration extends React.Component {
                             renderSuggestion={this.renderSuggestion.bind(this)}
                         />
 
-                        <SelectView
-                            state={this.state}
-                            onEdgeClick={this.onEdgeClick.bind(this)}
-                            no_feedback={true}
-                        />
+                        {this.state.hold && (
+                            <div
+                                style={{
+                                    marginTop: '30%',
+                                    marginLeft: '45%',
+                                }}>
+                                <Loading
+                                    description="Active loading indicator"
+                                    withOverlay={false}
+                                />
+                            </div>
+                        )}
+
+                        {!this.state.hold && (
+                            <SelectView
+                                state={this.state}
+                                onEdgeClick={this.onEdgeClick.bind(this)}
+                                no_feedback={true}
+                            />
+                        )}
                     </div>
 
                     <Modal

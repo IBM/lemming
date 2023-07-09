@@ -26,6 +26,8 @@ const default_state = {
     selected_formula: 0,
 };
 
+const shouldRenderSuggestions = e => true;
+
 const getCachedSuggestions = nl_prompts => {
     return nl_prompts
         .map(item => item.paraphrases.concat([item.utterance]))
@@ -211,6 +213,7 @@ class NL2LTLIntegration extends React.Component {
                     <div style={{ marginTop: '20px' }}>
                         <Autosuggest
                             suggestions={this.state.suggestions}
+                            shouldRenderSuggestions={shouldRenderSuggestions}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(
                                 this
                             )}

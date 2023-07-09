@@ -1,6 +1,8 @@
 import React from 'react';
 import { SelectView } from './SelectView';
 import { stringSimilarity } from 'string-similarity-js';
+import { Cognitive } from '@carbon/icons-react';
+import { Button } from '@carbon/react';
 import Autosuggest from 'react-autosuggest';
 import {
     Grid,
@@ -179,26 +181,36 @@ class NL2LTLIntegration extends React.Component {
     );
 
     renderInputComponent = inputProps => (
-        <TextInput
-            {...inputProps}
-            id="nl2ltl"
-            invalidText="A valid value is required."
-            labelText={
-                <span>
-                    Constrain the set of plans by describing LTL control rules
-                    in natural language. Learn more about NL2LTL{' '}
-                    <a
-                        href="https://github.com/IBM/nl2ltl"
-                        target="_blank"
-                        rel="noreferrer">
-                        here
-                    </a>
-                    .
-                </span>
-            }
-            placeholder="Write your control rule in English"
-            onKeyDown={this.handleKeyDown.bind(this)}
-        />
+        <div style={{ display: 'flex' }}>
+            <TextInput
+                size="md"
+                {...inputProps}
+                id="nl2ltl"
+                invalidText="A valid value is required."
+                helperText={
+                    <span>
+                        Constrain the set of plans by describing LTL control
+                        rules in natural language. Learn more about NL2LTL{' '}
+                        <a
+                            href="https://github.com/IBM/nl2ltl"
+                            target="_blank"
+                            rel="noreferrer">
+                            here
+                        </a>
+                        .
+                    </span>
+                }
+                placeholder="Write your control rule in English"
+                onKeyDown={this.handleKeyDown.bind(this)}
+            />
+            <Button
+                size="md"
+                renderIcon={Cognitive}
+                iconDescription="Submit"
+                hasIconOnly
+                onClick={this.handleKeyDown.bind(this, { key: 'Enter' })}
+            />
+        </div>
     );
 
     render() {

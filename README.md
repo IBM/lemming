@@ -87,8 +87,8 @@ user:~$ cd server/
 user:~$ pip install -e .
 ```
 
-11. For the NL2LTL integration, install it without the Rasa dependency and 
-build submodules.
+11. For the NL2LTL integration, install it without the Rasa dependency and
+    build submodules.
 
 ```bash
 user:~$ pip install nl2ltl --no-deps

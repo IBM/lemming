@@ -144,8 +144,7 @@ class LemmingTask(BaseModel):
 class LTL2PDDLRequest(BaseModel):
     formulas: List[LTLFormula]
     plans: List[Plan]
-    domain: str
-    problem: str
+    planning_task: PlanningTask
 
 
 class ToolCompiler(Enum):

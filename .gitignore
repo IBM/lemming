@@ -156,6 +156,3 @@ dmypy.json
 
 # skip vim swap files
 .*.*.swp
-
-# third-party planner
-/server/third_party/symk/

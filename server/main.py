@@ -268,8 +268,9 @@ async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler
 ) -> LemmingTask:
     if (
-        request.domain is None
-        or request.problem is None
+        request.planning_task is None
+        or request.planning_task.domain is None
+        or request.planning_task.problem is None
         or request.formulas is None
     ):
         raise HTTPException(status_code=400, detail="Bad Request")
@@ -277,8 +278,8 @@ async def ltl_compile(
     domain_parser = DomainParser()
     problem_parser = ProblemParser()
 
-    domain = domain_parser(request.domain)
-    problem = problem_parser(request.problem)
+    domain = domain_parser(request.planning_task.domain)
+    problem = problem_parser(request.planning_task.problem)
     goal = get_goal_formula(request.formulas, problem.goal, tool)
 
     compiled_domain, compiled_problem = compile_instance(
@@ -287,8 +288,8 @@ async def ltl_compile(
     planning_task = PlanningTask(
         domain=domain_to_string(compiled_domain),
         problem=problem_to_string(compiled_problem),
-        num_plans=10,
-        quality_bound=1.2,
+        num_plans=request.planning_task.num_plans,
+        quality_bound=request.planning_task.quality_bound,
     )
 
     # Planning with SymK planner

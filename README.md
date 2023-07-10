@@ -13,11 +13,17 @@ plans that need to be disambiguated, reflecting different considerations for the
 information they need to deal with during the disambgiuation process.
 
 The first Lemming appears in the ICAPS 2023 System Demonstration Track in Prague.
-Read more about it [here]().
+Read more about it [here](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf).
 
 ## Setting up locally
 
 ### Server
+
+0. Clone the repository and its submodules
+
+```bash
+user:~$ git clone git@github.com:IBM/lemming.git --recursive
+```
 
 1. Clone `watson-ai-planning` repo at an arbitrary folder
 
@@ -81,7 +87,16 @@ user:~$ cd server/
 user:~$ pip install -e .
 ```
 
-11. Start a server. The Swagger page is shown at http://localhost:8000/docs. The OpenAPI spec can be obtained from the swagger page.
+11. For the NL2LTL integration, install it without the Rasa dependency and
+    build submodules.
+
+```bash
+user:~$ pip install nl2ltl --no-deps
+user:~$ pip install pylogics openai==0.27.8
+user:~$ ./scripts/build_submodules.sh
+```
+
+12. Start a server. The Swagger page is shown at http://localhost:8000/docs. The OpenAPI spec can be obtained from the swagger page.
 
 ```bash
 user:~$ python -m uvicorn main:app --reload

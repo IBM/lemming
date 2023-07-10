@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from copy import deepcopy
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
 import pydot
 from networkx import Graph, nx_pydot, set_node_attributes
 from networkx.readwrite import json_graph
+
 from helpers.common_helper.data_type_helper import merge_sets
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
@@ -21,7 +24,7 @@ def edit_edge_labels(g: Graph) -> Graph:
             and "label" in edge_data[0]
         ):
             edge_data[0]["label"] = (
-                re.sub("\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
             )
 
     return new_graph
@@ -37,9 +40,9 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Optional[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Iterable[Any]:
     if len(g.nodes) == 0:
-        return None
+        return []
     degrees = g.in_degree() if is_forward else g.out_degree()
     root = [n for n, d in degrees if d == 0]
     return root
@@ -52,9 +55,9 @@ def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
     return end_goal[0]
 
 
-def get_edge_label(g: Graph, edge: Any) -> Optional[str]:
+def get_edge_label(g: Graph, edge: Any) -> str:
     if len(g.nodes) == 0:
-        return None
+        return ""
     edge_data = g.get_edge_data(edge[0], edge[1])
     edge_label: str = edge_data[0]["label"].replace('"', "").strip().lower()
     return edge_label
@@ -67,15 +70,15 @@ def get_first_node_with_multiple_out_edges(
     """
     returns a list of tuples of 1) node with multiple out edges, 2) out edges from the node, 3) edges traversed up to the node, nodes traversed
     """
+    nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
+    nodes_visited: Set[Any] = set()
+
     if len(g.nodes) == 0:
-        return None
-    root: Optional[Any] = None
+        return nodes_with_multiple_edges, nodes_visited
     # find a node to start
     roots = get_root_node_in_digraph(g, is_forward)
     queue: List[Tuple[Any, List[Any]]] = list()
     queue.extend(list(map(lambda root: (root, []), roots)))
-    nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
-    nodes_visited: Set[Any] = set()
     while len(queue) > 0:
         new_queue: List[Any] = list()
         for node, edges_traversed in queue:
@@ -138,7 +141,7 @@ def get_landmarks_in_edges(
     g: Graph,
     edges: List[Any],
     landmarks: List[Landmark],
-) -> List[Landmark]:
+) -> Tuple[List[Any], Dict[str, Tuple[str, str]]]:
     # TODO TEST THIS
     edge_label_landmark_dict: Dict[str, List[Landmark]] = dict()
     for landmark in landmarks:
@@ -149,7 +152,7 @@ def get_landmarks_in_edges(
                 edge_label_landmark_dict[first_achiever].append(landmark)
 
     selectable_landmarks: List[Landmark] = list()
-    first_achiever_edge_dict: Dict[str, Tuple(str, str)] = dict()
+    first_achiever_edge_dict: Dict[str, Tuple[str, str]] = dict()
     for edge in edges:
         edge_label = get_edge_label(g, edge)
         if edge_label in edge_label_landmark_dict:
@@ -237,7 +240,7 @@ def get_node_distance_from_terminal_node(
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
-    node_distance_from_terminal_node_dict: Dict[str] = dict()
+    node_distance_from_terminal_node_dict: Dict[str, int] = dict()
 
     if len(g.nodes) == 0:
         return node_distance_from_terminal_node_dict
@@ -268,11 +271,14 @@ def get_node_distance_from_terminal_node(
 
 def get_node_edge_name_plan_hash_list(
     g: Graph, plans: List[Plan], is_forward: bool
-) -> Tuple[
-    Dict[str, List[str]],
-    Dict[Tuple[Any, Any], List[str]],
-    Dict[str, List[str]],
-]:
+) -> (
+    Tuple[
+        Dict[str, List[str]],
+        Dict[Tuple[Any, Any], List[str]],
+        Dict[str, List[str]],
+    ]
+    | Dict[Any, Any]
+):
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
@@ -296,7 +302,7 @@ def get_node_edge_name_plan_hash_list(
                 if is_forward
                 else list(g.in_edges(node))
             )
-            plan_hashes_for_node: set[str] = set()
+            plan_hashes_for_node: Set[str] = set()
             for edge in edges:
                 edge_label = get_edge_label(g, edge)
                 if edge_label not in edge_label_nodes_set_dict:

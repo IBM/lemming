@@ -1,5 +1,6 @@
-from typing import List
 import unittest
+from typing import List
+
 from helpers.common_helper.str_helper import format_plan
 
 

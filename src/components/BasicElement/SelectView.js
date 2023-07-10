@@ -61,6 +61,7 @@ const SelectView = props => {
 
     const commitChanges = e => {
         if (commits.length > 0) props.commitChanges(commits);
+
         setCommits();
     };
 

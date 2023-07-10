@@ -2,7 +2,7 @@ from typing import List, Optional
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
-    SelelctionInfo,
+    SelectionInfo,
     PlanDisambiguatorOutput,
     SelectionPriority,
 )
@@ -11,7 +11,7 @@ from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plan_disambiguator_output_filtered_by_selection_infos,
     get_choice_info_multiple_edges_without_landmark,
-    append_landmarks_not_avialable_for_choice,
+    append_landmarks_not_available_for_choice,
     set_nodes_with_multiple_edges,
     process_selection_priority,
     set_distance_to_terminal_nodes,
@@ -23,7 +23,7 @@ from helpers.graph_helper.graph_helper import (
 
 @planner_exception_handler
 def get_selection_flow_output(
-    selection_infos: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelectionInfo]],
     landmarks: List[Landmark],
     domain: str,
     problem: str,
@@ -61,7 +61,7 @@ def get_selection_flow_output(
             nodes_with_multiple_edges,
             nodes_traversed,
         ) = get_first_node_with_multiple_out_edges(g, True)
-        choice_infos = append_landmarks_not_avialable_for_choice(
+        choice_infos = append_landmarks_not_available_for_choice(
             landmarks,
             list(
                 map(
@@ -98,7 +98,7 @@ def get_selection_flow_output(
         )
     choice_infos = process_selection_priority(
         set_nodes_with_multiple_edges(
-            append_landmarks_not_avialable_for_choice(landmarks, choice_infos),
+            append_landmarks_not_available_for_choice(landmarks, choice_infos),
             edge_label_nodes_dict,
         ),
         selection_priority,

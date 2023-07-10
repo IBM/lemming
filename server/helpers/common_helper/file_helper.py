@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any, Union
+
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRead
 
-from fastapi import UploadFile, File
 import json
+
+from fastapi import File, UploadFile
 
 
 def read_str_from_upload_file(file: UploadFile = File(...)) -> Optional[str]:

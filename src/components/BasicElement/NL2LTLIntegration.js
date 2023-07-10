@@ -1,6 +1,8 @@
 import React from 'react';
 import { SelectView } from './SelectView';
 import { stringSimilarity } from 'string-similarity-js';
+import { Cognitive } from '@carbon/icons-react';
+import { Button } from '@carbon/react';
 import Autosuggest from 'react-autosuggest';
 import {
     Grid,
@@ -14,6 +16,7 @@ import {
     StructuredListCell,
     RadioButton,
     ContainedListItem,
+    Loading,
 } from '@carbon/react';
 
 const config = require('../../config.json');
@@ -22,35 +25,55 @@ const link_to_server = config.link_to_server;
 const default_state = {
     text_input: '',
     ltl_formulas: [],
+    suggestions: [],
     selected_formula: 0,
+    hold: false,
+};
+
+const shouldRenderSuggestions = e => true;
+
+const getCachedSuggestions = nl_prompts => {
+    return nl_prompts
+        .map(item => item.paraphrases.concat([item.utterance]))
+        .reduce((options, item) => options.concat(item), []);
+};
+
+const getInitState = state => {
+    return {
+        ...default_state,
+        ...state,
+        domain_name: state.domain_name,
+        domain: state.domain,
+        problem: state.problem,
+        plans: state.plans,
+        cached_suggestions: getCachedSuggestions(state.nl_prompts),
+        suggestions: [],
+    };
 };
 
 class NL2LTLIntegration extends React.Component {
     constructor(props) {
         super(props);
-
-        const suggestions = props.state.nl_prompts
-            .map(item => item.paraphrases.concat([item.utterance]))
-            .reduce((options, item) => options.concat(item), []);
-
-        this.state = {
-            ...default_state,
-            ...props.state,
-            domain: props.state.domain,
-            problem: props.state.problem,
-            plans: props.state.plans,
-            cached_suggestions: suggestions,
-            suggestions: [],
-        };
+        this.state = getInitState(props.state);
     }
 
-    componentDidUpdate(prevProps, prevState) {}
+    componentWillReceiveProps(nextProps) {
+        this.setState(getInitState(nextProps.state));
+    }
 
     handleKeyDown(e) {
         if (e.key === 'Enter') {
+            this.setState({
+                ...this.state,
+                hold: true,
+            });
+
             fetch(link_to_server + '/nl2ltl', {
                 method: 'POST',
-                body: JSON.stringify({ utterance: this.state.text_input }),
+                body: JSON.stringify({
+                    domain_name: this.state.domain_name,
+                    utterance: this.state.text_input,
+                }),
                 headers: { 'Content-Type': 'application/json' },
             })
                 .then(res => res.json())
@@ -58,6 +81,7 @@ class NL2LTLIntegration extends React.Component {
                     this.setState({
                         ...this.state,
                         ltl_formulas: data,
+                        hold: false,
                     });
                 })
                 .catch(err => console.error(err));
@@ -71,33 +95,48 @@ class NL2LTLIntegration extends React.Component {
     onEdgeClick(edge) {}
 
     confirmFormula() {
-        const new_formula = this.state.ltl_formulas[
-            this.state.selected_formula
-        ];
-        var cached_formulas = this.state.cached_formulas;
-        cached_formulas.push(new_formula);
+        this.setState(
+            {
+                ...this.state,
+                hold: true,
+            },
+            () => {
+                const new_formula = this.state.ltl_formulas[
+                    this.state.selected_formula
+                ];
+                var cached_formulas = this.state.cached_formulas;
+                cached_formulas.push(new_formula);
 
-        fetch(link_to_server + '/ltl_compile', {
-            method: 'POST',
-            body: JSON.stringify({
-                domain: this.state.domain,
-                problem: this.state.problem,
-                plans: this.state.plans,
-                formulas: cached_formulas,
-            }),
-            headers: { 'Content-Type': 'application/json' },
-        })
-            .then(res => res.json())
-            .then(data => {
-                this.setState(
-                    {
-                        ...this.state,
-                        ...default_state,
-                    },
-                    () => this.update_planner_payload(data, new_formula)
-                );
-            })
-            .catch(err => console.error(err));
+                const planning_task = {
+                    domain: this.state.domain,
+                    problem: this.state.problem,
+                    num_plans: this.state.controls.num_plans,
+                    quality_bound: this.state.controls.quality_bound,
+                };
+
+                fetch(link_to_server + '/ltl_compile/p4p', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        planning_task: planning_task,
+                        plans: this.state.plans,
+                        formulas: cached_formulas,
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.setState(
+                            {
+                                ...this.state,
+                                ...default_state,
+                                hold: false,
+                            },
+                            () => this.update_planner_payload(data, new_formula)
+                        );
+                    })
+                    .catch(err => console.error(err));
+            }
+        );
     }
 
     onRequestClose() {
@@ -159,26 +198,36 @@ class NL2LTLIntegration extends React.Component {
     );
 
     renderInputComponent = inputProps => (
-        <TextInput
-            {...inputProps}
-            id="nl2ltl"
-            invalidText="A valid value is required."
-            labelText={
-                <span>
-                    Constrain the set of plans by describing LTL control rules
-                    in natural language. Learn more about NL2LTL{' '}
-                    <a
-                        href="https://github.com/IBM/nl2ltl"
-                        target="_blank"
-                        rel="noreferrer">
-                        here
-                    </a>
-                    .
-                </span>
-            }
-            placeholder="Write your control rule in English"
-            onKeyDown={this.handleKeyDown.bind(this)}
-        />
+        <div style={{ display: 'flex' }}>
+            <TextInput
+                size="md"
+                {...inputProps}
+                id="nl2ltl"
+                invalidText="A valid value is required."
+                helperText={
+                    <span>
+                        Constrain the set of plans by describing LTL control
+                        rules in natural language. Learn more about NL2LTL{' '}
+                        <a
+                            href="https://github.com/IBM/nl2ltl"
+                            target="_blank"
+                            rel="noreferrer">
+                            here
+                        </a>
+                        .
+                    </span>
+                }
+                placeholder="Write your control rule in English"
+                onKeyDown={this.handleKeyDown.bind(this)}
+            />
+            <Button
+                size="md"
+                renderIcon={Cognitive}
+                iconDescription="Submit"
+                hasIconOnly
+                onClick={this.handleKeyDown.bind(this, { key: 'Enter' })}
+            />
+        </div>
     );
 
     render() {
@@ -193,6 +242,7 @@ class NL2LTLIntegration extends React.Component {
                     <div style={{ marginTop: '20px' }}>
                         <Autosuggest
                             suggestions={this.state.suggestions}
+                            shouldRenderSuggestions={shouldRenderSuggestions}
                             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested.bind(
                                 this
                             )}
@@ -209,11 +259,26 @@ class NL2LTLIntegration extends React.Component {
                             renderSuggestion={this.renderSuggestion.bind(this)}
                         />
 
-                        <SelectView
-                            state={this.state}
-                            onEdgeClick={this.onEdgeClick.bind(this)}
-                            no_feedback={true}
-                        />
+                        {this.state.hold && (
+                            <div
+                                style={{
+                                    marginTop: '30%',
+                                    marginLeft: '45%',
+                                }}>
+                                <Loading
+                                    description="Active loading indicator"
+                                    withOverlay={false}
+                                />
+                            </div>
+                        )}
+
+                        {!this.state.hold && (
+                            <SelectView
+                                state={this.state}
+                                onEdgeClick={this.onEdgeClick.bind(this)}
+                                no_feedback={true}
+                            />
+                        )}
                     </div>
 
                     <Modal

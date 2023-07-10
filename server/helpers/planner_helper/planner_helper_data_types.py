@@ -2,10 +2,11 @@ from __future__ import annotations
 from enum import Enum
 import sys
 from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, validator
 from dacite import from_dict
-from watson_ai_planning.data_model.planning_types import PlanningResult
 from helpers.common_helper.hash_helper import get_list_hash
+from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
+from pydantic import BaseModel, validator
+from watson_ai_planning.data_model.planning_types import PlanningResult
 
 
 class Plan(BaseModel):
@@ -20,7 +21,7 @@ class Landmark(BaseModel):
     first_achievers: List[str] = []
 
 
-class SelelctionInfo(BaseModel):
+class SelectionInfo(BaseModel):
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
 
@@ -80,7 +81,7 @@ class ChoiceInfo(BaseModel):
 
 class PlanDisambiguatorInput(BaseModel):
     selection_priority: Optional[str]
-    selection_infos: List[SelelctionInfo] = []
+    selection_infos: List[SelectionInfo] = []
     landmarks: List[Landmark] = []
     plans: List[Plan]
     domain: str = ""
@@ -97,8 +98,8 @@ class PlanDisambiguatorInput(BaseModel):
 
     @validator("selection_infos")
     def check_selected_landmarks(
-        cls, v: List[SelelctionInfo]
-    ) -> Optional[List[SelelctionInfo]]:
+        cls, v: List[SelectionInfo]
+    ) -> Optional[List[SelectionInfo]]:
         if v is None:
             raise ValueError("selection_infos should not be None")
         return v
@@ -134,31 +135,18 @@ class PlanningTask(BaseModel):
     quality_bound: float = 1.0
 
 
-class Translation(BaseModel):
-    utterance: str
-    paraphrases: List[str]
-    declare: List[str]
-
-
 class LemmingTask(BaseModel):
     planning_task: PlanningTask
     plans: List[Plan] = []
-    nl_prompts: List[Translation] = []
-
-
-class NL2LTLRequest(BaseModel):
-    utterance: str
-
-
-class LTLFormula(BaseModel):
-    user_prompt: str
-    formula: str
-    description: str
-    confidence: float
+    nl_prompts: List[CachedPrompt] = []
 
 
 class LTL2PDDLRequest(BaseModel):
     formulas: List[LTLFormula]
     plans: List[Plan]
-    domain: str
-    problem: str
+    planning_task: PlanningTask
+
+
+class ToolCompiler(Enum):
+    P4P = "p4p"
+    LF2F = "lf2f"

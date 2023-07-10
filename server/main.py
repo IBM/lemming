@@ -1,20 +1,40 @@
 import json
+from pathlib import Path
+from typing import List, Dict, cast
 
-from typing import List
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from nl2ltl.declare.base import Template
+from pddl.formatter import domain_to_string, problem_to_string
+
+from helpers.common_helper.static_data_helper import app_description
+from helpers.nl2plan_helper.utils import temporary_directory
+from helpers.nl2plan_helper.ltl2plan_helper import (
+    compile_instance,
+    get_goal_formula,
+)
+from helpers.nl2plan_helper.manage_formulas import (
+    get_formulas_from_matched_formulas,
+)
+from helpers.nl2plan_helper.nl2ltl_helper import (
+    NL2LTLRequest,
+    prompt_builder,
+    LTLFormula,
+)
+from helpers.plan_disambiguator_helper.build_flow_helper import (
+    get_build_flow_output,
+)
+from helpers.nl2plan_helper.nl2ltl_helper import CachedPrompt
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarksResponseModel,
-    PlannerResponseModel,
-    PlanDisambiguatorOutput,
-    PlanDisambiguatorInput,
     LemmingTask,
+    PlanDisambiguatorInput,
+    PlanDisambiguatorOutput,
+    PlannerResponseModel,
     PlanningTask,
+    ToolCompiler,
     Plan,
-    LTLFormula,
-    NL2LTLRequest,
     LTL2PDDLRequest,
-    Translation,
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
@@ -27,10 +47,12 @@ from helpers.common_helper.file_helper import (
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
 )
-from helpers.common_helper.static_data_helper import app_description
-from helpers.plan_disambiguator_helper.build_flow_helper import (
-    get_build_flow_output,
-)
+from nl2ltl import translate
+from nl2ltl.engines.gpt.core import GPTEngine, Models
+from pddl.parser.domain import DomainParser
+from pddl.parser.problem import ProblemParser
+
+from planners.symk import SymKPlanner
 
 app = FastAPI(
     title="Lemming",
@@ -97,7 +119,7 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
-        nl_prompts = [Translation.parse_obj(item) for item in prompt]
+        nl_prompts = [CachedPrompt.parse_obj(item) for item in prompt]
 
     except Exception as e:
         print(e)
@@ -208,39 +230,72 @@ def generate_nl2ltl_integration(
     return generate_select_view(plan_disambiguator_input)
 
 
-@app.post("/nl2ltl")
-def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
-    _ = request
+@app.post("/nl2ltl", response_model=None)
+async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
+    if request.utterance is None:
+        raise HTTPException(status_code=400, detail="Bad Request")
 
-    # TODO: Call to NL2LTL
-    ltl_formulas: List[LTLFormula] = [
-        LTLFormula(
-            user_prompt=request.utterance,
-            formula="RespondedExistence Slack Gmail",
-            description="If Slack happens at least once then Gmail has to happen or happened before Slack.",
-            confidence=0.4,
-        ),
-        LTLFormula(
-            user_prompt=request.utterance,
-            formula="Response Slack Gmail",
-            description="Whenever activity Slack happens, activity Gmail has to happen eventually afterward.",
-            confidence=0.3,
-        ),
-        LTLFormula(
-            user_prompt=request.utterance,
-            formula="ExistenceTwo Slack",
-            description="Slack will happen at least twice.",
-            confidence=0.2,
-        ),
-    ]
+    domain_name = request.domain_name
+    if domain_name:
+        custom_prompt = prompt_builder(
+            prompt_path=Path(f"data/{domain_name}/prompt.json").resolve()
+        )
+    else:
+        raise NotImplementedError
+
+    with temporary_directory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "tmp.json"
+        tmp_file = tmp_file.resolve()
+        tmp_file.write_text(custom_prompt, encoding="utf-8")
+
+        engine = GPTEngine(model=Models.DAVINCI3.value, prompt=tmp_file)
+
+    utterance = request.utterance
+    matched_formulas: Dict[Template, float] = cast(
+        Dict[Template, float], translate(utterance, engine)
+    )
+    ltl_formulas: List[LTLFormula] = get_formulas_from_matched_formulas(
+        utterance, matched_formulas
+    )
+    if not ltl_formulas:
+        raise HTTPException(status_code=422, detail="Unprocessable Utterance")
 
     return ltl_formulas
 
 
-@app.post("/ltl_compile")
-def ltl_compile(request: LTL2PDDLRequest) -> LemmingTask:
-    planning_task = PlanningTask(domain=request.domain, problem=request.problem)
-    lemming_task = LemmingTask(planning_task=planning_task, plans=request.plans)
+@app.post("/ltl_compile/{tool}")
+async def ltl_compile(
+    request: LTL2PDDLRequest, tool: ToolCompiler
+) -> LemmingTask:
+    if (
+        request.planning_task is None
+        or request.planning_task.domain is None
+        or request.planning_task.problem is None
+        or request.formulas is None
+    ):
+        raise HTTPException(status_code=400, detail="Bad Request")
 
-    # TODO: Compile to new planning task
+    domain_parser = DomainParser()
+    problem_parser = ProblemParser()
+
+    domain = domain_parser(request.planning_task.domain)
+    problem = problem_parser(request.planning_task.problem)
+    goal = get_goal_formula(request.formulas, problem.goal, tool)
+
+    compiled_domain, compiled_problem = compile_instance(
+        domain, problem, goal, tool
+    )
+    planning_task = PlanningTask(
+        domain=domain_to_string(compiled_domain),
+        problem=problem_to_string(compiled_problem),
+        num_plans=request.planning_task.num_plans,
+        quality_bound=request.planning_task.quality_bound,
+    )
+
+    # Planning with SymK planner
+    symk_planner = SymKPlanner()
+    planning_result = symk_planner.plan(planning_task)
+    plans = get_planner_response_model_with_hash(planning_result).plans
+    lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
+
     return lemming_task

@@ -12,7 +12,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlannerResponseModel,
     LandmarkCategory,
     Landmark,
-    SelelctionInfo,
+    SelectionInfo,
 )
 from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
@@ -27,6 +27,11 @@ class TestBuildFlowHelper(unittest.TestCase):
     gripper_problem: str
     gripper_landmarks: List[Landmark]
     planner_response_model: PlannerResponseModel
+
+    toy_domain: str
+    toy_problem: str
+    toy_landmarks: List[Landmark]
+    toy_planner_response_model: PlannerResponseModel
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -175,7 +180,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_forward_flow_output_one_selection_info_no_landmark(
         self,
     ) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[
                 "08ef565ec364978b0295105f8ae52bce",
@@ -264,7 +269,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_backword_flow_output_one_selection_info_no_landmark(
         self,
     ) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[
                 "08ef565ec364978b0295105f8ae52bce",

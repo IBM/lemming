@@ -1,4 +1,4 @@
-from typing import Callable, Any
+from typing import Any, Callable
 
 
 def planner_exception_handler(function: Callable[[Any], Any]) -> Any:

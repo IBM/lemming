@@ -1,4 +1,5 @@
 from typing import List
+
 from watson_ai_planning.data_model.planning_types import Plan, PlanningResult
 
 

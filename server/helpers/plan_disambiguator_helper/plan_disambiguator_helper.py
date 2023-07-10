@@ -2,16 +2,17 @@ from copy import deepcopy
 import random
 import sys
 from typing import Any, Dict, List, Optional, Set, Tuple
-from networkx import Graph
+
 from helpers.planner_helper.planner_helper_data_types import (
+    ChoiceInfo,
     Landmark,
-    SelelctionInfo,
-    PlanningTask,
     Plan,
     PlannerResponseModel,
-    ChoiceInfo,
+    PlanningTask,
+    SelectionInfo,
     SelectionPriority,
 )
+from networkx import Graph
 from helpers.planner_helper.planner_helper import get_dot_graph_str
 from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
@@ -37,7 +38,7 @@ def get_min_dist_between_nodes_from_terminal_node(
     edge_labels: List[str],
     edge_label_nodes_dict: Dict[str, List[str]],
     node_dist_from_terminal_state: Dict[str, int],
-):
+) -> int:
     min_dist = sys.maxsize
     for edge_label in edge_labels:
         if edge_label in edge_label_nodes_dict:
@@ -127,7 +128,7 @@ def split_plans_with_actions(
 
 
 def get_plans_filetered_by_selected_plan_hashes(
-    selection_info: SelelctionInfo, plans: List[Plan]
+    selection_info: SelectionInfo, plans: List[Plan]
 ) -> List[Plan]:
     if (
         selection_info.selected_plan_hashes is None
@@ -142,7 +143,7 @@ def get_plans_filetered_by_selected_plan_hashes(
 
 
 def get_plans_with_selection_info(
-    selection_info: SelelctionInfo, landmarks: List[Landmark], plans: List[Plan]
+    selection_info: SelectionInfo, landmarks: List[Landmark], plans: List[Plan]
 ) -> List[Plan]:
     """
     returns plans filtered by a selected landmark
@@ -151,7 +152,7 @@ def get_plans_with_selection_info(
 
 
 def get_plans_with_selection_infos(
-    selection_infos: Optional[List[SelelctionInfo]],
+    selection_infos: Optional[List[SelectionInfo]],
     plans: List[Plan],
 ) -> List[Plan]:
     """
@@ -173,7 +174,7 @@ def get_plans_with_selection_infos(
 def get_split_by_actions(
     landmarks: List[Landmark],
     plans: List[Plan],
-    selection_infos: List[SelelctionInfo],
+    selection_infos: List[SelectionInfo],
 ) -> List[ChoiceInfo]:
     """
     return a list of landmark infos
@@ -235,7 +236,7 @@ def get_filtered_landmark_by_selected_plans(
 
 
 def get_plan_disambiguator_output_filtered_by_selection_infos(
-    selection_infos: List[SelelctionInfo],
+    selection_infos: List[SelectionInfo],
     landmarks: List[Landmark],
     domain: str,
     problem: str,
@@ -380,13 +381,13 @@ def get_first_achiever_out_edge_dict(
     return first_achiever_edge_dict
 
 
-def append_landmarks_not_avialable_for_choice(
+def append_landmarks_not_available_for_choice(
     landmarks: List[Landmark], choice_infos: List[ChoiceInfo]
 ) -> List[ChoiceInfo]:
     choice_infos_with_not_available_landmarks: List[ChoiceInfo] = list(
         map(lambda choice_info: choice_info.copy(deep=True), choice_infos)
     )
-    facts_set: Set[Tuple] = set()
+    facts_set: Set[Tuple[Any, ...]] = set()
     for choice_info in choice_infos:
         if choice_info.landmark is not None:
             facts_set.add(tuple(choice_info.landmark.facts))
@@ -415,7 +416,7 @@ def get_total_num_plans(choice_info: ChoiceInfo) -> int:
 def sort_choice_info_by_distance_to_terminal_nodes(
     choice_infos_input: List[ChoiceInfo],
     node_dist_from_terminal_node: Dict[str, int],
-):
+) -> List[ChoiceInfo]:
     choice_infos = list(
         map(
             lambda choice_info: choice_info.copy(deep=True),

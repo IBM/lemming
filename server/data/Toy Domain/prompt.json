@@ -17,19 +17,89 @@
       "Finish D after E"
     ],
     "declare": [
-      "Response has_done_E has_done_D",
-      "ChainResponse has_done_E has_done_D",
-      "Precedence has_done_D has_done_E"
+      {
+        "pattern": "Precedence",
+        "symbols": [
+          "hasDoneE",
+          "hasDoneD"
+        ]
+      }
     ]
   },
   {
     "utterance": "Use only alternative B",
     "paraphrases": [
       "Use alternative B only",
-      "Prefer using B_alt"
+      "Prefer using B_alt",
+      "Use B_alt",
+      "Use alternative B",
+      "Pick alternative B",
+      "Get B_alt before the end"
     ],
     "declare": [
-      "Existence has_done_B_alt"
+      {
+        "pattern": "Existence",
+        "symbols": [
+          "hasDoneBalt"
+        ]
+      }
+    ]
+  },
+  {
+    "utterance": "Don't do B_main",
+    "paraphrases": [
+      "Never execute B_main",
+      "Never do B_main",
+      "Never use B",
+      "Never use B_main",
+      "Avoid B",
+      "Avoid B_main"
+    ],
+    "declare": [
+      {
+        "pattern": "Absence",
+        "symbols": [
+          "hasDoneBmain"
+        ]
+      }
+    ]
+  },
+  {
+    "utterance": "Get G before the end",
+    "paraphrases": [
+      "Achieve G before the end",
+      "Achieve G before the end of the task",
+      "Do G eventually",
+      "Do G at some point",
+      "Execute G before the end"
+    ],
+    "declare": [
+      {
+        "pattern": "Existence",
+        "symbols": [
+          "hasDoneG"
+        ]
+      }
+    ]
+  },
+  {
+    "utterance": "Do B_main before you do E",
+    "paraphrases": [
+      "Achieve B_main before E",
+      "Achieve B_main before you do E",
+      "Perform B_main before E",
+      "Make sure B_main is done before E",
+      "When you do E, B_main should be done already",
+      "Complete B_main before E"
+    ],
+    "declare": [
+      {
+        "pattern": "Precedence",
+        "symbols": [
+          "hasDoneBmain",
+          "hasDoneE"
+        ]
+      }
     ]
   }
 ]

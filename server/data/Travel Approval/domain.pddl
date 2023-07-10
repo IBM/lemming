@@ -13,7 +13,7 @@
         type__of__pre_approval_done - generic
         type__of__client_name - generic
         type__of__client_to_be_verified - generic
-	 type__of__paper_to_be_verified - generic
+	    type__of__paper_to_be_verified - generic
         type__of__paper_title - generic
         type__of__flight_done - generic
         type__of__hotel_done - generic
@@ -31,7 +31,7 @@
         blanket_pre_approval - type__of__blanket_pre_approval
         client_name - type__of__client_name
         client_to_be_verified - type__of__client_to_be_verified
-	paper_to_be_verified - type__of__paper_to_be_verified
+	    paper_to_be_verified - type__of__paper_to_be_verified
         data_objects - type__of__data_objects
         des - type__of__des
         end_date - type__of__end_date
@@ -50,7 +50,7 @@
 
     (:predicates
         (goal-achieved)
-	(has_done ?x1 - agent)
+	    (has_done ?x1 - agent)
         (failed ?x1 - agent)
         (known ?x1 - generic)
         (is_slotfillable ?x1 - generic)
@@ -62,9 +62,6 @@
         (affinity ?x1 - generic ?x2 - generic) - number
     )
 
-    
-
-    
     (:action get_trip_estimate
      :parameters ()
      :precondition (and (not (goal-achieved)) (not (has_done get_trip_estimate)) (not (failed get_trip_estimate)) (known origin) (known des) (known start_date) (known end_date))

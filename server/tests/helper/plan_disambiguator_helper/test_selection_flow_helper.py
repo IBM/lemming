@@ -11,7 +11,7 @@ from helpers.planner_helper.planner_helper import (
 )
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
-    SelelctionInfo,
+    SelectionInfo,
     PlannerResponseModel,
     PlanningTask,
     Landmark,
@@ -33,8 +33,13 @@ class TestSelectionFlowHelper(unittest.TestCase):
 
     travel_domain: str
     travel_problem: str
-    travel_landmark: List[Landmark]
+    travel_landmarks: List[Landmark]
     travel_planner_response_model: PlannerResponseModel
+
+    toy_domain: str
+    toy_problem: str
+    toy_landmarks: List[Landmark]
+    toy_planner_response_model: PlannerResponseModel
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -132,7 +137,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         TestSelectionFlowHelper.travel_planner_response_model.set_plan_hashes()
 
     def test_get_selection_flow_output_no_selected_landmarks(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="pick ball2 rooma right",
             selected_plan_hashes=[
                 "9d49f737b4735da2a3b0d85e3be0bf67",
@@ -151,27 +156,29 @@ class TestSelectionFlowHelper(unittest.TestCase):
         self.assertEqual(len(selection_flow_output.choice_infos), 12)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
-    def test_get_selection_flow_output_no_selected_landmarks_toy(self) -> None:
-        selected_landmark_0 = SelelctionInfo(
+    def test_get_selection_flow_output_no_selected_landmarks_gripper(
+        self,
+    ) -> None:
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[],
         )
         selection_flow_output = get_selection_flow_output(
             [selected_landmark_0],
-            TestSelectionFlowHelper.toy_landmarks,
-            TestSelectionFlowHelper.toy_domain,
-            TestSelectionFlowHelper.toy_problem,
-            TestSelectionFlowHelper.toy_planner_response_model.plans,
+            TestSelectionFlowHelper.gripper_landmarks,
+            TestSelectionFlowHelper.gripper_domain,
+            TestSelectionFlowHelper.gripper_problem,
+            TestSelectionFlowHelper.planner_response_model.plans,
             SelectionPriority.MAX_PLANS.value,
         )
-        self.assertEqual(len(selection_flow_output.plans), 4)
-        self.assertEqual(len(selection_flow_output.choice_infos), 2)
+        self.assertEqual(len(selection_flow_output.plans), 12)
+        self.assertEqual(len(selection_flow_output.choice_infos), 12)
         self.assertEqual(len(selection_flow_output.networkx_graph), 5)
 
     def test_get_selection_flow_output_no_selected_landmarks_travel(
         self,
     ) -> None:
-        selected_landmark_0 = SelelctionInfo(
+        selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
             selected_plan_hashes=[],
         )

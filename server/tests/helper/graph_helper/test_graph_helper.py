@@ -186,7 +186,7 @@ class TestGraphHelper(unittest.TestCase):
         with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
-        first_achiever_plan_idx_dict = {"pick ball2 rooma right": [0, 1, 5]}
+        # first_achiever_plan_idx_dict = {"pick ball2 rooma right": [0, 1, 5]}
         # (
         #     first_node_with_first_achiever,
         #     first_achiever,
@@ -212,7 +212,7 @@ class TestGraphHelper(unittest.TestCase):
         with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
-        first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
+        # first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
         res, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(
             res,
@@ -235,7 +235,7 @@ class TestGraphHelper(unittest.TestCase):
         with open(abs_path_to_dot_file, "r") as f:
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
-        first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
+        # first_achiever_plan_idx_dict = {"nothing": [0, 1, 5]}
         res, nodes_traversed = get_first_node_with_multiple_out_edges(g, False)
         self.assertEqual(
             res,

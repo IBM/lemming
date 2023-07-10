@@ -55,9 +55,9 @@ def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
     return end_goal[0]
 
 
-def get_edge_label(g: Graph, edge: Any) -> Optional[str]:
+def get_edge_label(g: Graph, edge: Any) -> str:
     if len(g.nodes) == 0:
-        return None
+        return ""
     edge_data = g.get_edge_data(edge[0], edge[1])
     edge_label: str = edge_data[0]["label"].replace('"', "").strip().lower()
     return edge_label
@@ -70,14 +70,15 @@ def get_first_node_with_multiple_out_edges(
     """
     returns a list of tuples of 1) node with multiple out edges, 2) out edges from the node, 3) edges traversed up to the node, nodes traversed
     """
+    nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
+    nodes_visited: Set[Any] = set()
+
     if len(g.nodes) == 0:
-        return []
+        return nodes_with_multiple_edges, nodes_visited
     # find a node to start
     roots = get_root_node_in_digraph(g, is_forward)
     queue: List[Tuple[Any, List[Any]]] = list()
     queue.extend(list(map(lambda root: (root, []), roots)))
-    nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
-    nodes_visited: Set[Any] = set()
     while len(queue) > 0:
         new_queue: List[Any] = list()
         for node, edges_traversed in queue:
@@ -239,7 +240,7 @@ def get_node_distance_from_terminal_node(
     """
     returns a dictionary of node names (keys) and lists of plan hashes
     """
-    node_distance_from_terminal_node_dict: Dict[str] = dict()
+    node_distance_from_terminal_node_dict: Dict[str, int] = dict()
 
     if len(g.nodes) == 0:
         return node_distance_from_terminal_node_dict

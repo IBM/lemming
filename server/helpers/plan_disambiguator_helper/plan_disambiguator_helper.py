@@ -416,7 +416,7 @@ def get_total_num_plans(choice_info: ChoiceInfo) -> int:
 def sort_choice_info_by_distance_to_terminal_nodes(
     choice_infos_input: List[ChoiceInfo],
     node_dist_from_terminal_node: Dict[str, int],
-):
+) -> List[ChoiceInfo]:
     choice_infos = list(
         map(
             lambda choice_info: choice_info.copy(deep=True),

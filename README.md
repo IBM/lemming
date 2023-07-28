@@ -93,6 +93,7 @@ user:~$ pip install -e .
 ```bash
 user:~$ pip install nl2ltl --no-deps
 user:~$ pip install pylogics openai==0.27.8
+user:~$ brew install autoconf automake libtool # for MacOS
 user:~$ ./scripts/build_submodules.sh
 ```
 

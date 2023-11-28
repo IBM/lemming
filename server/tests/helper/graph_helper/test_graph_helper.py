@@ -1,4 +1,4 @@
-from dataclasses import asdict
+from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 import unittest
 import os
@@ -60,7 +60,7 @@ class TestGraphHelper(unittest.TestCase):
             LandmarkCategory.RWH.value,
         )
         TestGraphHelper.planner_response_model = PlannerResponseModel.parse_obj(
-            asdict(
+            as_dict(
                 get_plan_topk(
                     PlanningTask(
                         domain=TestGraphHelper.gripper_domain,

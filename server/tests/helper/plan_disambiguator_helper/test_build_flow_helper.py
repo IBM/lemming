@@ -1,6 +1,6 @@
 import unittest
 import os
-from dataclasses import asdict
+from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
@@ -52,7 +52,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         )
         TestBuildFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestBuildFlowHelper.gripper_domain,
@@ -81,7 +81,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         )
         TestBuildFlowHelper.toy_planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestBuildFlowHelper.toy_domain,

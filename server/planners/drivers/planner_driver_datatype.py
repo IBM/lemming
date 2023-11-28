@@ -1,17 +1,20 @@
-from typing import List, Optional, TypedDict
-from dataclasses import dataclass
+from typing import List, Optional
+from pydantic.dataclasses import dataclass
 
 
-class PlanDict(TypedDict):
+@dataclass
+class PlanDict:
     actions: List[str]
     cost: Optional[int]
 
 
-class PlanningResultDict(TypedDict):
+@dataclass
+class PlanningResultDict:
     plans: List[PlanDict]
 
 
-class PlanAction(TypedDict, total=False):
+@dataclass
+class PlanAction:
     action_name: str
     parameters: List[str]
     metric: float

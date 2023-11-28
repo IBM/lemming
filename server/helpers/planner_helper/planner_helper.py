@@ -1,5 +1,4 @@
-from dataclasses import asdict
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.common_helper.hash_helper import get_list_hash
@@ -12,13 +11,25 @@ from helpers.planner_helper.planner_helper_data_types import (
 )
 from planners.drivers.forbid_iterative_planner_driver import execute_forbid_iterative_planner, get_plans_dot
 from planners.drivers.landmark_driver import get_landmarks
+from planners.drivers.planner_driver_datatype import PlanDict
+
+
+def as_dict(obj: object) -> Dict[str, Any]:
+    output = {}
+    for name, value in obj.__dict__.items():
+        if name == "__pydantic_initialised__":
+            continue
+        if hasattr(type(value), "__pydantic_initialised__"):
+            value = as_dict(value)
+        output[name] = value
+    return output
 
 
 def get_planner_response_model_with_hash(
     planning_result: PlanningResult,
 ) -> PlannerResponseModel:
     planner_response_model = PlannerResponseModel.parse_obj(
-        asdict(planning_result)
+        as_dict(planning_result)
     )
 
     for plan in planner_response_model.plans:
@@ -41,7 +52,7 @@ def get_landmarks_by_landmark_category(
 ) -> List[Landmark]:
     landmarks = list(
         map(
-            lambda result: Landmark.parse_obj(asdict(result)),
+            lambda result: Landmark.parse_obj(as_dict(result)),
             get_landmarks(
                 landmark_category,
                 planning_task.domain,
@@ -71,10 +82,11 @@ def get_landmarks_by_landmark_category(
 def get_dot_graph_str(
     planning_task: PlanningTask, planning_results: PlanningResult
 ) -> str:
-    planning_results_dict = asdict(planning_results)
+    planning_dicts = list(map(lambda plan: as_dict(PlanDict(
+        actions=plan.actions, cost=plan.cost)), planning_results.plans))
     dot_graph_str: str = get_plans_dot(
         planning_task.domain,
         planning_task.problem,
-        planning_results_dict.get("plans"),
+        planning_dicts,
     )
     return dot_graph_str

@@ -1,4 +1,4 @@
-from dataclasses import asdict
+from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 
 import unittest
@@ -57,7 +57,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         TestPlanDisambiguatorHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestPlanDisambiguatorHelper.gripper_domain,

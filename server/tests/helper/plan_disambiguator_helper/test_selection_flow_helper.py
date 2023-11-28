@@ -1,4 +1,4 @@
-from dataclasses import asdict
+from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 
 import unittest
@@ -60,7 +60,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         )
         TestSelectionFlowHelper.toy_planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.toy_domain,
@@ -91,7 +91,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         )
         TestSelectionFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.gripper_domain,
@@ -122,7 +122,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         )
         TestSelectionFlowHelper.travel_planner_response_model = (
             PlannerResponseModel.parse_obj(
-                asdict(
+                as_dict(
                     get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.travel_domain,

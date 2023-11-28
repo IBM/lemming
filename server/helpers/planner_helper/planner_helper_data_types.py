@@ -7,7 +7,7 @@ from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 from pydantic import BaseModel, validator
 from planners.drivers.planner_driver_datatype import PlanningResult
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 
 
 @dataclass

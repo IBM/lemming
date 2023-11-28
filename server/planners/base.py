@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
-from server.planners.drivers.planner_driver_datatype import PlanningResult, PlanningTask
+from planners.drivers.planner_driver_datatype import PlanningResult, PlanningTask
 
 
 class Planner(ABC):  # pylint: disable=too-few-public-methods

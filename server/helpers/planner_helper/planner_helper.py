@@ -10,8 +10,8 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
     PlanningResult
 )
-from server.planners.drivers.forbid_iterative_planner_driver import execute_forbid_iterative_planner, get_plans_dot
-from server.planners.drivers.landmark_driver import get_landmarks
+from planners.drivers.forbid_iterative_planner_driver import execute_forbid_iterative_planner, get_plans_dot
+from planners.drivers.landmark_driver import get_landmarks
 
 
 def get_planner_response_model_with_hash(

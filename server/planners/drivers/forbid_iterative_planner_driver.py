@@ -5,8 +5,8 @@ import forbiditerative
 import subprocess
 import sys
 import json
-from server.planners.drivers.planner_driver_datatype import PlanningResult, PlanningResultDict, PlanDict
-from server.planners.drivers.planner_driver_helper import parse_planning_result
+from planners.drivers.planner_driver_datatype import PlanningResult, PlanningResultDict, PlanDict
+from planners.drivers.planner_driver_helper import parse_planning_result
 
 build_dir = Path(forbiditerative.__file__).parent / \
     "builds" / "release" / "bin"

@@ -5,7 +5,7 @@ import forbiditerative
 import tempfile
 import subprocess
 import sys
-from server.planners.drivers.landmark_driver_datatype import Landmark
+from planners.drivers.landmark_driver_datatype import Landmark
 
 build_dir = Path(forbiditerative.__file__).parent / \
     'builds' / 'release' / 'bin'

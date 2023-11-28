@@ -5,7 +5,7 @@ from typing import List
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
 )
 from helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
@@ -53,7 +53,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         TestBuildFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
-                    get_plan_topq(
+                    get_plan_topk(
                         PlanningTask(
                             domain=TestBuildFlowHelper.gripper_domain,
                             problem=TestBuildFlowHelper.gripper_problem,
@@ -82,7 +82,7 @@ class TestBuildFlowHelper(unittest.TestCase):
         TestBuildFlowHelper.toy_planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
-                    get_plan_topq(
+                    get_plan_topk(
                         PlanningTask(
                             domain=TestBuildFlowHelper.toy_domain,
                             problem=TestBuildFlowHelper.toy_problem,

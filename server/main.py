@@ -38,7 +38,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 )
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
     get_planner_response_model_with_hash,
 )
 from helpers.common_helper.file_helper import (
@@ -161,7 +161,7 @@ async def get_plans(planning_task: PlanningTask) -> PlannerResponseModel:
             status_code=400, detail="Bad Request: domain or problem is empty"
         )
 
-    planning_result = get_plan_topq(planning_task)
+    planning_result = get_plan_topk(planning_task)
 
     if planning_result is None:
         raise HTTPException(status_code=422, detail="Unprocessable Entity")

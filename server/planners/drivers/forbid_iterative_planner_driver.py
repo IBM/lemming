@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import List, Optional
 import tempfile
 from pathlib import Path
 import forbiditerative
 import subprocess
 import sys
 import json
-from server.planners.drivers.planner_driver_datatype import PlanningResult, PlanningResultDict
+from server.planners.drivers.planner_driver_datatype import PlanningResult, PlanningResultDict, PlanDict
 from server.planners.drivers.planner_driver_helper import parse_planning_result
 
 build_dir = Path(forbiditerative.__file__).parent / \
@@ -66,3 +66,39 @@ def execute_forbid_iterative_planner(
         planning_result.planner_name = f"{planner_name}"
         planning_result.planner_exit_code = planner_exit_code
         return planning_result
+
+
+def plan_to_text(plan: PlanDict) -> str:
+    actions = ["(" + a + ")" for a in plan["actions"]]
+    return "\n".join(actions) + "\n" + f"; cost = {plan.get('cost')} (unit cost)"
+
+
+def get_plans_dot(domain: str, problem: str, plans: List[PlanDict]) -> str:
+    """Execute the planner on the task, no search."""
+    # a mapping from category to aliases recognized by the planner
+    # each alias represents a large amount of settings.
+    with tempfile.NamedTemporaryFile() as domain_temp, \
+            tempfile.NamedTemporaryFile() as problem_temp:
+        # We have to read and write to files because the planner is CLI oriented.
+        graph_file = Path(tempfile.gettempdir()) / "graph0.dot"
+        plans_path = Path(tempfile.gettempdir()) / "plans"
+        domain_file = Path(tempfile.gettempdir()) / domain_temp.name
+        problem_file = Path(tempfile.gettempdir()) / problem_temp.name
+        domain_file.write_text(domain)
+        problem_file.write_text(problem)
+        if not (plans_path.is_dir()):
+            plans_path.mkdir()
+        counter = 1
+        for plan in plans:
+            plan_file = Path(plans_path / f'sas_plan.{counter}')
+            plan_file.write_text(plan_to_text(plan))
+            counter += 1
+
+        counter -= 1
+        subprocess.run(
+            [sys.executable, "-B", "-m", "driver.main"]
+            + ["--build", str(build_dir.absolute())]
+            + [str(domain_file.absolute()), str(problem_file.absolute())]
+            + ["--search", f'forbid_iterative(reformulate=NONE,read_plans_and_dump_graph=true,external_plans_path={plans_path},number_of_plans_to_read={counter})'], cwd=Path(tempfile.gettempdir())
+        )
+        return graph_file.read_text()

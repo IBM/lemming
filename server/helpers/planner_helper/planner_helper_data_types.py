@@ -6,7 +6,26 @@ from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 from pydantic import BaseModel, validator
-from watson_ai_planning.data_model.planning_types import PlanningResult
+from server.planners.drivers.planner_driver_datatype import PlanningResult
+from dataclasses import dataclass
+
+
+@dataclass
+class PlanningTask:
+    """The planning problem to solve."""
+    domain: str
+    """The PDDL domain"""
+    problem: str
+    """The PDDL problem"""
+    num_plans: Optional[int] = None
+    """The overall number of plans. Used in TopK or TopQ planners. TopQ planners may return up to `num_plans`."""
+    quality_bound: Optional[float] = None
+    """A relative (to an optimal plan cost) bound on the plans quality (>= 1.0). Used in TopQ planners. """
+    timeout: Optional[int] = None
+    """The overall time limit (in seconds) on planner execution."""
+    case_sensitive: Optional[bool] = False
+    """Whether to treat PDDL as case-sensitive"""
+    action_name_prefix_preserve: Optional[str] = None
 
 
 class Plan(BaseModel):

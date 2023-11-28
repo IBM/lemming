@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
-from watson_ai_planning.data_model import PlanningResult, PlanningTask
+from server.planners.drivers.planner_driver_datatype import PlanningResult, PlanningTask
 
 
 class Planner(ABC):  # pylint: disable=too-few-public-methods

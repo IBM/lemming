@@ -7,7 +7,7 @@ import os
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
 )
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
@@ -61,7 +61,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         TestSelectionFlowHelper.toy_planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
-                    get_plan_topq(
+                    get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.toy_domain,
                             problem=TestSelectionFlowHelper.toy_problem,
@@ -92,7 +92,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         TestSelectionFlowHelper.planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
-                    get_plan_topq(
+                    get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.gripper_domain,
                             problem=TestSelectionFlowHelper.gripper_problem,
@@ -123,7 +123,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
         TestSelectionFlowHelper.travel_planner_response_model = (
             PlannerResponseModel.parse_obj(
                 asdict(
-                    get_plan_topq(
+                    get_plan_topk(
                         PlanningTask(
                             domain=TestSelectionFlowHelper.travel_domain,
                             problem=TestSelectionFlowHelper.travel_problem,
@@ -208,7 +208,8 @@ class TestSelectionFlowHelper(unittest.TestCase):
         self.assertEqual(len(selection_flow_output.plans), 12)
         self.assertEqual(len(selection_flow_output.choice_infos), 1)
         self.assertIsNone(selection_flow_output.choice_infos[0].landmark)
-        self.assertEqual(selection_flow_output.choice_infos[0].max_num_plans, 0)
+        self.assertEqual(
+            selection_flow_output.choice_infos[0].max_num_plans, 0)
         self.assertEqual(
             len(selection_flow_output.choice_infos[0].action_name_plan_idx_map),
             0,

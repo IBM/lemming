@@ -74,23 +74,6 @@ app.add_middleware(
 )
 
 
-def handle_flow_output(
-    flow_output: PlanDisambiguatorOutput,
-) -> PlanDisambiguatorOutput:
-    if flow_output is None:
-        raise HTTPException(status_code=422, detail="Unprocessable Entity")
-    return flow_output
-
-
-def check_pddl_input(plan_disambiguator_input: PlanDisambiguatorInput) -> None:
-    if not PlanDisambiguatorInput.check_domain_problem(
-        plan_disambiguator_input
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
-
-
 @app.get("/")
 def hello_lemming() -> str:
     return "Hello Lemming!"
@@ -111,7 +94,7 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         plans = json.load(open(f"./data/{domain_name}/plans.json"))
-        plans = [Plan.parse_obj(item) for item in plans]
+        plans = [Plan.model_validate(item) for item in plans]
 
     except Exception as e:
         print(e)
@@ -119,7 +102,7 @@ def import_domain(domain_name: str) -> LemmingTask:
 
     try:
         prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
-        nl_prompts = [CachedPrompt.parse_obj(item) for item in prompt]
+        nl_prompts = [CachedPrompt.model_validate(item) for item in prompt]
 
     except Exception as e:
         print(e)
@@ -136,9 +119,6 @@ async def get_landmarks(
     landmark_category: str,
     planning_task: PlanningTask,
 ) -> LandmarksResponseModel:
-    if planning_task.domain is None or planning_task.problem is None:
-        raise HTTPException(status_code=400, detail="Bad Request")
-
     landmarks = get_landmarks_by_landmark_category(
         planning_task, landmark_category
     )
@@ -151,16 +131,6 @@ async def get_landmarks(
 
 @app.post("/get_plans")
 async def get_plans(planning_task: PlanningTask) -> PlannerResponseModel:
-    if (
-        planning_task.domain is None
-        or planning_task.problem is None
-        or len(planning_task.domain) == 0
-        or len(planning_task.problem) == 0
-    ):
-        raise HTTPException(
-            status_code=400, detail="Bad Request: domain or problem is empty"
-        )
-
     planning_result = get_plan_topk(planning_task)
 
     if planning_result is None:
@@ -173,9 +143,7 @@ async def get_plans(planning_task: PlanningTask) -> PlannerResponseModel:
 def generate_select_view(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    check_pddl_input(plan_disambiguator_input)
-
-    flow_output = get_selection_flow_output(
+    return get_selection_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
@@ -184,16 +152,12 @@ def generate_select_view(
         plan_disambiguator_input.selection_priority,
     )
 
-    return handle_flow_output(flow_output)
-
 
 @app.post("/generate_build_forward")
 def generate_build_forward(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    check_pddl_input(plan_disambiguator_input)
-
-    flow_output = get_build_flow_output(
+    return get_build_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
@@ -202,16 +166,12 @@ def generate_build_forward(
         True,
     )
 
-    return handle_flow_output(flow_output)
-
 
 @app.post("/generate_build_backward")
 def generate_build_backward(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    check_pddl_input(plan_disambiguator_input)
-
-    flow_output = get_build_flow_output(
+    return get_build_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
@@ -219,8 +179,6 @@ def generate_build_backward(
         plan_disambiguator_input.plans,
         False,
     )
-
-    return handle_flow_output(flow_output)
 
 
 @app.post("/generate_nl2ltl_integration")
@@ -232,9 +190,6 @@ def generate_nl2ltl_integration(
 
 @app.post("/nl2ltl", response_model=None)
 async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
-    if request.utterance is None:
-        raise HTTPException(status_code=400, detail="Bad Request")
-
     domain_name = request.domain_name
     if domain_name:
         custom_prompt = prompt_builder(
@@ -267,14 +222,6 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler
 ) -> LemmingTask:
-    if (
-        request.planning_task is None
-        or request.planning_task.domain is None
-        or request.planning_task.problem is None
-        or request.formulas is None
-    ):
-        raise HTTPException(status_code=400, detail="Bad Request")
-
     domain_parser = DomainParser()
     problem_parser = ProblemParser()
 

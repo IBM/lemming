@@ -51,7 +51,7 @@ class TestBuildFlowHelper(unittest.TestCase):
             )
         )
         TestBuildFlowHelper.planner_response_model = (
-            PlannerResponseModel.parse_obj(
+            PlannerResponseModel.model_validate(
                 as_dict(
                     get_plan_topk(
                         PlanningTask(
@@ -80,7 +80,7 @@ class TestBuildFlowHelper(unittest.TestCase):
             LandmarkCategory.RWH.value,
         )
         TestBuildFlowHelper.toy_planner_response_model = (
-            PlannerResponseModel.parse_obj(
+            PlannerResponseModel.model_validate(
                 as_dict(
                     get_plan_topk(
                         PlanningTask(

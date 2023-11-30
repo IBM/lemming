@@ -56,7 +56,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             )
         )
         TestPlanDisambiguatorHelper.planner_response_model = (
-            PlannerResponseModel.parse_obj(
+            PlannerResponseModel.model_validate(
                 as_dict(
                     get_plan_topk(
                         PlanningTask(

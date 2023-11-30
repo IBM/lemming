@@ -59,14 +59,16 @@ class TestGraphHelper(unittest.TestCase):
             ),
             LandmarkCategory.RWH.value,
         )
-        TestGraphHelper.planner_response_model = PlannerResponseModel.parse_obj(
-            as_dict(
-                get_plan_topk(
-                    PlanningTask(
-                        domain=TestGraphHelper.gripper_domain,
-                        problem=TestGraphHelper.gripper_problem,
-                        num_plans=6,
-                        quality_bound=1.0,
+        TestGraphHelper.planner_response_model = (
+            PlannerResponseModel.model_validate(
+                as_dict(
+                    get_plan_topk(
+                        PlanningTask(
+                            domain=TestGraphHelper.gripper_domain,
+                            problem=TestGraphHelper.gripper_problem,
+                            num_plans=6,
+                            quality_bound=1.0,
+                        )
                     )
                 )
             )
@@ -194,8 +196,7 @@ class TestGraphHelper(unittest.TestCase):
         #     edges_traversed,
         # )
 
-        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(
-            g, True)
+        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
             nodes[0][1],
@@ -258,8 +259,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         source_node = "node1"
-        nodes = get_all_nodes_coming_from_node(
-            g, source_node, {"node19"}, True)
+        nodes = get_all_nodes_coming_from_node(g, source_node, {"node19"}, True)
         self.assertEqual(len(nodes), 17)
 
     def test_get_nodes_to_exclude(self) -> None:

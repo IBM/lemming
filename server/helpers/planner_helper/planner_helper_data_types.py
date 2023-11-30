@@ -5,14 +5,16 @@ from typing import Dict, List, Optional, Any
 from dacite import from_dict
 from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, model_validator
 from planners.drivers.planner_driver_datatype import PlanningResult
 from pydantic.dataclasses import dataclass
+from fastapi import HTTPException
 
 
 @dataclass
 class PlanningTask:
     """The planning problem to solve."""
+
     domain: str
     """The PDDL domain"""
     problem: str
@@ -66,7 +68,7 @@ class PlannerResponseModel(BaseModel):
 
     @staticmethod
     def get_planning_results(model: PlannerResponseModel) -> PlanningResult:
-        return from_dict(data_class=PlanningResult, data=model.dict())
+        return from_dict(data_class=PlanningResult, data=model.model_dump())
 
     def set_plan_hashes(self) -> None:
         for plan in self.plans:
@@ -106,16 +108,23 @@ class PlanDisambiguatorInput(BaseModel):
     domain: str = ""
     problem: str = ""
 
-    @staticmethod
-    def check_domain_problem(input: PlanDisambiguatorInput) -> bool:
-        return (
-            input.domain is not None
-            and len(input.domain) > 0
-            and input.problem is not None
-            and len(input.problem) > 0
-        )
+    @model_validator(mode="after")
+    def check_domain_problem(self) -> PlanDisambiguatorInput:
+        if (
+            self.domain is None
+            or len(self.domain) == 0
+            or self.problem is None
+            or len(self.problem) == 0
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Bad Request: domain or problem is empty",
+            )
 
-    @validator("selection_infos")
+        return self
+
+    @field_validator("selection_infos")
+    @classmethod
     def check_selected_landmarks(
         cls, v: List[SelectionInfo]
     ) -> Optional[List[SelectionInfo]]:
@@ -123,13 +132,15 @@ class PlanDisambiguatorInput(BaseModel):
             raise ValueError("selection_infos should not be None")
         return v
 
-    @validator("landmarks")
+    @field_validator("landmarks")
+    @classmethod
     def check_landmarks(cls, v: List[Landmark]) -> Optional[List[Landmark]]:
         if v is None:
             raise ValueError("landmarks should not be None")
         return v
 
-    @validator("plans")
+    @field_validator("plans")
+    @classmethod
     def check_plans(cls, v: List[Plan]) -> Optional[List[Plan]]:
         if v is None:
             raise ValueError("plans should not be None")
@@ -146,12 +157,33 @@ class PlanDisambiguatorOutput(BaseModel):
     node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
     edge_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
 
+    @model_validator(mode="after")
+    def check_for_none(self) -> PlanDisambiguatorOutput:
+        if self is None:
+            raise HTTPException(status_code=422, detail="Unprocessable Entity")
+        return self
+
 
 class PlanningTask(BaseModel):
     domain: str
     problem: str
     num_plans: int = 2
     quality_bound: float = 1.0
+
+    @model_validator(mode="after")
+    def check_for_none(self) -> PlanningTask:
+        if (
+            self.domain is None
+            or self.problem is None
+            or len(self.domain) == 0
+            or len(self.problem) == 0
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Bad Request: domain or problem is empty",
+            )
+
+        return self
 
 
 class LemmingTask(BaseModel):
@@ -164,6 +196,18 @@ class LTL2PDDLRequest(BaseModel):
     formulas: List[LTLFormula]
     plans: List[Plan]
     planning_task: PlanningTask
+
+    @model_validator(mode="after")
+    def check_for_none(self) -> LTL2PDDLRequest:
+        if (
+            self.planning_task is None
+            or self.planning_task.domain is None
+            or self.planning_task.problem is None
+            or self.formulas is None
+        ):
+            raise HTTPException(status_code=400, detail="Bad Request")
+
+        return self
 
 
 class ToolCompiler(Enum):

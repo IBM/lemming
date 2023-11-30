@@ -19,15 +19,30 @@ class PlanningTask:
     """The PDDL domain"""
     problem: str
     """The PDDL problem"""
-    num_plans: Optional[int] = None
+    num_plans: int = 1
     """The overall number of plans. Used in TopK or TopQ planners. TopQ planners may return up to `num_plans`."""
-    quality_bound: Optional[float] = None
+    quality_bound: float = 1.0
     """A relative (to an optimal plan cost) bound on the plans quality (>= 1.0). Used in TopQ planners. """
     timeout: Optional[int] = None
     """The overall time limit (in seconds) on planner execution."""
     case_sensitive: Optional[bool] = False
     """Whether to treat PDDL as case-sensitive"""
     action_name_prefix_preserve: Optional[str] = None
+
+    @model_validator(mode="after")
+    def check_for_none(self) -> PlanningTask:
+        if (
+            self.domain is None
+            or self.problem is None
+            or len(self.domain) == 0
+            or len(self.problem) == 0
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Bad Request: domain or problem is empty",
+            )
+
+        return self
 
 
 class Plan(BaseModel):
@@ -88,12 +103,12 @@ class ChoiceInfo(BaseModel):
         Dict[str, List[int]]
     ] = (
         dict()
-    )  # keys are first-achievers (or edges) available fore the next choice
+    )  # keys are first-achievers (or edges) available for the next choice
     action_name_plan_hash_map: Optional[
         Dict[str, List[str]]
     ] = (
         dict()
-    )  # keys are first-achievers (or edges) available fore the next choice
+    )  # keys are first-achievers (or edges) available for the next choice
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
     distance_to_init: int = sys.maxsize
@@ -161,28 +176,6 @@ class PlanDisambiguatorOutput(BaseModel):
     def check_for_none(self) -> PlanDisambiguatorOutput:
         if self is None:
             raise HTTPException(status_code=422, detail="Unprocessable Entity")
-        return self
-
-
-class PlanningTask(BaseModel):
-    domain: str
-    problem: str
-    num_plans: int = 2
-    quality_bound: float = 1.0
-
-    @model_validator(mode="after")
-    def check_for_none(self) -> PlanningTask:
-        if (
-            self.domain is None
-            or self.problem is None
-            or len(self.domain) == 0
-            or len(self.problem) == 0
-        ):
-            raise HTTPException(
-                status_code=400,
-                detail="Bad Request: domain or problem is empty",
-            )
-
         return self
 
 

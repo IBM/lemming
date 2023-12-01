@@ -3,16 +3,18 @@ from enum import Enum
 import sys
 from typing import Dict, List, Optional, Any
 from dacite import from_dict
+from pydantic import BaseModel, field_validator, model_validator
+
 from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
-from pydantic import BaseModel, field_validator, model_validator
+
 from planners.drivers.planner_driver_datatype import PlanningResult
-from pydantic.dataclasses import dataclass
+from planners.drivers.landmark_driver_datatype import Landmark
+
 from fastapi import HTTPException
 
 
-@dataclass
-class PlanningTask:
+class PlanningTask(BaseModel):
     """The planning problem to solve."""
 
     domain: str
@@ -49,12 +51,6 @@ class Plan(BaseModel):
     actions: List[str] = []
     cost: int = 0
     plan_hash: Optional[str] = None
-
-
-class Landmark(BaseModel):
-    facts: List[str] = []
-    disjunctive: bool = False
-    first_achievers: List[str] = []
 
 
 class SelectionInfo(BaseModel):

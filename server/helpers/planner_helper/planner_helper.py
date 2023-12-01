@@ -58,31 +58,10 @@ def get_plan_topk(planning_task: PlanningTask) -> Optional[PlanningResult]:
 def get_landmarks_by_landmark_category(
     planning_task: PlanningTask, landmark_category: str
 ) -> List[Landmark]:
-    landmarks = list(
-        map(
-            lambda result: Landmark.model_validate(as_dict(result)),
-            get_landmarks(
-                landmark_category,
-                planning_task.domain,
-                planning_task.problem,
-            ),
-        )
-    )
-
-    return list(
-        map(
-            lambda landmark: Landmark(
-                facts=landmark.facts,
-                disjunctive=landmark.disjunctive,
-                first_achievers=list(
-                    map(
-                        lambda first_achiever: first_achiever.strip(),
-                        landmark.first_achievers,
-                    )
-                ),
-            ),
-            landmarks,
-        )
+    return get_landmarks(
+        landmark_category,
+        planning_task.domain,
+        planning_task.problem,
     )
 
 

@@ -9,13 +9,7 @@ import inspect
 from pathlib import Path
 from helpers.common_helper.str_helper import format_plans
 from helpers.planner_helper.planner_helper_data_types import PlanningTask
-from planners.drivers.planner_driver_datatype import (
-    PlanningResultDict,
-    PlanningResult,
-)
-from planners.drivers.forbid_iterative_planner_driver import (
-    parse_planning_result,
-)
+from planners.drivers.planner_driver_datatype import PlanningResult
 from planners.base import Planner
 
 current_frame = inspect.currentframe()
@@ -112,11 +106,11 @@ class SymKPlanner(Planner):
                 planning_task.quality_bound,
             )
             json_plans = _parse_planning_result(str(plan_file))
-            result: PlanningResultDict = json.loads(str(json_plans))
+            result = json.loads(str(json_plans))
 
             for plan in result["plans"]:
                 plan["cost"] = int(plan["cost"])
-            return format_plans(parse_planning_result(result))
+            return format_plans(PlanningResult(**result))
 
     def _call_planner(
         self,

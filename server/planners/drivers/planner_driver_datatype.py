@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pydantic.dataclasses import dataclass
 from pydantic import BaseModel, model_validator
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from helpers.common_helper.hash_helper import get_list_hash
 
@@ -12,11 +12,6 @@ class PlanDict:
     cost: Optional[int]
 
 
-@dataclass
-class PlanningResultDict:
-    plans: List[PlanDict]
-
-
 class Plan(BaseModel):
     actions: List[str] = []
     cost: int = 0
@@ -25,6 +20,16 @@ class Plan(BaseModel):
 
 class PlanningResult(BaseModel):
     plans: List[Plan]
+    planner_name: Optional[str] = None
+    planner_exit_code: Optional[int] = 0
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_card_number_omitted(cls, data: Any) -> Any:
+        if not data or "plans" not in data:
+            return {"plans": []}
+
+        return data
 
     @model_validator(mode="after")
     def set_plan_hashes(self) -> PlanningResult:

@@ -5,7 +5,7 @@ import forbiditerative
 import subprocess
 import sys
 import json
-from planners.drivers.planner_driver_datatype import PlanningResult, PlanDict
+from planners.drivers.planner_driver_datatype import PlanningResult, Plan
 
 build_dir = Path(forbiditerative.__file__).parent / "builds" / "release" / "bin"
 
@@ -66,14 +66,7 @@ def execute_forbid_iterative_planner(
         return planning_result
 
 
-def plan_to_text(plan: PlanDict) -> str:
-    actions = ["(" + a + ")" for a in plan["actions"]]
-    return (
-        "\n".join(actions) + "\n" + f"; cost = {plan.get('cost')} (unit cost)"
-    )
-
-
-def get_plans_dot(domain: str, problem: str, plans: List[PlanDict]) -> str:
+def get_plans_dot(domain: str, problem: str, plans: List[Plan]) -> str:
     """Execute the planner on the task, no search."""
     # a mapping from category to aliases recognized by the planner
     # each alias represents a large amount of settings.
@@ -90,7 +83,7 @@ def get_plans_dot(domain: str, problem: str, plans: List[PlanDict]) -> str:
         counter = 1
         for plan in plans:
             plan_file = Path(plans_path / f"sas_plan.{counter}")
-            plan_file.write_text(plan_to_text(plan))
+            plan_file.write_text(plan.plan_to_text(plan))
             counter += 1
 
         counter -= 1

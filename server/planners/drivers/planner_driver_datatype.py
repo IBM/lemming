@@ -1,21 +1,23 @@
 from __future__ import annotations
-from pydantic.dataclasses import dataclass
 from pydantic import BaseModel, model_validator
 from typing import List, Optional, Any
 
 from helpers.common_helper.hash_helper import get_list_hash
 
 
-@dataclass
-class PlanDict:
-    actions: List[str]
-    cost: Optional[int]
-
-
 class Plan(BaseModel):
     actions: List[str] = []
     cost: int = 0
     plan_hash: Optional[str] = None
+
+    @staticmethod
+    def plan_to_text(plan: Plan) -> str:
+        actions = ["(" + a + ")" for a in plan.actions]
+        return (
+            "\n".join(actions)
+            + "\n"
+            + f"; cost = {plan.cost} ({'unit cost' if plan.cost == 1 else 'general cost'})"
+        )
 
 
 class PlanningResult(BaseModel):

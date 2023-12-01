@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.common_helper.str_helper import format_plans
@@ -11,18 +11,7 @@ from planners.drivers.forbid_iterative_planner_driver import (
     get_plans_dot,
 )
 from planners.drivers.landmark_driver import get_landmarks
-from planners.drivers.planner_driver_datatype import PlanDict, PlanningResult
-
-
-def as_dict(obj: object) -> Dict[str, Any]:
-    output = {}
-    for name, value in obj.__dict__.items():
-        if name == "__pydantic_initialised__":
-            continue
-        if hasattr(type(value), "__pydantic_initialised__"):
-            value = as_dict(value)
-        output[name] = value
-    return output
+from planners.drivers.planner_driver_datatype import PlanningResult
 
 
 @planner_exception_handler
@@ -53,17 +42,9 @@ def get_landmarks_by_landmark_category(
 def get_dot_graph_str(
     planning_task: PlanningTask, planning_results: PlanningResult
 ) -> str:
-    planning_dicts = list(
-        map(
-            lambda plan: as_dict(
-                PlanDict(actions=plan.actions, cost=plan.cost)
-            ),
-            planning_results.plans,
-        )
-    )
     dot_graph_str: str = get_plans_dot(
         planning_task.domain,
         planning_task.problem,
-        planning_dicts,
+        planning_results.plans,
     )
     return dot_graph_str

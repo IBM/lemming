@@ -65,6 +65,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 quality_bound=1.2,
             )
         )
+
         TestSelectionFlowHelper.gripper_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
@@ -88,6 +89,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 quality_bound=1.2,
             )
         )
+
         TestSelectionFlowHelper.travel_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("travel/domain"))
         )

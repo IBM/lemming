@@ -54,7 +54,10 @@ def set_nodes_with_multiple_edges(
     edge_label_nodes: Dict[str, List[str]],
 ) -> List[ChoiceInfo]:
     choice_infos = list(
-        map(lambda choice_info: choice_info.copy(deep=True), choice_infos_input)
+        map(
+            lambda choice_info: choice_info.model_copy(deep=True),
+            choice_infos_input,
+        )
     )
     for i in range(len(choice_infos)):
         nodes_with_target_edges: Set[str] = set()
@@ -158,7 +161,9 @@ def get_plans_with_selection_infos(
     """
     returns plans filtered by selected landmarks
     """
-    plans_before_filtering = list(map(lambda plan: plan.copy(deep=True), plans))
+    plans_before_filtering = list(
+        map(lambda plan: plan.model_copy(deep=True), plans)
+    )
 
     if selection_infos is None or len(selection_infos) == 0:
         return plans_before_filtering
@@ -417,7 +422,7 @@ def sort_choice_info_by_distance_to_terminal_nodes(
 ) -> List[ChoiceInfo]:
     choice_infos = list(
         map(
-            lambda choice_info: choice_info.copy(deep=True),
+            lambda choice_info: choice_info.model_copy(deep=True),
             choice_infos_input,
         )
     )
@@ -461,7 +466,7 @@ def process_selection_priority(
 ) -> List[ChoiceInfo]:
     choice_infos = list(
         map(
-            lambda choice_info: choice_info.copy(deep=True),
+            lambda choice_info: choice_info.model_copy(deep=True),
             choice_infos_input,
         )
     )

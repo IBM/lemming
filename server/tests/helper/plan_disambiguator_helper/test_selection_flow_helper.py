@@ -1,9 +1,9 @@
-from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 
 import unittest
 import os
 
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
@@ -12,7 +12,6 @@ from helpers.planner_helper.planner_helper import (
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
     SelectionInfo,
-    PlannerResponseModel,
     PlanningTask,
     Landmark,
     SelectionPriority,
@@ -29,17 +28,17 @@ class TestSelectionFlowHelper(unittest.TestCase):
     gripper_domain: str
     gripper_problem: str
     gripper_landmarks: List[Landmark]
-    planner_response_model: PlannerResponseModel
+    planner_response_model: PlanningResult
 
     travel_domain: str
     travel_problem: str
     travel_landmarks: List[Landmark]
-    travel_planner_response_model: PlannerResponseModel
+    travel_planner_response_model: PlanningResult
 
     toy_domain: str
     toy_problem: str
     toy_landmarks: List[Landmark]
-    toy_planner_response_model: PlannerResponseModel
+    toy_planner_response_model: PlanningResult
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -58,22 +57,14 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 LandmarkCategory.RWH.value,
             )
         )
-        TestSelectionFlowHelper.toy_planner_response_model = (
-            PlannerResponseModel.model_validate(
-                as_dict(
-                    get_plan_topk(
-                        PlanningTask(
-                            domain=TestSelectionFlowHelper.toy_domain,
-                            problem=TestSelectionFlowHelper.toy_problem,
-                            num_plans=10,
-                            quality_bound=1.2,
-                        )
-                    )
-                )
+        TestSelectionFlowHelper.toy_planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestSelectionFlowHelper.toy_domain,
+                problem=TestSelectionFlowHelper.toy_problem,
+                num_plans=10,
+                quality_bound=1.2,
             )
         )
-        TestSelectionFlowHelper.toy_planner_response_model.set_plan_hashes()
-
         TestSelectionFlowHelper.gripper_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("gripper/domain"))
         )
@@ -89,22 +80,14 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 LandmarkCategory.RWH.value,
             )
         )
-        TestSelectionFlowHelper.planner_response_model = (
-            PlannerResponseModel.model_validate(
-                as_dict(
-                    get_plan_topk(
-                        PlanningTask(
-                            domain=TestSelectionFlowHelper.gripper_domain,
-                            problem=TestSelectionFlowHelper.gripper_problem,
-                            num_plans=10,
-                            quality_bound=1.2,
-                        )
-                    )
-                )
+        TestSelectionFlowHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestSelectionFlowHelper.gripper_domain,
+                problem=TestSelectionFlowHelper.gripper_problem,
+                num_plans=10,
+                quality_bound=1.2,
             )
         )
-        TestSelectionFlowHelper.planner_response_model.set_plan_hashes()
-
         TestSelectionFlowHelper.travel_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("travel/domain"))
         )
@@ -120,21 +103,14 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 LandmarkCategory.RWH.value,
             )
         )
-        TestSelectionFlowHelper.travel_planner_response_model = (
-            PlannerResponseModel.model_validate(
-                as_dict(
-                    get_plan_topk(
-                        PlanningTask(
-                            domain=TestSelectionFlowHelper.travel_domain,
-                            problem=TestSelectionFlowHelper.travel_problem,
-                            num_plans=10,
-                            quality_bound=1.2,
-                        )
-                    )
-                )
+        TestSelectionFlowHelper.travel_planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestSelectionFlowHelper.travel_domain,
+                problem=TestSelectionFlowHelper.travel_problem,
+                num_plans=10,
+                quality_bound=1.2,
             )
         )
-        TestSelectionFlowHelper.travel_planner_response_model.set_plan_hashes()
 
     def test_get_selection_flow_output_no_selected_landmarks(self) -> None:
         selected_landmark_0 = SelectionInfo(

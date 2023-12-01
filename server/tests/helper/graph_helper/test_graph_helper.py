@@ -1,4 +1,3 @@
-from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 import unittest
 import os
@@ -59,16 +58,12 @@ class TestGraphHelper(unittest.TestCase):
             ),
             LandmarkCategory.RWH.value,
         )
-        TestGraphHelper.planner_response_model = PlanningResult.model_validate(
-            as_dict(
-                get_plan_topk(
-                    PlanningTask(
-                        domain=TestGraphHelper.gripper_domain,
-                        problem=TestGraphHelper.gripper_problem,
-                        num_plans=6,
-                        quality_bound=1.0,
-                    )
-                )
+        TestGraphHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestGraphHelper.gripper_domain,
+                problem=TestGraphHelper.gripper_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
         (

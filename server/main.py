@@ -26,11 +26,9 @@ from helpers.plan_disambiguator_helper.build_flow_helper import (
 )
 from helpers.nl2plan_helper.nl2ltl_helper import CachedPrompt
 from helpers.planner_helper.planner_helper_data_types import (
-    LandmarksResponseModel,
     LemmingTask,
     PlanDisambiguatorInput,
     PlanDisambiguatorOutput,
-    PlannerResponseModel,
     PlanningTask,
     ToolCompiler,
     Plan,
@@ -39,7 +37,6 @@ from helpers.planner_helper.planner_helper_data_types import (
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topk,
-    get_planner_response_model_with_hash,
 )
 from helpers.common_helper.file_helper import (
     read_str_from_upload_file,
@@ -47,6 +44,9 @@ from helpers.common_helper.file_helper import (
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
 )
+from planners.drivers.landmark_driver_datatype import LandmarksResponseModel
+from planners.drivers.planner_driver_datatype import PlanningResult
+
 from nl2ltl import translate
 from nl2ltl.engines.gpt.core import GPTEngine, Models
 from pddl.parser.domain import DomainParser
@@ -130,13 +130,13 @@ async def get_landmarks(
 
 
 @app.post("/get_plans")
-async def get_plans(planning_task: PlanningTask) -> PlannerResponseModel:
+async def get_plans(planning_task: PlanningTask) -> PlanningResult:
     planning_result = get_plan_topk(planning_task)
 
     if planning_result is None:
         raise HTTPException(status_code=422, detail="Unprocessable Entity")
 
-    return get_planner_response_model_with_hash(planning_result)
+    return planning_result
 
 
 @app.post("/generate_select_view")
@@ -241,8 +241,9 @@ async def ltl_compile(
 
     # Planning with SymK planner
     symk_planner = SymKPlanner()
-    planning_result = symk_planner.plan(planning_task)
-    plans = get_planner_response_model_with_hash(planning_result).plans
+
+    planning_result: PlanningResult = symk_planner.plan(planning_task)
+    plans = planning_result.plans
     lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
 
     return lemming_task

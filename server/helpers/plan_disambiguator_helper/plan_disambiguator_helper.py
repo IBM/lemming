@@ -1,18 +1,18 @@
-from copy import deepcopy
 import random
 import sys
+from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
+from networkx import Graph
 
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.planner_helper.planner_helper_data_types import (
     ChoiceInfo,
     Landmark,
     Plan,
-    PlannerResponseModel,
     PlanningTask,
     SelectionInfo,
     SelectionPriority,
 )
-from networkx import Graph
 from helpers.planner_helper.planner_helper import get_dot_graph_str
 from helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
@@ -143,7 +143,7 @@ def get_plans_filetered_by_selected_plan_hashes(
 
 
 def get_plans_with_selection_info(
-    selection_info: SelectionInfo, landmarks: List[Landmark], plans: List[Plan]
+    selection_info: SelectionInfo, plans: List[Plan]
 ) -> List[Plan]:
     """
     returns plans filtered by a selected landmark
@@ -178,8 +178,8 @@ def get_split_by_actions(
 ) -> List[ChoiceInfo]:
     """
     return a list of landmark infos
-    (1) a landmark, 2) the maximum number of plans including a first achiever,
-    and 3) a dictionary of first achiever name and a list of plan indices)
+    1) a landmark, 2) the maximum number of plans including a first achiever,
+    and 3) a dictionary of first achiever name and a list of plan indices
     """
     previous_selected_actions = set(
         map(
@@ -201,10 +201,10 @@ def get_split_by_actions(
         ):  # only consider landmarks shown in given plans
             choice_infos.append(
                 ChoiceInfo(
-                    landmark=landmark.copy(deep=True),
+                    landmark=landmark.model_copy(deep=True),
                     max_num_plans=num_plans_in_actions,
-                    action_name_plan_idx_map=action_name_plan_idx_list,  # keys are first-achievers available fore the next choice
-                    action_name_plan_hash_map=action_name_plan_hash_list,  # keys are first-achievers available fore the next choice
+                    action_name_plan_idx_map=action_name_plan_idx_list,  # keys are first-achievers available for the next choice
+                    action_name_plan_hash_map=action_name_plan_hash_list,  # keys are first-achievers available for the next choice
                     is_available_for_choice=num_plans_in_actions > 0,
                 )
             )
@@ -231,7 +231,7 @@ def get_filtered_landmark_by_selected_plans(
                     counter_valid_first_achievers += 1
                     break
         if counter_valid_first_achievers >= 2:
-            filtered_landmarks.append(landmark.copy(deep=True))
+            filtered_landmarks.append(landmark.model_copy(deep=True))
     return filtered_landmarks
 
 
@@ -258,10 +258,8 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
     """
     selected_plans = get_plans_with_selection_infos(selection_infos, plans)
     dot_str = get_dot_graph_str(
-        PlanningTask(domain=domain, problem=problem),
-        planning_results=PlannerResponseModel.get_planning_results(
-            PlannerResponseModel(plans=selected_plans)
-        ),
+        planning_task=PlanningTask(domain=domain, problem=problem),
+        planning_results=PlanningResult(plans=selected_plans),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
     node_dist_from_initial_state = get_node_distance_from_terminal_node(g, True)
@@ -304,7 +302,7 @@ def filter_in_choice_info_by_first_achiever(
 ) -> List[ChoiceInfo]:
     for selection_info in selection_infos:
         if first_achiever in selection_info.action_name_plan_idx_map:
-            return [selection_info.copy(deep=True)]
+            return [selection_info.model_copy(deep=True)]
     return []
 
 
@@ -385,7 +383,7 @@ def append_landmarks_not_available_for_choice(
     landmarks: List[Landmark], choice_infos: List[ChoiceInfo]
 ) -> List[ChoiceInfo]:
     choice_infos_with_not_available_landmarks: List[ChoiceInfo] = list(
-        map(lambda choice_info: choice_info.copy(deep=True), choice_infos)
+        map(lambda cf: cf.model_copy(deep=True), choice_infos)
     )
     facts_set: Set[Tuple[Any, ...]] = set()
     for choice_info in choice_infos:
@@ -399,7 +397,7 @@ def append_landmarks_not_available_for_choice(
         ):
             choice_infos_with_not_available_landmarks.append(
                 ChoiceInfo(
-                    landmark=landmark.copy(deep=True),
+                    landmark=landmark.model_copy(deep=True),
                     is_available_for_choice=False,
                 )
             )
@@ -438,7 +436,7 @@ def set_distance_to_terminal_nodes(
     node_dist_from_initial_state: Dict[str, int],
     node_dist_from_end_state: Dict[str, int],
 ) -> ChoiceInfo:
-    choice_info = choice_info_input.copy(deep=True)
+    choice_info = choice_info_input.model_copy(deep=True)
     choice_info.distance_to_init = (
         get_min_dist_between_nodes_from_terminal_node_by_node(
             choice_info.nodes_with_multiple_out_edges,

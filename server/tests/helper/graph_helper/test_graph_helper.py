@@ -73,7 +73,6 @@ class TestGraphHelper(unittest.TestCase):
                 )
             )
         )
-        TestGraphHelper.planner_response_model.set_plan_hashes()
         (
             _,
             _,

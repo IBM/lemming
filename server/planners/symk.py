@@ -8,14 +8,22 @@ from typing import Dict, Optional, Any
 import inspect
 from pathlib import Path
 from helpers.common_helper.str_helper import format_plans
-from helpers.planner_helper.planner_helper_data_types import PlanningTask, PlanningResult
-from planners.drivers.planner_driver_datatype import PlanningResultDict
-from planners.drivers.forbid_iterative_planner_driver import parse_planning_result
+from helpers.planner_helper.planner_helper_data_types import PlanningTask
+from planners.drivers.planner_driver_datatype import (
+    PlanningResultDict,
+    PlanningResult,
+)
+from planners.drivers.forbid_iterative_planner_driver import (
+    parse_planning_result,
+)
 from planners.base import Planner
 
-PLANNERS_ROOT = Path(inspect.getframeinfo(
-    inspect.currentframe()).filename).parent  # type: ignore[arg-type]
-SERVER_ROOT = PLANNERS_ROOT.parent
+current_frame = inspect.currentframe()
+if inspect.isframe(current_frame):
+    PLANNERS_ROOT = Path(inspect.getframeinfo(current_frame).filename).parent
+    SERVER_ROOT = PLANNERS_ROOT.parent
+else:
+    raise FileNotFoundError("Error getting path to SYMK Planner.")
 
 DEFAULT_BIN_SYMK_PATH = (
     SERVER_ROOT / "third_party" / "symk" / "fast-downward.py"

@@ -16,3 +16,7 @@ class Landmark(BaseModel):
         ]
 
         return new_landmark_object
+
+
+class LandmarksResponseModel(BaseModel):
+    landmarks: List[Landmark] = []

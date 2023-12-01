@@ -2,13 +2,11 @@ from __future__ import annotations
 from enum import Enum
 import sys
 from typing import Dict, List, Optional, Any
-from dacite import from_dict
 from pydantic import BaseModel, field_validator, model_validator
 
-from helpers.common_helper.hash_helper import get_list_hash
 from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 
-from planners.drivers.planner_driver_datatype import PlanningResult
+from planners.drivers.planner_driver_datatype import Plan
 from planners.drivers.landmark_driver_datatype import Landmark
 
 from fastapi import HTTPException
@@ -47,12 +45,6 @@ class PlanningTask(BaseModel):
         return self
 
 
-class Plan(BaseModel):
-    actions: List[str] = []
-    cost: int = 0
-    plan_hash: Optional[str] = None
-
-
 class SelectionInfo(BaseModel):
     selected_first_achiever: Optional[str] = ""
     selected_plan_hashes: Optional[List[str]] = []
@@ -72,22 +64,6 @@ class LandmarkCategory(Enum):
     H2 = "h2"
     RWH = "rhw"
     ZG = "zg"
-
-
-class PlannerResponseModel(BaseModel):
-    plans: List[Plan] = []
-
-    @staticmethod
-    def get_planning_results(model: PlannerResponseModel) -> PlanningResult:
-        return from_dict(data_class=PlanningResult, data=model.model_dump())
-
-    def set_plan_hashes(self) -> None:
-        for plan in self.plans:
-            plan.plan_hash = get_list_hash(plan.actions)
-
-
-class LandmarksResponseModel(BaseModel):
-    landmarks: List[Landmark] = []
 
 
 class ChoiceInfo(BaseModel):

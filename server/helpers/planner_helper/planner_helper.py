@@ -1,20 +1,17 @@
 from typing import Any, Dict, List, Optional
 
 from helpers.common_helper.exception_handler import planner_exception_handler
-from helpers.common_helper.hash_helper import get_list_hash
 from helpers.common_helper.str_helper import format_plans
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
-    PlannerResponseModel,
     PlanningTask,
-    PlanningResult,
 )
 from planners.drivers.forbid_iterative_planner_driver import (
     execute_forbid_iterative_planner,
     get_plans_dot,
 )
 from planners.drivers.landmark_driver import get_landmarks
-from planners.drivers.planner_driver_datatype import PlanDict
+from planners.drivers.planner_driver_datatype import PlanDict, PlanningResult
 
 
 def as_dict(obj: object) -> Dict[str, Any]:
@@ -26,19 +23,6 @@ def as_dict(obj: object) -> Dict[str, Any]:
             value = as_dict(value)
         output[name] = value
     return output
-
-
-def get_planner_response_model_with_hash(
-    planning_result: PlanningResult,
-) -> PlannerResponseModel:
-    planner_response_model = PlannerResponseModel.model_validate(
-        as_dict(planning_result)
-    )
-
-    for plan in planner_response_model.plans:
-        plan.plan_hash = get_list_hash(plan.actions)
-
-    return planner_response_model
 
 
 @planner_exception_handler

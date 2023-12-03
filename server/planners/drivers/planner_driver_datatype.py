@@ -16,7 +16,8 @@ class Plan(BaseModel):
         return (
             "\n".join(actions)
             + "\n"
-            + f"; cost = {plan.cost} ({'unit cost' if plan.cost == 1 else 'general cost'})"
+            + "; cost = "
+            f"{plan.cost} ({'unit cost' if plan.cost == 1 else 'general cost'})"
         )
 
 
@@ -27,7 +28,7 @@ class PlanningResult(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_card_number_omitted(cls, data: Any) -> Any:
+    def custom_initializer(cls, data: Any) -> Any:
         if not data or "plans" not in data:
             return {"plans": []}
 

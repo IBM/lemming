@@ -15,8 +15,8 @@ while greedily minimizing the number of disambiguation points. It also provides 
 plans that need to be disambiguated, reflecting different considerations for the user in terms of how much
 information they need to deal with during the disambiguation process.
 
-> 🏆 The first Lemming appears in the ICAPS 2023 System Demonstration Track in Prague, where its integration with 
-> the [NL2LTL](https://github.com/IBM/nl2ltl) package was the runners-up for the People's Choice Best System Demonstration 
+> 🏆 The first Lemming appears in the ICAPS 2023 System Demonstration Track in Prague, where its integration with
+> the [NL2LTL](https://github.com/IBM/nl2ltl) package was the runners-up for the People's Choice Best System Demonstration
 > Award. Read more about it [here](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf).
 
 ## Setting up locally
@@ -33,7 +33,7 @@ user:~$ cd lemming
 
 ### Change to a virtual environment
 
-We also strongly recommend using a virtual environment, such 
+We also strongly recommend using a virtual environment, such
 as [anaconda](https://www.anaconda.com/), for development.
 
 ```bash

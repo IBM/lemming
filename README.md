@@ -38,6 +38,7 @@ as [anaconda](https://www.anaconda.com/), for development.
 
 ```bash
 $ conda create --name lemming python=3.10.11
+$ conda activate lemming
 ```
 
 ### Install Dependencies

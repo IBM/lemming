@@ -24,7 +24,8 @@ def edit_edge_labels(g: Graph) -> Graph:
             and "label" in edge_data[0]
         ):
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", edge_data[0]
+                       ["label"]).strip('"').strip()
             )
 
     return new_graph
@@ -59,8 +60,11 @@ def get_edge_label(g: Graph, edge: Any) -> str:
     if len(g.nodes) == 0:
         return ""
     edge_data = g.get_edge_data(edge[0], edge[1])
-    edge_label: str = edge_data[0]["label"].replace('"', "").strip().lower()
-    return edge_label
+    if (edge_data is not None) and (0 in edge_data) and ("label" in edge_data[0]):
+        label = edge_data[0]["label"][:]
+        edge_label: str = label.replace('"', "").strip().lower()
+        return edge_label
+    return ""
 
 
 def get_first_node_with_multiple_out_edges(

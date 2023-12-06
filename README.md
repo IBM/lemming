@@ -50,7 +50,7 @@ $ conda create --name lemming python=3.10.11
 
 ```bash
 (lemming) user:~$ pip install nl2ltl --no-deps
-(lemming) user:~$ pip install pylogics openai==0.27.8
+(lemming) user:~$ pip install pylogics openai==0.27.8 rasa==3.6.15
 (lemming) user:~$ ./scripts/build_submodules.sh
 ```
 

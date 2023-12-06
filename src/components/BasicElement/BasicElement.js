@@ -411,10 +411,13 @@ class PlanArea extends React.Component {
             selection_infos: selection_infos,
         };
 
-        if (this.state.active_view === 'Select View')
+        if (this.state.active_view === 'Select View') {
             payload.selection_priority = this.state.views.filter(
                 item => item.name === 'Select View'
             )[0].selection_priority;
+        } else {
+            payload.selection_priority = null;
+        }
 
         fetch(viz_endpoint, {
             method: 'POST',

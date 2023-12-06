@@ -1,4 +1,3 @@
-from helpers.planner_helper.planner_helper import as_dict
 from typing import List
 import unittest
 import os
@@ -16,10 +15,10 @@ from helpers.graph_helper.graph_helper import (
     get_graph_with_number_of_plans_label,
     get_edge_label,
 )
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     LandmarkCategory,
-    PlannerResponseModel,
     PlanningTask,
 )
 from helpers.common_helper.file_helper import read_str_from_file
@@ -41,7 +40,7 @@ class TestGraphHelper(unittest.TestCase):
     gripper_domain: str
     gripper_problem: str
     gripper_landmarks: List[Landmark]
-    planner_response_model: PlannerResponseModel
+    planner_response_model: PlanningResult
     test_graph: nx.Graph
 
     @classmethod
@@ -59,19 +58,14 @@ class TestGraphHelper(unittest.TestCase):
             ),
             LandmarkCategory.RWH.value,
         )
-        TestGraphHelper.planner_response_model = PlannerResponseModel.parse_obj(
-            as_dict(
-                get_plan_topk(
-                    PlanningTask(
-                        domain=TestGraphHelper.gripper_domain,
-                        problem=TestGraphHelper.gripper_problem,
-                        num_plans=6,
-                        quality_bound=1.0,
-                    )
-                )
+        TestGraphHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestGraphHelper.gripper_domain,
+                problem=TestGraphHelper.gripper_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
-        TestGraphHelper.planner_response_model.set_plan_hashes()
         (
             _,
             _,
@@ -194,8 +188,7 @@ class TestGraphHelper(unittest.TestCase):
         #     edges_traversed,
         # )
 
-        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(
-            g, True)
+        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
         self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
             nodes[0][1],
@@ -258,8 +251,7 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         source_node = "node1"
-        nodes = get_all_nodes_coming_from_node(
-            g, source_node, {"node19"}, True)
+        nodes = get_all_nodes_coming_from_node(g, source_node, {"node19"}, True)
         self.assertEqual(len(nodes), 17)
 
     def test_get_nodes_to_exclude(self) -> None:

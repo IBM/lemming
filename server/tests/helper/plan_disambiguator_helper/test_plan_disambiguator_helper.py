@@ -1,18 +1,17 @@
-from dataclasses import asdict
 from typing import List
 
 import unittest
 import os
 
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
 )
 from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
     SelectionInfo,
-    PlannerResponseModel,
     Landmark,
     PlanningTask,
     ChoiceInfo,
@@ -36,7 +35,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
     gripper_domain: str
     gripper_problem: str
     gripper_landmarks: List[Landmark]
-    planner_response_model: PlannerResponseModel
+    planner_response_model: PlanningResult
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -55,21 +54,14 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
                 LandmarkCategory.RWH.value,
             )
         )
-        TestPlanDisambiguatorHelper.planner_response_model = (
-            PlannerResponseModel.parse_obj(
-                asdict(
-                    get_plan_topq(
-                        PlanningTask(
-                            domain=TestPlanDisambiguatorHelper.gripper_domain,
-                            problem=TestPlanDisambiguatorHelper.gripper_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
-                        )
-                    )
-                )
+        TestPlanDisambiguatorHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestPlanDisambiguatorHelper.gripper_domain,
+                problem=TestPlanDisambiguatorHelper.gripper_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
-        TestPlanDisambiguatorHelper.planner_response_model.set_plan_hashes()
 
     def test_get_plans_with_selection_infos(self) -> None:
         selection_info_0 = SelectionInfo(

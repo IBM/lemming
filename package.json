@@ -1,21 +1,18 @@
 {
-  "name": "Lemming",
-  "version": "0.0.0",
-  "private": true,
+  "name": "lemming",
+  "version": "0.0.2",
   "repository": "https://github.com/IBM/lemming",
   "bugs": "https://github.com/IBM/lemming/issues",
   "license": "Apache License 2.0",
   "scripts": {
     "build": "react-scripts build",
-    "ci-check": "yarn format:diff",
     "clean": "yarn cache clean && yarn install",
-    "eject": "react-scripts eject",
     "format": "prettier --write \"**/*.{js,md,scss}\"",
-    "format:diff": "prettier --list-different \"**/*.{js,md,scss}\"",
-    "format:staged": "prettier --write",
     "start": "react-scripts start",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
-    "deploy": "rm -rf ./build && yarn build && cf push -f manifest.yml"
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "@carbon/react": "^1.31.3",

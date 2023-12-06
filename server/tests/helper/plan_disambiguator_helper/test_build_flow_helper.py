@@ -1,15 +1,14 @@
 import unittest
 import os
-from dataclasses import asdict
 from typing import List
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
 )
 from helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
-    PlannerResponseModel,
     LandmarkCategory,
     Landmark,
     SelectionInfo,
@@ -26,12 +25,12 @@ class TestBuildFlowHelper(unittest.TestCase):
     gripper_domain: str
     gripper_problem: str
     gripper_landmarks: List[Landmark]
-    planner_response_model: PlannerResponseModel
+    planner_response_model: PlanningResult
 
     toy_domain: str
     toy_problem: str
     toy_landmarks: List[Landmark]
-    toy_planner_response_model: PlannerResponseModel
+    toy_planner_response_model: PlanningResult
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -50,21 +49,14 @@ class TestBuildFlowHelper(unittest.TestCase):
                 LandmarkCategory.RWH.value,
             )
         )
-        TestBuildFlowHelper.planner_response_model = (
-            PlannerResponseModel.parse_obj(
-                asdict(
-                    get_plan_topq(
-                        PlanningTask(
-                            domain=TestBuildFlowHelper.gripper_domain,
-                            problem=TestBuildFlowHelper.gripper_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
-                        )
-                    )
-                )
+        TestBuildFlowHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestBuildFlowHelper.gripper_domain,
+                problem=TestBuildFlowHelper.gripper_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
-        TestBuildFlowHelper.planner_response_model.set_plan_hashes()
 
         TestBuildFlowHelper.toy_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
@@ -79,21 +71,14 @@ class TestBuildFlowHelper(unittest.TestCase):
             ),
             LandmarkCategory.RWH.value,
         )
-        TestBuildFlowHelper.toy_planner_response_model = (
-            PlannerResponseModel.parse_obj(
-                asdict(
-                    get_plan_topq(
-                        PlanningTask(
-                            domain=TestBuildFlowHelper.toy_domain,
-                            problem=TestBuildFlowHelper.toy_problem,
-                            num_plans=6,
-                            quality_bound=1.0,
-                        )
-                    )
-                )
+        TestBuildFlowHelper.toy_planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestBuildFlowHelper.toy_domain,
+                problem=TestBuildFlowHelper.toy_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
-        TestBuildFlowHelper.toy_planner_response_model.set_plan_hashes()
 
     def test_get_build_forward_flow_output_no_selection_info_no_landmark(
         self,

@@ -41,7 +41,7 @@ class LLMPrompt(BaseModel):
 
 def _build_llm_prompt_from_cached_prompt(data: Json[List[Dict]]) -> LLMPrompt:
     """Instantiate an LLM Prompt from parsed Cached prompt."""
-    nl_prompts = [CachedPrompt.parse_obj(obj) for obj in data]
+    nl_prompts = [CachedPrompt.model_validate(obj) for obj in data]
     body = ""
     for c_prompt in nl_prompts:
         for case in [c_prompt.utterance, *c_prompt.paraphrases]:

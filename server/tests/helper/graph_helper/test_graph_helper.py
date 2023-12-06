@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import List
 import unittest
 import os
@@ -16,16 +15,16 @@ from helpers.graph_helper.graph_helper import (
     get_graph_with_number_of_plans_label,
     get_edge_label,
 )
+from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     LandmarkCategory,
-    PlannerResponseModel,
     PlanningTask,
 )
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
-    get_plan_topq,
+    get_plan_topk,
 )
 from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plan_disambiguator_output_filtered_by_selection_infos,
@@ -41,7 +40,7 @@ class TestGraphHelper(unittest.TestCase):
     gripper_domain: str
     gripper_problem: str
     gripper_landmarks: List[Landmark]
-    planner_response_model: PlannerResponseModel
+    planner_response_model: PlanningResult
     test_graph: nx.Graph
 
     @classmethod
@@ -59,19 +58,14 @@ class TestGraphHelper(unittest.TestCase):
             ),
             LandmarkCategory.RWH.value,
         )
-        TestGraphHelper.planner_response_model = PlannerResponseModel.parse_obj(
-            asdict(
-                get_plan_topq(
-                    PlanningTask(
-                        domain=TestGraphHelper.gripper_domain,
-                        problem=TestGraphHelper.gripper_problem,
-                        num_plans=6,
-                        quality_bound=1.0,
-                    )
-                )
+        TestGraphHelper.planner_response_model = get_plan_topk(
+            PlanningTask(
+                domain=TestGraphHelper.gripper_domain,
+                problem=TestGraphHelper.gripper_problem,
+                num_plans=6,
+                quality_bound=1.0,
             )
         )
-        TestGraphHelper.planner_response_model.set_plan_hashes()
         (
             _,
             _,

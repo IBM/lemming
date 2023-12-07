@@ -52,6 +52,7 @@ $ conda activate lemming
 ```bash
 (lemming) user:~$ pip install nl2ltl --no-deps
 (lemming) user:~$ pip install pylogics openai==0.27.8 rasa==3.6.15
+(lemming) user:~$ brew install autoconf automake libtool # for MacOS
 (lemming) user:~$ ./scripts/build-submodules.sh
 (lemming) user:~$ pip install --upgrade --no-deps --force-reinstall pydantic==2.5.2
 ```

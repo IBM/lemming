@@ -1,6 +1,5 @@
 from typing import List
-
-from watson_ai_planning.data_model.planning_types import Plan, PlanningResult
+from planners.drivers.planner_driver_datatype import Plan, PlanningResult
 
 
 def format_plan(actions: List[str]) -> List[str]:

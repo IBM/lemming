@@ -5,22 +5,19 @@ import re
 import subprocess
 import tempfile
 from typing import Dict, Optional, Any
-
 import inspect
 from pathlib import Path
-
-from watson_ai_planning.data_model import PlanningResult
-from watson_ai_planning.planner.utils import (
-    PlanningResultDict,
-    parse_planning_result,
-)
-
 from helpers.common_helper.str_helper import format_plans
 from helpers.planner_helper.planner_helper_data_types import PlanningTask
-from server.planners.base import Planner
+from planners.drivers.planner_driver_datatype import PlanningResult
+from planners.base import Planner
 
-PLANNERS_ROOT = Path(inspect.getframeinfo(inspect.currentframe()).filename).parent  # type: ignore[arg-type]
-SERVER_ROOT = PLANNERS_ROOT.parent
+current_frame = inspect.currentframe()
+if inspect.isframe(current_frame):
+    PLANNERS_ROOT = Path(inspect.getframeinfo(current_frame).filename).parent
+    SERVER_ROOT = PLANNERS_ROOT.parent
+else:
+    raise FileNotFoundError("Error getting path to SYMK Planner.")
 
 DEFAULT_BIN_SYMK_PATH = (
     SERVER_ROOT / "third_party" / "symk" / "fast-downward.py"
@@ -109,11 +106,11 @@ class SymKPlanner(Planner):
                 planning_task.quality_bound,
             )
             json_plans = _parse_planning_result(str(plan_file))
-            result: PlanningResultDict = json.loads(str(json_plans))
+            result = json.loads(str(json_plans))
 
             for plan in result["plans"]:
                 plan["cost"] = int(plan["cost"])
-            return format_plans(parse_planning_result(result))
+            return format_plans(PlanningResult(**result))
 
     def _call_planner(
         self,

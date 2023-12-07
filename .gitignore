@@ -11,6 +11,12 @@ temp/
 localstore/
 # .vscode/
 
+LICENSE.txt
+include/
+
+# testing
+pddl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -82,8 +82,8 @@ def split_plans_with_actions(
     previous_selected_actions: Set[str],
 ) -> Tuple[Dict[str, List[int]], Dict[str, List[str]], int]:
     """
-    returns a tuple of 1) a dictionary of first_achiever names and lists of plan indices
-    and 2) the maximum number of plans with a first achiever
+    returns a tuple of 1) a dictionary of first_achiever names and lists of plan
+    indices and 2) the maximum number of plans with a first achiever
     """
     plan_sets: List[Set[str]] = list(map(lambda plan: set(plan.actions), plans))
     action_name_list_plan_idx: Dict[str, List[int]] = dict()
@@ -99,11 +99,17 @@ def split_plans_with_actions(
                 if action_name not in action_name_list_plan_idx:
                     action_name_list_plan_idx[action_name] = list()
                     action_name_list_plan_hash[action_name] = list()
+
                 action_name_list_plan_idx[action_name].append(plan_set_idx)
-                action_name_list_plan_hash[action_name].append(
-                    plans[plan_set_idx].plan_hash
-                )
-                plan_hashes_for_action.add(plans[plan_set_idx].plan_hash)
+
+                if plans[plan_set_idx].plan_hash is not None:
+                    plan_hashes_for_action.add(
+                        plans[plan_set_idx].plan_hash  # type: ignore
+                    )
+                    action_name_list_plan_hash[action_name].append(
+                        plans[plan_set_idx].plan_hash  # type: ignore
+                    )
+
         if action_name in action_name_list_plan_idx and len(
             action_name_list_plan_idx[action_name]
         ) == len(
@@ -137,7 +143,7 @@ def get_plans_filetered_by_selected_plan_hashes(
         selection_info.selected_plan_hashes is None
         or len(selection_info.selected_plan_hashes) == 0
     ):
-        return list(map(lambda plan: plan.copy(deep=True), plans))
+        return list(map(lambda plan: plan.model_copy(deep=True), plans))
 
     plan_hashes_to_select: Set[str] = set(selection_info.selected_plan_hashes)
     return list(
@@ -187,11 +193,11 @@ def get_split_by_actions(
     and 3) a dictionary of first achiever name and a list of plan indices
     """
     previous_selected_actions = set(
-        map(
-            lambda selection_info: selection_info.selected_first_achiever,
-            selection_infos,
-        )
+        item.selected_first_achiever
+        for item in selection_infos
+        if item.selected_first_achiever
     )
+
     choice_infos: List[ChoiceInfo] = list()
     for landmark in landmarks:
         (
@@ -208,8 +214,10 @@ def get_split_by_actions(
                 ChoiceInfo(
                     landmark=landmark.model_copy(deep=True),
                     max_num_plans=num_plans_in_actions,
-                    action_name_plan_idx_map=action_name_plan_idx_list,  # keys are first-achievers available for the next choice
-                    action_name_plan_hash_map=action_name_plan_hash_list,  # keys are first-achievers available for the next choice
+                    # keys are first-achievers available for the next choice
+                    action_name_plan_idx_map=action_name_plan_idx_list,
+                    # keys are first-achievers available for the next choice
+                    action_name_plan_hash_map=action_name_plan_hash_list,
                     is_available_for_choice=num_plans_in_actions > 0,
                 )
             )
@@ -226,7 +234,8 @@ def get_filtered_landmark_by_selected_plans(
 ) -> List[Landmark]:
     plan_hash_actions_dict: Dict[str, Set[str]] = dict()
     for plan in selected_plans:
-        plan_hash_actions_dict[plan.plan_hash] = set(plan.actions)
+        if plan.plan_hash is not None:
+            plan_hash_actions_dict[plan.plan_hash] = set(plan.actions)
     filtered_landmarks: List[Landmark] = list()
     for landmark in landmarks:
         counter_valid_first_achievers = 0
@@ -334,9 +343,11 @@ def get_edge_label_plan_hashes_dict(
     for plan_idx, edge_label in plan_idx_edges_dict.items():
         if edge_label not in edge_label_plan_hash_dict:
             edge_label_plan_hash_dict[edge_label] = list()
-        edge_label_plan_hash_dict[edge_label].append(
-            plans[plan_idx].plan_hash[:]
-        )
+
+        if plans[plan_idx].plan_hash:
+            edge_label_plan_hash_dict[edge_label].append(
+                plans[plan_idx].plan_hash  # type: ignore
+            )
 
     return edge_label_plan_hash_dict
 
@@ -427,8 +438,8 @@ def sort_choice_info_by_distance_to_terminal_nodes(
         )
     )
     choice_infos.sort(
-        key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node_by_node(
-            list(choice_info.nodes_with_multiple_out_edges),
+        key=lambda cf: get_min_dist_between_nodes_from_terminal_node_by_node(
+            list(cf.nodes_with_multiple_out_edges),
             node_dist_from_terminal_node,
         )
     )
@@ -441,7 +452,7 @@ def set_distance_to_terminal_nodes(
     node_dist_from_initial_state: Dict[str, int],
     node_dist_from_end_state: Dict[str, int],
 ) -> ChoiceInfo:
-    choice_info = choice_info_input.model_copy(deep=True)
+    choice_info: ChoiceInfo = choice_info_input.model_copy(deep=True)
     choice_info.distance_to_init = (
         get_min_dist_between_nodes_from_terminal_node_by_node(
             choice_info.nodes_with_multiple_out_edges,
@@ -459,7 +470,7 @@ def set_distance_to_terminal_nodes(
 
 def process_selection_priority(
     choice_infos_input: List[ChoiceInfo],
-    selection_priority: SelectionPriority,
+    selection_priority: Optional[str],
     edge_label_nodes_dict: Dict[str, List[str]],
     node_dist_from_initial_state: Dict[str, int],
     node_dist_from_end_state: Dict[str, int],
@@ -472,7 +483,8 @@ def process_selection_priority(
     )
 
     if (
-        selection_priority == SelectionPriority.MAX_PLANS.value
+        selection_priority is None
+        or selection_priority == SelectionPriority.MAX_PLANS.value
         or selection_priority == SelectionPriority.MIN_PLANS.value
     ):
         choice_infos.sort(
@@ -483,16 +495,16 @@ def process_selection_priority(
         random.shuffle(choice_infos)
     elif selection_priority == SelectionPriority.INIT_FORWARD.value:
         choice_infos.sort(
-            key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node(
-                list(choice_info.action_name_plan_hash_map.keys()),
+            key=lambda cf: get_min_dist_between_nodes_from_terminal_node(
+                list(cf.action_name_plan_hash_map.keys()),
                 edge_label_nodes_dict,
                 node_dist_from_initial_state,
             )
         )
     elif selection_priority == SelectionPriority.GOAL_BACKWARD.value:
         choice_infos.sort(
-            key=lambda choice_info: get_min_dist_between_nodes_from_terminal_node(
-                list(choice_info.action_name_plan_hash_map.keys()),
+            key=lambda cf: get_min_dist_between_nodes_from_terminal_node(
+                list(cf.action_name_plan_hash_map.keys()),
                 edge_label_nodes_dict,
                 node_dist_from_end_state,
             )

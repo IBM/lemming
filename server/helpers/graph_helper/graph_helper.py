@@ -24,8 +24,7 @@ def edit_edge_labels(g: Graph) -> Graph:
             and "label" in edge_data[0]
         ):
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]
-                       ["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
             )
 
     return new_graph
@@ -60,7 +59,11 @@ def get_edge_label(g: Graph, edge: Any) -> str:
     if len(g.nodes) == 0:
         return ""
     edge_data = g.get_edge_data(edge[0], edge[1])
-    if (edge_data is not None) and (0 in edge_data) and ("label" in edge_data[0]):
+    if (
+        (edge_data is not None)
+        and (0 in edge_data)
+        and ("label" in edge_data[0])
+    ):
         label = edge_data[0]["label"][:]
         edge_label: str = label.replace('"', "").strip().lower()
         return edge_label
@@ -72,7 +75,8 @@ def get_first_node_with_multiple_out_edges(
     is_forward: bool = True,
 ) -> Tuple[List[Tuple[Any, List[Any], List[Any]]], Set[Any]]:
     """
-    returns a list of tuples of 1) node with multiple out edges, 2) out edges from the node, 3) edges traversed up to the node, nodes traversed
+    returns a list of tuples of 1) node with multiple out edges, 2) out edges
+    from the node, 3) edges traversed up to the node, nodes traversed
     """
     nodes_with_multiple_edges: List[Tuple[Any, List[Any], List[Any]]] = list()
     nodes_visited: Set[Any] = set()
@@ -162,7 +166,7 @@ def get_landmarks_in_edges(
         if edge_label in edge_label_landmark_dict:
             first_achiever_edge_dict[edge_label] = deepcopy(edge)
             for landmark in edge_label_landmark_dict[edge_label]:
-                selectable_landmarks.append(landmark.copy(deep=True))
+                selectable_landmarks.append(landmark.model_copy(deep=True))
     return selectable_landmarks, first_achiever_edge_dict
 
 
@@ -314,14 +318,15 @@ def get_node_edge_name_plan_hash_list(
                 edge_label_nodes_set_dict[edge_label].add(node)
 
                 for plan in plans:
-                    if depth < len(plan.actions):
-                        if edge_label in plan.actions[depth]:
-                            plan_hashes_for_node.add(plan.plan_hash[:])
-                            if edge not in edge_list_plan_hash_dict:
-                                edge_list_plan_hash_dict[edge] = list()
-                            edge_list_plan_hash_dict[edge].append(
-                                plan.plan_hash[:]
-                            )
+                    if plan.plan_hash is not None:
+                        if depth < len(plan.actions):
+                            if edge_label in plan.actions[depth]:
+                                plan_hashes_for_node.add(plan.plan_hash[:])
+                                if edge not in edge_list_plan_hash_dict:
+                                    edge_list_plan_hash_dict[edge] = list()
+                                edge_list_plan_hash_dict[edge].append(
+                                    plan.plan_hash[:]
+                                )
                 target_node = edge[1] if is_forward else edge[0]
                 new_queue.append(target_node)
             node_list_plan_hash_dict[node] = list(plan_hashes_for_node)

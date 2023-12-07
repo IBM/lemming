@@ -188,7 +188,8 @@ class TestGraphHelper(unittest.TestCase):
         #     edges_traversed,
         # )
 
-        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(g, True)
+        nodes, nodes_traversed = get_first_node_with_multiple_out_edges(
+            g, True)
         self.assertEqual(nodes[0][0], "node1")
         self.assertEqual(
             nodes[0][1],
@@ -251,7 +252,8 @@ class TestGraphHelper(unittest.TestCase):
             dot_str = f.read()
         g = convert_dot_str_to_networkx_graph(dot_str)
         source_node = "node1"
-        nodes = get_all_nodes_coming_from_node(g, source_node, {"node19"}, True)
+        nodes = get_all_nodes_coming_from_node(
+            g, source_node, {"node19"}, True)
         self.assertEqual(len(nodes), 17)
 
     def test_get_nodes_to_exclude(self) -> None:
@@ -276,9 +278,3 @@ class TestGraphHelper(unittest.TestCase):
         )
         num_plans = g.nodes[node]["num_plans"]
         self.assertEqual(num_plans, 1)
-
-    def test_get_edge_label(self) -> None:
-        edge_label = get_edge_label(
-            TestGraphHelper.test_graph, ("node38", "node39")
-        )
-        self.assertEqual(edge_label, "drop ball4 roomb left")

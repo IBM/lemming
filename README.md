@@ -38,6 +38,7 @@ as [anaconda](https://www.anaconda.com/), for development.
 
 ```bash
 $ conda create --name lemming python=3.10.11
+$ conda activate lemming
 ```
 
 ### Install Dependencies
@@ -50,8 +51,9 @@ $ conda create --name lemming python=3.10.11
 
 ```bash
 (lemming) user:~$ pip install nl2ltl --no-deps
-(lemming) user:~$ pip install pylogics openai==0.27.8
-(lemming) user:~$ ./scripts/build_submodules.sh
+(lemming) user:~$ pip install pylogics openai==0.27.8 rasa==3.6.15
+(lemming) user:~$ ./scripts/build-submodules.sh
+(lemming) user:~$ pip install --upgrade --no-deps --force-reinstall pydantic==2.5.2
 ```
 
 ### Start the Lemming Server

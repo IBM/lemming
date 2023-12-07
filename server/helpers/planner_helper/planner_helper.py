@@ -27,7 +27,7 @@ def get_plan_topk(planning_task: PlanningTask) -> Optional[PlanningResult]:
     )
 
 
-@planner_exception_handler
+@planner_exception_handler  # type: ignore
 def get_landmarks_by_landmark_category(
     planning_task: PlanningTask, landmark_category: str
 ) -> List[Landmark]:
@@ -38,7 +38,7 @@ def get_landmarks_by_landmark_category(
     )
 
 
-@planner_exception_handler
+@planner_exception_handler  # type: ignore
 def get_dot_graph_str(
     planning_task: PlanningTask, planning_results: PlanningResult
 ) -> str:

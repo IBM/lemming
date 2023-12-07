@@ -20,9 +20,11 @@ class PlanningTask(BaseModel):
     problem: str
     """The PDDL problem"""
     num_plans: int = 1
-    """The overall number of plans. Used in TopK or TopQ planners. TopQ planners may return up to `num_plans`."""
+    """The overall number of plans. Used in TopK or TopQ planners."""
+    """TopQ planners may return up to `num_plans`."""
     quality_bound: float = 1.0
-    """A relative (to an optimal plan cost) bound on the plans quality (>= 1.0). Used in TopQ planners. """
+    """A relative (to an optimal plan cost) bound on the plans"""
+    """quality (>= 1.0). Used in TopQ planners. """
     timeout: Optional[int] = None
     """The overall time limit (in seconds) on planner execution."""
     case_sensitive: Optional[bool] = False
@@ -46,7 +48,7 @@ class PlanningTask(BaseModel):
 
 
 class SelectionInfo(BaseModel):
-    selected_first_achiever: Optional[str] = ""
+    selected_first_achiever: Optional[str] = None
     selected_plan_hashes: Optional[List[str]] = []
 
 
@@ -68,19 +70,12 @@ class LandmarkCategory(Enum):
 
 class ChoiceInfo(BaseModel):
     landmark: Optional[Landmark] = None  # landmark
-    max_num_plans: Optional[
-        int
-    ] = 0  # the maximum number of plans included in a first achiever
-    action_name_plan_idx_map: Optional[
-        Dict[str, List[int]]
-    ] = (
-        dict()
-    )  # keys are first-achievers (or edges) available for the next choice
-    action_name_plan_hash_map: Optional[
-        Dict[str, List[str]]
-    ] = (
-        dict()
-    )  # keys are first-achievers (or edges) available for the next choice
+    # the maximum number of plans included in a first achiever
+    max_num_plans: int = 0
+    # keys are first-achievers (or edges) available for the next choice
+    action_name_plan_idx_map: Dict[str, List[int]] = dict()
+    # keys are first-achievers (or edges) available for the next choice
+    action_name_plan_hash_map: Dict[str, List[str]] = dict()
     nodes_with_multiple_out_edges: List[str] = []
     is_available_for_choice: bool = True
     distance_to_init: int = sys.maxsize

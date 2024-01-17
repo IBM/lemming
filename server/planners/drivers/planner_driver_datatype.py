@@ -13,12 +13,8 @@ class Plan(BaseModel):
     @staticmethod
     def plan_to_text(plan: Plan) -> str:
         actions = ["(" + a + ")" for a in plan.actions]
-        return (
-            "\n".join(actions)
-            + "\n"
-            + "; cost = "
-            f"{plan.cost} ({'unit cost' if plan.cost == 1 else 'general cost'})"
-        )
+        actions.append("; cost = general cost'})")
+        return "\n".join(actions)
 
 
 class PlanningResult(BaseModel):

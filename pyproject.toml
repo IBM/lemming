@@ -38,7 +38,7 @@ classifiers = [
 dependencies = [
     "fastapi>=0.104.1",
     "pydantic>=2.5.2",
-    "forbiditerative==1.0.3",
+    "forbiditerative==1.0.8",
     "requests==2.30.0",
     "pydot==1.4.2",
     "networkx==3.1.0",
@@ -74,7 +74,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 80
-experimental-string-processing = true
+preview = true
 target-version = ['py310']
 include = '\.pyi?$'
 exclude = '''

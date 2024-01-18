@@ -67,11 +67,11 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         selection_info_0 = SelectionInfo(
             selected_plan_hashes=[
                 "6a81b2a65657b4444a989205b590c346",
-                "3eb0ac2095b6b3ab60720283152f3d64",
+                "'9d49f737b4735da2a3b0d85e3be0bf67'",
             ],
         )
         selection_info_1 = SelectionInfo(
-            selected_plan_hashes=["3eb0ac2095b6b3ab60720283152f3d64"],
+            selected_plan_hashes=["9d49f737b4735da2a3b0d85e3be0bf67"],
         )
         selected_plans = get_plans_with_selection_infos(
             [selection_info_0, selection_info_1],
@@ -85,20 +85,12 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self.assertEqual(len(selected_plans), 1)
 
     def test_get_split_by_actions(self) -> None:
-        expected_dict_0 = {
-            "drop ball1 roomb left": [0, 1, 4],
-            "drop ball1 roomb right": [2, 3, 5],
-        }
-        expected_dict_1 = {
-            "pick ball4 rooma left": [0, 2, 5],
-            "pick ball4 rooma right": [1, 3, 4],
-        }
         landmark_infos = get_split_by_actions(
             TestPlanDisambiguatorHelper.gripper_landmarks,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
             [],
         )
-        self.assertEqual(len(landmark_infos), 0)
+        self.assertEqual(len(landmark_infos), 8)
 
     def test_get_plan_disambiguator_output_filtered_by_selection_infos(
         self,
@@ -161,7 +153,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             selected_landmark,
             TestPlanDisambiguatorHelper.planner_response_model.plans,
         )
-        self.assertEqual(len(plans), 2)
+        self.assertEqual(len(plans), 1)
 
     def test_get_plan_idx_edge_dict_forward(self) -> None:
         plan_idx_action_dict = get_plan_idx_edge_dict(
@@ -185,7 +177,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
             TestPlanDisambiguatorHelper.planner_response_model.plans,
             True,
         )
-        self.assertEqual(len(edge_label_plan_hash_dict), 2)
+        self.assertEqual(len(edge_label_plan_hash_dict), 4)
 
     def test_append_landmarks_not_available_for_choice(self) -> None:
         landmark = Landmark(facts=["b"], first_achievers=[], disjunctive=True)

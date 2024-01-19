@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional
 from pydantic import BaseModel
-
 from planners.drivers.landmark_driver_datatype import Landmark
 
 
@@ -23,6 +22,7 @@ class EdgeSelectionUnit(BaseModel):
     edge: Optional[str]
     plan_hashes: Optional[List[str]]
     landmark: Optional[Landmark]
+
 
 class EdgeChoiceUnit(BaseModel):
     edge_name_plan_hash_dict: Dict[str, List[str]]

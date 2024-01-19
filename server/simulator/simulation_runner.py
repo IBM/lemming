@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Optional, Set, Tuple
+from typing import List, Optional
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topk,
@@ -27,21 +27,6 @@ from simulator.simulation_datatypes import (
 def set_random_seed(seed: int) -> None:
     random.seed(seed)
 
-# def simulate_build_forward_view(planning_task: PlanningTask, planning_result: Optional[PlanningResult], landmarks: List[Landmark], num_replicates: int) -> List[int]:
-#     num_steps_replicates: List[int] = []
-#     return num_steps_replicates
-
-
-# def simulate_build_backward_view(planning_task: PlanningTask, planning_result: Optional[PlanningResult], landmarks: List[Landmark], num_replicates: int) -> List[int]:
-#     num_steps_replicates: List[int] = []
-#     return num_steps_replicates
-
-
-# simulation_runner: Dict[PlanDisambiguationView, Callable] = {
-#     PlanDisambiguationView.SELECT: simulate_selection_view,
-#     PlanDisambiguationView.BUILD_FORWARD: simulate_build_forward_view,
-#     PlanDisambiguationView.BUILD_BACKWARD: simulate_build_backward_view
-# }
 
 def is_landmark_choice_info(choice_info: ChoiceInfo) -> bool:
     return choice_info.landmark is not None
@@ -150,7 +135,7 @@ def select_edge(
 def get_plan_disambuguator_output(
         plan_disambiguator_input: PlanDisambiguatorInput,
         plan_disambiguator_view: PlanDisambiguationView) -> PlanDisambiguatorOutput:
-    if plan_disambiguator_view == PlanDisambiguationView.SELECT:  # selet flow
+    if plan_disambiguator_view == PlanDisambiguationView.SELECT:  # select flow
         return get_selection_flow_output(
             selection_infos=plan_disambiguator_input.selection_infos,
             landmarks=plan_disambiguator_input.landmarks,
@@ -209,10 +194,10 @@ def simulate_view(
                         is_disambiguation_done=True
                     ))
                 break
-
             edge_selection_payload = select_edge(
                 plan_disambiguator_output=plan_disambiguator_output,
                 use_landmark_to_select_edge=use_landmark_to_select_edge)
+
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(
                     plan_disambiguator_input=plan_disambiguator_input_rep,
@@ -250,14 +235,13 @@ def run_simulation(
         landmark_category: str,
         planning_task: PlanningTask,
         plan_disambiguator_view: PlanDisambiguationView,
-        num_replicates: int,
-        use_landmark_to_select_edge: bool) -> List[int]:
-    # get all plans
+        num_replicates: int
+) -> List[int]:
     planning_result = get_plan_topk(planning_task)
-    # get all landmarks
     landmarks = get_landmarks_by_landmark_category(
         planning_task, landmark_category
     )
+    use_landmark_to_select_edge = plan_disambiguator_view == PlanDisambiguationView.SELECT
     return simulate_view(
         planning_task=planning_task,
         planning_result=planning_result,

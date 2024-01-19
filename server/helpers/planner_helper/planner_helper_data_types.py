@@ -52,6 +52,12 @@ class SelectionInfo(BaseModel):
     selected_plan_hashes: Optional[List[str]] = []
 
 
+class PlanDisambiguationView(Enum):
+    SELECT = "SELECT"
+    BUILD_FORWARD = "BUILD_FORWARD"
+    BUILD_BACKWARD = "BUILD_BACKWARD"
+
+
 class SelectionPriority(Enum):
     MAX_PLANS = "MAX_PLANS"
     MIN_PLANS = "MIN_PLANS"

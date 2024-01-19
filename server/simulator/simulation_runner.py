@@ -235,13 +235,13 @@ def run_simulation(
         landmark_category: str,
         planning_task: PlanningTask,
         plan_disambiguator_view: PlanDisambiguationView,
+        use_landmark_to_select_edge: bool,
         num_replicates: int
 ) -> List[int]:
     planning_result = get_plan_topk(planning_task)
     landmarks = get_landmarks_by_landmark_category(
         planning_task, landmark_category
     )
-    use_landmark_to_select_edge = plan_disambiguator_view == PlanDisambiguationView.SELECT
     return simulate_view(
         planning_task=planning_task,
         planning_result=planning_result,

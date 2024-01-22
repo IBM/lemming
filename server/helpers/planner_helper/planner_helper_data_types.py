@@ -131,6 +131,12 @@ class PlanDisambiguatorInput(BaseModel):
         return v
 
 
+class PlanDisambiguationView(Enum):
+    SELECT = "SELECT"
+    BUILD_FORWARD = "BUILD_FORWARD"
+    BUILD_BACKWARD = "BUILD_BACKWARD"
+
+
 class PlanDisambiguatorOutput(BaseModel):
     plans: List[Plan] = []
     choice_infos: List[ChoiceInfo] = []

@@ -93,7 +93,6 @@ def get_first_node_with_multiple_out_edges(
         for node, edges_traversed in queue:
             if node in nodes_visited:
                 continue
-            out_edges = list(g.out_edges(node))  # this is for backward
             edges = (
                 list(g.out_edges(node))
                 if is_forward
@@ -111,6 +110,7 @@ def get_first_node_with_multiple_out_edges(
                     nodes_visited.add(node)
                     continue
             else:  # backward
+                out_edges = list(g.out_edges(node))  # this is for backward
                 if len(out_edges) > 1 or len(edges) > 1:
                     if len(out_edges) > 1:
                         nodes_with_multiple_edges.append(

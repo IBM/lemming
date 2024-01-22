@@ -13,6 +13,7 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguatorInput,
     PlanDisambiguatorOutput,
     SelectionInfo,
+    LandmarkCategory,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
@@ -39,18 +40,19 @@ def get_edges_from_choice_infos(
     action_names_landmarks: List[EdgeChoiceUnit] = []
     for choice_info in choice_infos:
         if use_landmark:
-            if is_landmark_choice_info(choice_info) == is_landmark:
+            if is_landmark_choice_info(choice_info) == is_landmark and len(choice_info.action_name_plan_hash_map) > 0:
                 action_names_landmarks.append(
                     EdgeChoiceUnit(
                         edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
                         landmark=choice_info.landmark
                     ))
         else:
-            action_names_landmarks.append(
-                EdgeChoiceUnit(
-                    edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
-                    landmark=choice_info.landmark
-                ))
+            if len(choice_info.action_name_plan_hash_map) > 0:
+                action_names_landmarks.append(
+                    EdgeChoiceUnit(
+                        edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
+                        landmark=choice_info.landmark
+                    ))
     return action_names_landmarks
 
 
@@ -59,12 +61,13 @@ def choose_edge_landmark(edge_choice_units: List[EdgeChoiceUnit]) -> EdgeSelecti
     returns chosen edge, plan hashes, and landmark
     """
     if len(edge_choice_units) >= 1:
-        idx_0 = random.randint(0, len(edge_choice_units))
+        idx_0 = random.randint(0, len(edge_choice_units)-1)
         edges = list(edge_choice_units[idx_0].edge_name_plan_hash_dict.keys())
-        idx_edge = random.randint(0, len(edges))
+        idx_edge = random.randint(0, len(edges)-1)
+        chosen_edge = edges[idx_edge]
         return EdgeSelectionUnit(
-            edge=edges[idx_edge],
-            plan_hashes=edge_choice_units[idx_0].edge_name_plan_hash_dict[edges[idx_edge]],
+            edge=chosen_edge,
+            plan_hashes=edge_choice_units[idx_0].edge_name_plan_hash_dict[chosen_edge],
             landmark=edge_choice_units[idx_0].landmark,
         )
     return EdgeSelectionUnit(
@@ -178,31 +181,35 @@ def simulate_view(
         plan_disambiguator_input_rep = plan_disambiguator_input.model_copy(
             deep=True)
         num_steps_replicate: List[SimulationResultUnit] = []
-        while len(plan_disambiguator_input_rep.plans) > 1:
+        plan_disambiguation_done = False
+        while not plan_disambiguation_done:
             plan_disambiguator_output = get_plan_disambuguator_output(
                 plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_view=plan_disambiguator_view)
+            edge_selection_payload = select_edge(
+                plan_disambiguator_output=plan_disambiguator_output,
+                use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if len(plan_disambiguator_output.plans) == 1:  # plan disambiguation completed
                 num_steps_replicate.append(
                     SimulationResultUnit(
-                        chosen_edge=None,
-                        is_edge_selected=None,
+                        chosen_edge=edge_selection_payload.selected_edge,
+                        is_edge_selected=edge_selection_payload.is_edge_selected,
                         num_remaining_plans=len(
                             plan_disambiguator_output.plans),
-                        is_from_landmark=None,
-                        is_disambiguation_done=True
-                    ))
-                break
-            edge_selection_payload = select_edge(
-                plan_disambiguator_output=plan_disambiguator_output,
-                use_landmark_to_select_edge=use_landmark_to_select_edge)
+                        is_from_landmark=edge_selection_payload.is_edge_from_landmark,
+                        is_disambiguation_done=(
+                            len(plan_disambiguator_output.plans) == 1)
+                    )
+                )
+                plan_disambiguation_done = True
+                continue
 
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(
                     plan_disambiguator_input=plan_disambiguator_input_rep,
                     selected_edge=edge_selection_payload.selected_edge,
-                    selected_plan_hashes=edge_selection_payload.selected_plan_hashes
+                    selected_plan_hashes=edge_selection_payload.plan_hashes
                 )
                 num_steps_replicate.append(
                     SimulationResultUnit(
@@ -210,8 +217,9 @@ def simulate_view(
                         is_edge_selected=edge_selection_payload.is_edge_selected,
                         num_remaining_plans=len(
                             plan_disambiguator_output.plans),
-                        is_from_landmark=edge_selection_payload.is_from_landmark,
-                        is_disambiguation_done=False
+                        is_from_landmark=edge_selection_payload.is_edge_from_landmark,
+                        is_disambiguation_done=(
+                            len(plan_disambiguator_output.plans) == 1)
                     )
                 )
             else:
@@ -225,14 +233,14 @@ def simulate_view(
                         is_disambiguation_done=False
                     )
                 )
-                break
+                plan_disambiguation_done = True
         num_steps_replicates.append(num_steps_replicate)
 
     return num_steps_replicates
 
 
 def run_simulation(
-        landmark_category: str,
+        landmark_category: LandmarkCategory,
         planning_task: PlanningTask,
         plan_disambiguator_view: PlanDisambiguationView,
         use_landmark_to_select_edge: bool,
@@ -240,7 +248,7 @@ def run_simulation(
 ) -> List[int]:
     planning_result = get_plan_topk(planning_task)
     landmarks = get_landmarks_by_landmark_category(
-        planning_task, landmark_category
+        planning_task, landmark_category.value
     )
     return simulate_view(
         planning_task=planning_task,

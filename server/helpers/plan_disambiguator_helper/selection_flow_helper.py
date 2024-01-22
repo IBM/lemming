@@ -50,7 +50,8 @@ def get_selection_flow_output(
         and len(
             list(
                 filter(
-                    lambda choice_info: choice_info.is_available_for_choice,
+                    lambda choice_info: (choice_info.is_available_for_choice and len(
+                        choice_info.action_name_plan_hash_map) > 0),
                     choice_infos,
                 )
             )

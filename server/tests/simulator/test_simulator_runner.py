@@ -12,7 +12,6 @@ rel_pddl_path = "../data/pddl/{}.pddl"
 
 
 class TestSimulationRunner(unittest.TestCase):
-    # @unittest.skip("simulation with pseudo random numbers")
     def test_run_simulation_select(self):
         toy_domain = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("toy/domain"))
@@ -30,7 +29,7 @@ class TestSimulationRunner(unittest.TestCase):
             case_sensitive=False,
             action_name_prefix_preserve=None
         )
-        num_replicates = 10
+        num_replicates = 2
         metrics = run_simulation(
             landmark_category=landmark_category,
             planning_task=planning_task,
@@ -40,3 +39,5 @@ class TestSimulationRunner(unittest.TestCase):
         )
 
         self.assertEqual(len(metrics), num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)

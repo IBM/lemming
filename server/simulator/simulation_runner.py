@@ -175,12 +175,12 @@ def simulate_view(
         problem=planning_task.problem
     )
 
-    num_steps_replicates: List[List[SimulationResultUnit]] = []
+    simulation_results: List[List[SimulationResultUnit]] = []
 
     for _ in range(num_replicates):
         plan_disambiguator_input_rep = plan_disambiguator_input.model_copy(
             deep=True)
-        num_steps_replicate: List[SimulationResultUnit] = []
+        simulation_result_unit: List[SimulationResultUnit] = []
         plan_disambiguation_done = False
         while not plan_disambiguation_done:
             plan_disambiguator_output = get_plan_disambuguator_output(
@@ -191,7 +191,7 @@ def simulate_view(
                 use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if len(plan_disambiguator_output.plans) == 1:  # plan disambiguation completed
-                num_steps_replicate.append(
+                simulation_result_unit.append(
                     SimulationResultUnit(
                         chosen_edge=edge_selection_payload.selected_edge,
                         is_edge_selected=edge_selection_payload.is_edge_selected,
@@ -211,7 +211,7 @@ def simulate_view(
                     selected_edge=edge_selection_payload.selected_edge,
                     selected_plan_hashes=edge_selection_payload.plan_hashes
                 )
-                num_steps_replicate.append(
+                simulation_result_unit.append(
                     SimulationResultUnit(
                         chosen_edge=edge_selection_payload.selected_edge,
                         is_edge_selected=edge_selection_payload.is_edge_selected,
@@ -223,7 +223,7 @@ def simulate_view(
                     )
                 )
             else:
-                num_steps_replicate.append(
+                simulation_result_unit.append(
                     SimulationResultUnit(
                         chosen_edge=None,
                         is_edge_selected=False,
@@ -234,9 +234,9 @@ def simulate_view(
                     )
                 )
                 plan_disambiguation_done = True
-        num_steps_replicates.append(num_steps_replicate)
+        simulation_results.append(simulation_result_unit)
 
-    return num_steps_replicates
+    return simulation_results
 
 
 def run_simulation(

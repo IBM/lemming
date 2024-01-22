@@ -186,24 +186,22 @@ def simulate_view(
             plan_disambiguator_output = get_plan_disambuguator_output(
                 plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_view=plan_disambiguator_view)
-            edge_selection_payload = select_edge(
-                plan_disambiguator_output=plan_disambiguator_output,
-                use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if len(plan_disambiguator_output.plans) == 1:  # plan disambiguation completed
                 simulation_result_unit.append(
                     SimulationResultUnit(
-                        chosen_edge=edge_selection_payload.selected_edge,
-                        is_edge_selected=edge_selection_payload.is_edge_selected,
+                        chosen_edge=None,
+                        is_edge_selected=None,
                         num_remaining_plans=len(
                             plan_disambiguator_output.plans),
-                        is_from_landmark=edge_selection_payload.is_edge_from_landmark,
-                        is_disambiguation_done=(
-                            len(plan_disambiguator_output.plans) == 1)
-                    )
-                )
+                        is_from_landmark=None,
+                        is_disambiguation_done=True))
                 plan_disambiguation_done = True
                 continue
+
+            edge_selection_payload = select_edge(
+                plan_disambiguator_output=plan_disambiguator_output,
+                use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(

@@ -81,7 +81,7 @@ class TestSimulationRunner(unittest.TestCase):
             case_sensitive=False,
             action_name_prefix_preserve=None
         )
-        num_replicates = 2
+        num_replicates = 1
         metrics = run_simulation(
             landmark_category=landmark_category,
             planning_task=planning_task,

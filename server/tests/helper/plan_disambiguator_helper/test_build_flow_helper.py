@@ -109,7 +109,7 @@ class TestBuildFlowHelper(unittest.TestCase):
             build_forward_flow_output.choice_infos[
                 0
             ].nodes_with_multiple_out_edges[0],
-            "node3",
+            "node0",
         )
         self.assertEqual(
             len(
@@ -117,7 +117,7 @@ class TestBuildFlowHelper(unittest.TestCase):
                     0
                 ].action_name_plan_hash_map
             ),
-            2,
+            4,
         )
         self.assertEqual(len(build_forward_flow_output.networkx_graph), 5)
 

@@ -69,10 +69,9 @@ def get_selection_flow_output(
                         g=g,
                         node_with_multiple_edges=payload[0],
                         node_plan_hashes_dict=node_plan_hashes_dict,
+                        edge_plan_hash_dict=edge_plan_hash_dict,
                         edges=payload[1],
-                        edges_traversed=payload[2],
                         plans=selected_plans,
-                        is_forward=True,
                     ),
                     nodes_with_multiple_edges,
                 )

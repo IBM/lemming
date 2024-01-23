@@ -358,13 +358,14 @@ def get_edge_label_plan_hashes_dict(
     return edge_label_plan_hash_dict
 
 
-def get_plan_hashes_with_edges(edge_labels: List[str], plans: List[Plan]) -> Dict[str, List[str]]:
-    action_name_plan_hashes_dict: Dict[str, List[str]] = defaultdict(list)
-    for plan in plans:
-        actions = set(plan.actions)
-        for edge in edge_labels:
-            if edge in actions:
-                action_name_plan_hashes_dict[edge].append(plan.plan_hash)
+def get_plan_hashes_with_edges(g: Graph, edges: List[str], edge_plan_hash_dict: Dict[Tuple[Any, Any], List[str]], plans: List[Plan]) -> Dict[str, List[str]]:
+    action_name_plan_hashes_dict: Dict[str, List[str]] = {}
+    plan_hashes_from_plans: Set[str] = set(
+        map(lambda plan: plan.plan_hash, plans))
+    for edge in edges:
+        edge_label = get_edge_label(g, edge)
+        action_name_plan_hashes_dict[edge_label] = set(edge_plan_hash_dict[edge]).intersection(
+            plan_hashes_from_plans)
     return action_name_plan_hashes_dict
 
 
@@ -372,20 +373,17 @@ def get_choice_info_multiple_edges_without_landmark(
     g: Graph,
     node_with_multiple_edges: str,
     node_plan_hashes_dict: Dict[str, List[str]],
+    edge_plan_hash_dict: Dict[Tuple[Any, Any], List[str]],
     edges: List[Tuple[str, str]],
-    edges_traversed: List[Any],
     plans: List[Plan],
-    is_forward: bool,
 ) -> ChoiceInfo:
     plan_hashes_from_node = set(
         node_plan_hashes_dict[node_with_multiple_edges])
     filtered_plans = list(
         filter(lambda plan: plan.plan_hash in plan_hashes_from_node, plans))
     action_name_plan_hashes_dict = get_plan_hashes_with_edges(
-        edge_labels=list(map(lambda edge: get_edge_label(g, edge), edges)), plans=filtered_plans)
-    # action_name_plan_hash_map=get_edge_label_plan_hashes_dict(
-    #             edges_traversed, plans, is_forward
-    #         )
+        g, edges=edges, edge_plan_hash_dict=edge_plan_hash_dict, plans=filtered_plans)
+
     return ChoiceInfo(
         nodes_with_multiple_out_edges=[node_with_multiple_edges],
         action_name_plan_hash_map=action_name_plan_hashes_dict,

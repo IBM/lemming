@@ -84,10 +84,9 @@ def get_build_flow_output(
                 g=g,
                 node_with_multiple_edges=node_with_multiple_out_edges,
                 node_plan_hashes_dict=node_plan_hashes_dict,
+                edge_plan_hash_dict=edge_plan_hash_dict,
                 edges=out_edges_first_node_with_multiple_out_edges,
-                edges_traversed=edges_traversed,
                 plans=selected_plans,
-                is_forward=is_forward,
             )
         )
         for edge in out_edges_first_node_with_multiple_out_edges:

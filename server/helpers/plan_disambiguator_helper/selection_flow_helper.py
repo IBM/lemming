@@ -66,7 +66,10 @@ def get_selection_flow_output(
             list(
                 map(
                     lambda payload: get_choice_info_multiple_edges_without_landmark(
+                        g=g,
                         node_with_multiple_edges=payload[0],
+                        node_plan_hashes_dict=node_plan_hashes_dict,
+                        edges=payload[1],
                         edges_traversed=payload[2],
                         plans=selected_plans,
                         is_forward=True,

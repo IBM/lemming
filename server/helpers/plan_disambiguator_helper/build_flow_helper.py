@@ -81,7 +81,10 @@ def get_build_flow_output(
     ) in node_search_results:
         new_choice_infos.append(
             get_choice_info_multiple_edges_without_landmark(
+                g=g,
                 node_with_multiple_edges=node_with_multiple_out_edges,
+                node_plan_hashes_dict=node_plan_hashes_dict,
+                edges=out_edges_first_node_with_multiple_out_edges,
                 edges_traversed=edges_traversed,
                 plans=selected_plans,
                 is_forward=is_forward,

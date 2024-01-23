@@ -1,3 +1,4 @@
+from collections import defaultdict
 import random
 import sys
 from copy import deepcopy
@@ -19,6 +20,7 @@ from helpers.graph_helper.graph_helper import (
     get_node_edge_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
     get_node_distance_from_terminal_node,
+    get_edge_label,
 )
 
 
@@ -168,6 +170,8 @@ def get_plans_with_selection_infos(
     """
     returns plans filtered by selected landmarks
     """
+    if len(plans) == 0:
+        return []
     plans_before_filtering = list(
         map(lambda plan: plan.model_copy(deep=True), plans)
     )
@@ -175,12 +179,15 @@ def get_plans_with_selection_infos(
     if selection_infos is None or len(selection_infos) == 0:
         return plans_before_filtering
 
-    selected_plans: List[Plan] = plans_before_filtering
-    for selection_info in selection_infos:
-        selected_plans = get_plans_filetered_by_selected_plan_hashes(
-            selection_info, plans
-        )
-    return selected_plans
+    filtered_plan_hashes: Set[str] = set(
+        selection_infos[0].selected_plan_hashes)
+    for i in range(len(selection_infos) - 1):
+        if len(selection_infos[i+1].selected_plan_hashes) > 0:
+            filtered_plan_hashes = filtered_plan_hashes.intersection(
+                set(selection_infos[i+1].selected_plan_hashes))
+    filtered_plans = list(filter(
+        lambda plan: plan.plan_hash in filtered_plan_hashes, plans_before_filtering))
+    return filtered_plans if len(filtered_plans) > 0 else plans_before_filtering
 
 
 def get_split_by_actions(
@@ -330,7 +337,8 @@ def get_plan_idx_edge_dict(
     )
     plan_idx_edge_dict: Dict[int, Any] = dict()
     for plan_idx, plan in enumerate(plans):
-        plan_idx_edge_dict[plan_idx] = plan.actions[len_edges_traversed]
+        if (is_forward and len_edges_traversed < len(plan.actions)) or abs(len_edges_traversed) <= len(plan.actions):
+            plan_idx_edge_dict[plan_idx] = plan.actions[len_edges_traversed]
     return plan_idx_edge_dict
 
 
@@ -340,12 +348,8 @@ def get_edge_label_plan_hashes_dict(
     plan_idx_edges_dict = get_plan_idx_edge_dict(
         edges_traversed, plans, is_forward
     )
-    edge_label_plan_hash_dict: Dict[str, List[str]] = dict()
-
+    edge_label_plan_hash_dict: Dict[str, List[str]] = defaultdict(list)
     for plan_idx, edge_label in plan_idx_edges_dict.items():
-        if edge_label not in edge_label_plan_hash_dict:
-            edge_label_plan_hash_dict[edge_label] = list()
-
         if plans[plan_idx].plan_hash:
             edge_label_plan_hash_dict[edge_label].append(
                 plans[plan_idx].plan_hash  # type: ignore
@@ -354,17 +358,37 @@ def get_edge_label_plan_hashes_dict(
     return edge_label_plan_hash_dict
 
 
+def get_plan_hashes_with_edges(edge_labels: List[str], plans: List[Plan]) -> Dict[str, List[str]]:
+    action_name_plan_hashes_dict: Dict[str, List[str]] = defaultdict(list)
+    for plan in plans:
+        actions = set(plan.actions)
+        for edge in edge_labels:
+            if edge in actions:
+                action_name_plan_hashes_dict[edge].append(plan.plan_hash)
+    return action_name_plan_hashes_dict
+
+
 def get_choice_info_multiple_edges_without_landmark(
+    g: Graph,
     node_with_multiple_edges: str,
+    node_plan_hashes_dict: Dict[str, List[str]],
+    edges: List[Tuple[str, str]],
     edges_traversed: List[Any],
     plans: List[Plan],
     is_forward: bool,
 ) -> ChoiceInfo:
+    plan_hashes_from_node = set(
+        node_plan_hashes_dict[node_with_multiple_edges])
+    filtered_plans = list(
+        filter(lambda plan: plan.plan_hash in plan_hashes_from_node, plans))
+    action_name_plan_hashes_dict = get_plan_hashes_with_edges(
+        edge_labels=list(map(lambda edge: get_edge_label(g, edge), edges)), plans=filtered_plans)
+    # action_name_plan_hash_map=get_edge_label_plan_hashes_dict(
+    #             edges_traversed, plans, is_forward
+    #         )
     return ChoiceInfo(
         nodes_with_multiple_out_edges=[node_with_multiple_edges],
-        action_name_plan_hash_map=get_edge_label_plan_hashes_dict(
-            edges_traversed, plans, is_forward
-        ),
+        action_name_plan_hash_map=action_name_plan_hashes_dict,
     )
 
 

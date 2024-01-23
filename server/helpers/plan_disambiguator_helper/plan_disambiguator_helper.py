@@ -85,7 +85,8 @@ def split_plans_with_actions(
     returns a tuple of 1) a dictionary of first_achiever names and lists of plan
     indices and 2) the maximum number of plans with a first achiever
     """
-    plan_sets: List[Set[str]] = list(map(lambda plan: set(plan.actions), plans))
+    plan_sets: List[Set[str]] = list(
+        map(lambda plan: set(plan.actions), plans))
     action_name_list_plan_idx: Dict[str, List[int]] = dict()
     action_name_list_plan_hash: Dict[str, List[str]] = dict()
     plan_hashes_for_action: Set[str] = set()
@@ -208,7 +209,7 @@ def get_split_by_actions(
             landmark.first_achievers, plans, previous_selected_actions
         )
         if (
-            num_plans_in_actions > 0
+            len(action_name_plan_hash_list) > 0
         ):  # only consider landmarks shown in given plans
             choice_infos.append(
                 ChoiceInfo(
@@ -276,7 +277,8 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         planning_results=PlanningResult(plans=selected_plans),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
-    node_dist_from_initial_state = get_node_distance_from_terminal_node(g, True)
+    node_dist_from_initial_state = get_node_distance_from_terminal_node(
+        g, True)
     node_dist_from_end_state = get_node_distance_from_terminal_node(g, False)
     (
         node_plan_hashes_dict,

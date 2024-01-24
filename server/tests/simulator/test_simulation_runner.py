@@ -46,6 +46,31 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
+    def test_run_simulation_select_flow_random(self):
+        landmark_category = LandmarkCategory.RWH
+        planning_task = PlanningTask(
+            domain=TestSimulationRunner.toy_domain,
+            problem=TestSimulationRunner.toy_problem,
+            num_plans=4,
+            quality_bound=20.0,
+            timeout=None,
+            case_sensitive=False,
+            action_name_prefix_preserve=None
+        )
+        num_replicates = 2
+        metrics = run_simulation(
+            landmark_category=landmark_category,
+            planning_task=planning_task,
+            plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            select_edge_randomly=True,
+            use_landmark_to_select_edge=True,
+            num_replicates=num_replicates
+        )
+
+        self.assertEqual(len(metrics), num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
     def test_run_simulation_build_forward_flow(self):
         landmark_category = LandmarkCategory.RWH
         planning_task = PlanningTask(
@@ -71,6 +96,31 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
+    def test_run_simulation_build_forward_flow_random(self):
+        landmark_category = LandmarkCategory.RWH
+        planning_task = PlanningTask(
+            domain=TestSimulationRunner.toy_domain,
+            problem=TestSimulationRunner.toy_problem,
+            num_plans=4,
+            quality_bound=20.0,
+            timeout=None,
+            case_sensitive=False,
+            action_name_prefix_preserve=None
+        )
+        num_replicates = 2
+        metrics = run_simulation(
+            landmark_category=landmark_category,
+            planning_task=planning_task,
+            plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
+            select_edge_randomly=True,
+            use_landmark_to_select_edge=False,
+            num_replicates=num_replicates
+        )
+
+        self.assertEqual(len(metrics), num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
     def test_run_simulation_build_backward_flow(self):
         landmark_category = LandmarkCategory.RWH
         planning_task = PlanningTask(
@@ -88,6 +138,31 @@ class TestSimulationRunner(unittest.TestCase):
             planning_task=planning_task,
             plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
             select_edge_randomly=False,
+            use_landmark_to_select_edge=False,
+            num_replicates=num_replicates
+        )
+
+        self.assertEqual(len(metrics), num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
+    def test_run_simulation_build_backward_random(self):
+        landmark_category = LandmarkCategory.RWH
+        planning_task = PlanningTask(
+            domain=TestSimulationRunner.toy_domain,
+            problem=TestSimulationRunner.toy_problem,
+            num_plans=4,
+            quality_bound=20.0,
+            timeout=None,
+            case_sensitive=False,
+            action_name_prefix_preserve=None
+        )
+        num_replicates = 1
+        metrics = run_simulation(
+            landmark_category=landmark_category,
+            planning_task=planning_task,
+            plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
+            select_edge_randomly=True,
             use_landmark_to_select_edge=False,
             num_replicates=num_replicates
         )

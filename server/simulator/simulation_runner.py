@@ -15,7 +15,6 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguatorInput,
     PlanDisambiguatorOutput,
     SelectionInfo,
-    LandmarkCategory,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,

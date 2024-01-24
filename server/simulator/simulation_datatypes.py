@@ -25,7 +25,6 @@ class SimulationResultUnit(BaseModel):
     num_remaining_plans: int
     is_from_landmark: Optional[bool]
     is_disambiguation_done: bool
-    landmark_category: LandmarkCategory
 
 
 class SimulationOutput(BaseModel):

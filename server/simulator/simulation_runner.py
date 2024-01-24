@@ -277,7 +277,7 @@ def run_simulation(
 
     planning_result = get_plan_topk(simulation_input.planning_task)
     landmarks = get_landmarks_by_landmark_category(
-        simulation_input.planning_task, str(simulation_input.landmark_category)
+        simulation_input.planning_task, simulation_input.landmark_category.value
     )
     return SimulationOutput(
         simulation_results=simulate_view(

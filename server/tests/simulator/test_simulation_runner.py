@@ -62,7 +62,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
 
-        self.assertEqual(len(metrics), simulation_output.num_replicates)
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
@@ -79,7 +79,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = run_simulation(simulation_input)
 
         metrics = simulation_output.simulation_results
-        self.assertEqual(len(metrics), simulation_output.num_replicates)
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
@@ -96,7 +96,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
 
-        self.assertEqual(len(metrics), simulation_output.num_replicates)
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
@@ -113,7 +113,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
 
-        self.assertEqual(len(metrics), simulation_output.num_replicates)
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
@@ -130,6 +130,6 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
 
-        self.assertEqual(len(metrics), simulation_output.num_replicates)
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)

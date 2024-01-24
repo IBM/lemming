@@ -169,6 +169,7 @@ def simulate_view(
         landmarks: List[Landmark],
         plan_disambiguator_view: PlanDisambiguationView,
         num_replicates: int,
+        select_edge_randomly: bool,
         use_landmark_to_select_edge: bool) -> List[List[SimulationResultUnit]]:
     plan_disambiguator_input = PlanDisambiguatorInput(
         selection_priority=None,
@@ -247,6 +248,7 @@ def run_simulation(
         landmark_category: LandmarkCategory,
         planning_task: PlanningTask,
         plan_disambiguator_view: PlanDisambiguationView,
+        select_edge_randomly: bool,
         use_landmark_to_select_edge: bool,
         num_replicates: int
 ) -> List[int]:
@@ -260,4 +262,5 @@ def run_simulation(
         landmarks=landmarks,
         plan_disambiguator_view=plan_disambiguator_view,
         num_replicates=num_replicates,
+        select_edge_randomly=select_edge_randomly,
         use_landmark_to_select_edge=use_landmark_to_select_edge)

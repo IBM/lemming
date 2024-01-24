@@ -37,6 +37,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=landmark_category,
             planning_task=planning_task,
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            select_edge_randomly=False,
             use_landmark_to_select_edge=True,
             num_replicates=num_replicates
         )
@@ -61,6 +62,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=landmark_category,
             planning_task=planning_task,
             plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
+            select_edge_randomly=False,
             use_landmark_to_select_edge=False,
             num_replicates=num_replicates
         )
@@ -85,6 +87,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=landmark_category,
             planning_task=planning_task,
             plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
+            select_edge_randomly=False,
             use_landmark_to_select_edge=False,
             num_replicates=num_replicates
         )

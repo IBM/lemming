@@ -112,14 +112,9 @@ def add_new_selection_to_plan_disambiguator_input(
     return new_plan_disambiguator_input
 
 
-def select_edge(
+def select_edge_among_choiceinfos(
         plan_disambiguator_output: PlanDisambiguatorOutput,
-        edge_planhashes_dict: Dict[Tuple[str, str], List[str]],
-        g: Graph,
         use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
-    """
-    returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
-    """
     if len(plan_disambiguator_output.plans) <= 1:
         return EdgeSelectionPayload(
             selected_edge=None,
@@ -131,12 +126,34 @@ def select_edge(
     edge_selection_unit = get_edge_landmark_from_plan_disambiguator_output(
         plan_disambiguator_output=plan_disambiguator_output,
         use_landmark_to_select_edge=use_landmark_to_select_edge)
+
     return EdgeSelectionPayload(
         selected_edge=edge_selection_unit.edge,
         is_edge_selected=(edge_selection_unit.edge is not None),
         is_edge_from_landmark=(edge_selection_unit.landmark is not None),
         plan_hashes=edge_selection_unit.plan_hashes
     )
+
+
+def select_edge_randomly(
+        edge_planhashes_dict: Dict[Tuple[str, str], List[str]],
+        g: Graph) -> EdgeSelectionPayload:
+    return EdgeSelectionPayload()
+
+
+def select_edge(
+        plan_disambiguator_output: PlanDisambiguatorOutput,
+        edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
+        g: Graph,
+        select_edge_randomly: bool,
+        use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
+    """
+    returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
+    """
+    return (select_edge_randomly(
+        edge_plan_hash_dict=edge_plan_hash_dict, g=g) if select_edge_randomly else select_edge_among_choiceinfos(
+        plan_disambiguator_output=plan_disambiguator_output,
+        use_landmark_to_select_edge=use_landmark_to_select_edge))
 
 
 def get_plan_disambuguator_output(
@@ -188,7 +205,7 @@ def simulate_view(
         simulation_result_unit: List[SimulationResultUnit] = []
         plan_disambiguation_done = False
         while not plan_disambiguation_done:
-            plan_disambiguator_output, edge_planhashes_dict, g = get_plan_disambuguator_output(
+            plan_disambiguator_output, edge_plan_hash_dict, g = get_plan_disambuguator_output(
                 plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_view=plan_disambiguator_view)
 
@@ -206,8 +223,9 @@ def simulate_view(
 
             edge_selection_payload = select_edge(
                 plan_disambiguator_output=plan_disambiguator_output,
-                edge_planhashes_dict=edge_planhashes_dict,
+                edge_plan_hash_dict=edge_plan_hash_dict,
                 g=g,
+                select_edge_randomly=select_edge_randomly,
                 use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if edge_selection_payload.is_edge_selected:

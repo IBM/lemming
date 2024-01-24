@@ -25,6 +25,9 @@ from helpers.plan_disambiguator_helper.build_flow_helper import (
 )
 from simulator.simulation_datatypes import (
     SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit)
+from helpers.graph_helper.graph_helper import (
+    get_edge_label,
+)
 
 
 def set_random_seed(seed: int) -> None:
@@ -115,14 +118,6 @@ def add_new_selection_to_plan_disambiguator_input(
 def select_edge_among_choiceinfos(
         plan_disambiguator_output: PlanDisambiguatorOutput,
         use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
-    if len(plan_disambiguator_output.plans) <= 1:
-        return EdgeSelectionPayload(
-            selected_edge=None,
-            is_edge_selected=False,
-            is_edge_from_landmark=False,
-            plan_hashes=None
-        )
-
     edge_selection_unit = get_edge_landmark_from_plan_disambiguator_output(
         plan_disambiguator_output=plan_disambiguator_output,
         use_landmark_to_select_edge=use_landmark_to_select_edge)
@@ -135,10 +130,17 @@ def select_edge_among_choiceinfos(
     )
 
 
-def select_edge_randomly(
-        edge_planhashes_dict: Dict[Tuple[str, str], List[str]],
+def select_edge_random(
+        edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph) -> EdgeSelectionPayload:
-    return EdgeSelectionPayload()
+    edge, plan_hashes = random.choice(list(edge_plan_hash_dict.items()))
+
+    return EdgeSelectionPayload(
+        selected_edge=get_edge_label(g, edge),
+        is_edge_selected=True,
+        is_edge_from_landmark=False,
+        plan_hashes=plan_hashes
+    )
 
 
 def select_edge(
@@ -150,7 +152,14 @@ def select_edge(
     """
     returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
     """
-    return (select_edge_randomly(
+    if len(plan_disambiguator_output.plans) <= 1:
+        return EdgeSelectionPayload(
+            selected_edge=None,
+            is_edge_selected=False,
+            is_edge_from_landmark=False,
+            plan_hashes=None
+        )
+    return (select_edge_random(
         edge_plan_hash_dict=edge_plan_hash_dict, g=g) if select_edge_randomly else select_edge_among_choiceinfos(
         plan_disambiguator_output=plan_disambiguator_output,
         use_landmark_to_select_edge=use_landmark_to_select_edge))

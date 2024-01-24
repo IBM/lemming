@@ -274,14 +274,14 @@ def simulate_view(
 def run_simulation(
         simulation_input: SimulationInput,
 ) -> SimulationOutput:
-    planning_task = simulation_input.planner_input.get_planning_task()
-    planning_result = get_plan_topk(planning_task)
+
+    planning_result = get_plan_topk(simulation_input.planning_task)
     landmarks = get_landmarks_by_landmark_category(
-        planning_task, simulation_input.landmark_category
+        simulation_input.planning_task, str(simulation_input.landmark_category)
     )
     return SimulationOutput(
         simulation_results=simulate_view(
-            planning_task=planning_task,
+            planning_task=simulation_input.planning_task,
             planning_result=planning_result,
             landmarks=landmarks,
             plan_disambiguator_view=simulation_input.plan_disambiguator_view,

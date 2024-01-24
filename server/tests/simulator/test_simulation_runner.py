@@ -4,9 +4,10 @@ from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguationView,
     LandmarkCategory,
+    PlanningTask,
 )
 from simulator.simulation_runner import run_simulation
-from simulator.simulation_datatypes import (PlannerInput, SimulationInput)
+from simulator.simulation_datatypes import (SimulationInput)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../data/pddl/{}.pddl"
@@ -21,7 +22,7 @@ class TestSimulationRunner(unittest.TestCase):
         TestSimulationRunner.toy_problem = read_str_from_file(
             os.path.join(my_dir, rel_pddl_path.format("toy/problem"))
         )
-        TestSimulationRunner.planner_input = PlannerInput(
+        TestSimulationRunner.planning_task = PlanningTask(
             domain=TestSimulationRunner.toy_domain,
             problem=TestSimulationRunner.toy_problem,
             num_plans=4,
@@ -39,7 +40,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=True,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -56,7 +57,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=True,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -73,7 +74,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=False,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
 
@@ -90,7 +91,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=False,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -107,7 +108,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=False,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -124,7 +125,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_landmark_to_select_edge=False,
             num_replicates=2,
             setting_name="test",
-            planner_input=TestSimulationRunner.planner_input
+            planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results

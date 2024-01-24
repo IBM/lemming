@@ -143,7 +143,7 @@ async def get_plans(planning_task: PlanningTask) -> PlanningResult:
 def generate_select_view(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    return get_selection_flow_output(
+    plan_disambiguator_output, _, _ = get_selection_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
@@ -151,13 +151,14 @@ def generate_select_view(
         plan_disambiguator_input.plans,
         plan_disambiguator_input.selection_priority,
     )
+    return plan_disambiguator_output
 
 
 @app.post("/generate_build_forward")
 def generate_build_forward(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    plan_disambiguator_output, _ = get_build_flow_output(
+    plan_disambiguator_output, _, _ = get_build_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,
@@ -172,7 +173,7 @@ def generate_build_forward(
 def generate_build_backward(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
-    plan_disambiguator_output, _ = get_build_flow_output(
+    plan_disambiguator_output, _, _ = get_build_flow_output(
         plan_disambiguator_input.selection_infos,
         plan_disambiguator_input.landmarks,
         plan_disambiguator_input.domain,

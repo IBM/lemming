@@ -1,4 +1,6 @@
 from typing import Any, Dict, List, Optional, Set, Tuple
+
+from networkx import Graph
 from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
@@ -28,7 +30,7 @@ def get_build_flow_output(
     problem: str,
     plans: List[Plan],
     is_forward: bool,
-) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]]]:
+) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]], Graph]:
     (
         selected_plans,
         _,
@@ -53,7 +55,7 @@ def get_build_flow_output(
                 f"{label[0]}_{label[1]}": plan_hashes
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
-        ), edge_plan_hash_dict)
+        ), edge_plan_hash_dict, g)
 
     (
         node_search_results,
@@ -70,7 +72,7 @@ def get_build_flow_output(
                 f"{label[0]}_{label[1]}": plan_hashes
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
-        ), edge_plan_hash_dict)
+        ), edge_plan_hash_dict, g)
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
     new_choice_infos: List[ChoiceInfo] = list()
@@ -130,4 +132,4 @@ def get_build_flow_output(
             f"{label[0]}_{label[1]}": plan_hashes
             for label, plan_hashes in edge_plan_hash_dict.items()
         },
-    ), edge_plan_hash_dict)
+    ), edge_plan_hash_dict, g)

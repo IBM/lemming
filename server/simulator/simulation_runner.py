@@ -1,5 +1,7 @@
 import random
 from typing import Dict, List, Optional, Tuple
+
+from networkx import Graph
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topk,
@@ -112,6 +114,8 @@ def add_new_selection_to_plan_disambiguator_input(
 
 def select_edge(
         plan_disambiguator_output: PlanDisambiguatorOutput,
+        edge_planhashes_dict: Dict[Tuple[str, str], List[str]],
+        g: Graph,
         use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
     """
     returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
@@ -137,7 +141,7 @@ def select_edge(
 
 def get_plan_disambuguator_output(
         plan_disambiguator_input: PlanDisambiguatorInput,
-        plan_disambiguator_view: PlanDisambiguationView) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]]]:
+        plan_disambiguator_view: PlanDisambiguationView) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]], Graph]:
     if plan_disambiguator_view == PlanDisambiguationView.SELECT:  # select flow
         return get_selection_flow_output(
             selection_infos=plan_disambiguator_input.selection_infos,
@@ -183,7 +187,7 @@ def simulate_view(
         simulation_result_unit: List[SimulationResultUnit] = []
         plan_disambiguation_done = False
         while not plan_disambiguation_done:
-            plan_disambiguator_output, edge_planhashes_dict = get_plan_disambuguator_output(
+            plan_disambiguator_output, edge_planhashes_dict, g = get_plan_disambuguator_output(
                 plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_view=plan_disambiguator_view)
 
@@ -201,6 +205,8 @@ def simulate_view(
 
             edge_selection_payload = select_edge(
                 plan_disambiguator_output=plan_disambiguator_output,
+                edge_planhashes_dict=edge_planhashes_dict,
+                g=g,
                 use_landmark_to_select_edge=use_landmark_to_select_edge)
 
             if edge_selection_payload.is_edge_selected:

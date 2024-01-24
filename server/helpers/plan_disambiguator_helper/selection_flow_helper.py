@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
@@ -29,7 +29,7 @@ def get_selection_flow_output(
     problem: str,
     plans: List[Plan],
     selection_priority: SelectionPriority,
-) -> PlanDisambiguatorOutput:
+) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]]]:
     (
         selected_plans,
         choice_infos,
@@ -88,7 +88,7 @@ def get_selection_flow_output(
             )
         )
 
-        return PlanDisambiguatorOutput(
+        return (PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=choice_infos,
             networkx_graph=networkx_graph,
@@ -97,7 +97,7 @@ def get_selection_flow_output(
                 f"{label[0]}_{label[1]}": plan_hashes
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
-        )
+        ), edge_plan_hash_dict)
     choice_infos = process_selection_priority(
         set_nodes_with_multiple_edges(
             append_landmarks_not_available_for_choice(landmarks, choice_infos),
@@ -119,7 +119,7 @@ def get_selection_flow_output(
         )
     )
 
-    return PlanDisambiguatorOutput(
+    return (PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=choice_infos,
         networkx_graph=networkx_graph,
@@ -128,4 +128,4 @@ def get_selection_flow_output(
             f"{label[0]}_{label[1]}": plan_hashes
             for label, plan_hashes in edge_plan_hash_dict.items()
         },
-    )
+    ), edge_plan_hash_dict)

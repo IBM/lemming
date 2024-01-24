@@ -83,7 +83,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_forward_flow_output_no_selection_info_no_landmark(
         self,
     ) -> None:
-        build_forward_flow_output = get_build_flow_output(
+        build_forward_flow_output, _ = get_build_flow_output(
             [],
             [],
             TestBuildFlowHelper.gripper_domain,
@@ -124,7 +124,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_forward_flow_output_no_selection_info_no_landmark_toy(
         self,
     ) -> None:
-        build_forward_flow_output = get_build_flow_output(
+        build_forward_flow_output, _ = get_build_flow_output(
             [],
             [],
             TestBuildFlowHelper.toy_domain,
@@ -171,7 +171,7 @@ class TestBuildFlowHelper(unittest.TestCase):
                 "6a81b2a65657b4444a989205b590c346",
             ],
         )
-        build_forward_flow_output = get_build_flow_output(
+        build_forward_flow_output, _ = get_build_flow_output(
             [selected_landmark_0],
             [],
             TestBuildFlowHelper.gripper_domain,
@@ -185,7 +185,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     def test_get_build_backword_flow_output_no_selection_info_no_landmark(
         self,
     ) -> None:
-        build_forward_flow_output = get_build_flow_output(
+        build_forward_flow_output, _ = get_build_flow_output(
             [],
             [],
             TestBuildFlowHelper.gripper_domain,
@@ -207,7 +207,7 @@ class TestBuildFlowHelper(unittest.TestCase):
                 "6a81b2a65657b4444a989205b590c346"
             ],
         )
-        build_forward_flow_output = get_build_flow_output(
+        build_forward_flow_output, _ = get_build_flow_output(
             [selected_landmark_0],
             [],
             TestBuildFlowHelper.gripper_domain,

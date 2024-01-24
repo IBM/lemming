@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 from helpers.common_helper.exception_handler import planner_exception_handler
 from helpers.planner_helper.planner_helper_data_types import (
     Landmark,
@@ -28,7 +28,7 @@ def get_build_flow_output(
     problem: str,
     plans: List[Plan],
     is_forward: bool,
-) -> PlanDisambiguatorOutput:
+) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]]]:
     (
         selected_plans,
         _,
@@ -44,7 +44,7 @@ def get_build_flow_output(
     )
     networkx_graph = get_dict_from_graph(g)
     if len(selected_plans) <= 1:  # no plans to disambiguate
-        return PlanDisambiguatorOutput(
+        return (PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=[],
             networkx_graph=networkx_graph,
@@ -53,7 +53,7 @@ def get_build_flow_output(
                 f"{label[0]}_{label[1]}": plan_hashes
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
-        )
+        ), edge_plan_hash_dict)
 
     (
         node_search_results,
@@ -61,7 +61,7 @@ def get_build_flow_output(
     ) = get_first_node_with_multiple_out_edges(g, is_forward)
 
     if len(node_search_results) == 0:  # no selection needed
-        return PlanDisambiguatorOutput(
+        return (PlanDisambiguatorOutput(
             plans=selected_plans,
             choice_infos=[],
             networkx_graph=networkx_graph,
@@ -70,7 +70,7 @@ def get_build_flow_output(
                 f"{label[0]}_{label[1]}": plan_hashes
                 for label, plan_hashes in edge_plan_hash_dict.items()
             },
-        )
+        ), edge_plan_hash_dict)
 
     edges_to_traverse_to_remove_from_graph: Set[Any] = set()
     new_choice_infos: List[ChoiceInfo] = list()
@@ -120,7 +120,7 @@ def get_build_flow_output(
         )
     )
 
-    return PlanDisambiguatorOutput(
+    return (PlanDisambiguatorOutput(
         plans=selected_plans,
         choice_infos=new_choice_infos,
         networkx_graph=networkx_graph,
@@ -130,4 +130,4 @@ def get_build_flow_output(
             f"{label[0]}_{label[1]}": plan_hashes
             for label, plan_hashes in edge_plan_hash_dict.items()
         },
-    )
+    ), edge_plan_hash_dict)

@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 from helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topk,
@@ -137,7 +137,7 @@ def select_edge(
 
 def get_plan_disambuguator_output(
         plan_disambiguator_input: PlanDisambiguatorInput,
-        plan_disambiguator_view: PlanDisambiguationView) -> PlanDisambiguatorOutput:
+        plan_disambiguator_view: PlanDisambiguationView) -> Tuple[PlanDisambiguatorOutput, Dict[Tuple[str, str], List[str]]]:
     if plan_disambiguator_view == PlanDisambiguationView.SELECT:  # select flow
         return get_selection_flow_output(
             selection_infos=plan_disambiguator_input.selection_infos,
@@ -183,7 +183,7 @@ def simulate_view(
         simulation_result_unit: List[SimulationResultUnit] = []
         plan_disambiguation_done = False
         while not plan_disambiguation_done:
-            plan_disambiguator_output = get_plan_disambuguator_output(
+            plan_disambiguator_output, edge_planhashes_dict = get_plan_disambuguator_output(
                 plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_view=plan_disambiguator_view)
 

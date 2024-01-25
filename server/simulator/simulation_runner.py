@@ -80,7 +80,7 @@ def get_edge_with_min_plans(edge_choice_units: List[EdgeChoiceUnit]) -> Optional
             if num_plan_hashes > 0:
                 if num_plan_hashes == max_num_plan_hashes:
                     edges_with_minimum_num_plans.append(
-                        (edge, plan_hashes))
+                        (edge, plan_hashes, edge_choice_unit.landmark))
                 elif num_plan_hashes < max_num_plan_hashes:
                     edges_with_minimum_num_plans = [
                         (edge, plan_hashes, edge_choice_unit.landmark)]
@@ -90,7 +90,7 @@ def get_edge_with_min_plans(edge_choice_units: List[EdgeChoiceUnit]) -> Optional
 
 def choose_edge_landmark(
         edge_choice_units: List[EdgeChoiceUnit],
-        use_greedy_disjunctive_action_selection: bool = False) -> EdgeSelectionUnit:
+        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionUnit:
     """
     returns chosen edge, plan hashes, and landmark
     """
@@ -99,7 +99,7 @@ def choose_edge_landmark(
             edge_choice_units)
         if edges_with_landmarks_min_plans is not None:
             idx_0 = random.randint(0, len(edges_with_landmarks_min_plans)-1)
-            chosen_edge_choice_unit = edges_with_landmarks_min_plans[idx_edge]
+            chosen_edge_choice_unit = edges_with_landmarks_min_plans[idx_0]
             return EdgeSelectionUnit(
                 edge=chosen_edge_choice_unit[0],
                 plan_hashes=chosen_edge_choice_unit[1],

@@ -11,11 +11,12 @@ from helpers.planner_helper.planner_helper_data_types import (
 
 class SimulationInput(BaseModel):
     plan_disambiguator_view: PlanDisambiguationView
-    landmark_category: LandmarkCategory
-    select_edge_randomly: bool
-    use_landmark_to_select_edge: bool
-    num_replicates: int
-    setting_name: str
+    landmark_category: LandmarkCategory = LandmarkCategory.RWH
+    select_edge_randomly: bool = True
+    use_landmark_to_select_edge: bool = False
+    use_greedy_disjunctive_action_selection: bool = False
+    num_replicates: int = 1
+    setting_name: str = "test"
     planning_task: PlanningTask
 
 

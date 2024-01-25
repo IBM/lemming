@@ -38,6 +38,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -55,6 +56,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -72,6 +74,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -89,6 +92,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -106,6 +110,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -123,6 +128,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task

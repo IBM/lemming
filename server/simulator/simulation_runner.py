@@ -15,7 +15,6 @@ from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguatorInput,
     PlanDisambiguatorOutput,
     SelectionInfo,
-    LandmarkCategory,
 )
 from helpers.plan_disambiguator_helper.selection_flow_helper import (
     get_selection_flow_output,
@@ -24,7 +23,7 @@ from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
 from simulator.simulation_datatypes import (
-    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit)
+    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit, SimulationInput, SimulationOutput)
 from helpers.graph_helper.graph_helper import (
     get_edge_label,
 )
@@ -272,22 +271,20 @@ def simulate_view(
 
 
 def run_simulation(
-        landmark_category: LandmarkCategory,
-        planning_task: PlanningTask,
-        plan_disambiguator_view: PlanDisambiguationView,
-        select_edge_randomly: bool,
-        use_landmark_to_select_edge: bool,
-        num_replicates: int
-) -> List[int]:
-    planning_result = get_plan_topk(planning_task)
+        simulation_input: SimulationInput,
+) -> SimulationOutput:
+
+    planning_result = get_plan_topk(simulation_input.planning_task)
     landmarks = get_landmarks_by_landmark_category(
-        planning_task, landmark_category.value
+        simulation_input.planning_task, simulation_input.landmark_category.value
     )
-    return simulate_view(
-        planning_task=planning_task,
-        planning_result=planning_result,
-        landmarks=landmarks,
-        plan_disambiguator_view=plan_disambiguator_view,
-        num_replicates=num_replicates,
-        select_edge_randomly=select_edge_randomly,
-        use_landmark_to_select_edge=use_landmark_to_select_edge)
+    return SimulationOutput(
+        simulation_results=simulate_view(
+            planning_task=simulation_input.planning_task,
+            planning_result=planning_result,
+            landmarks=landmarks,
+            plan_disambiguator_view=simulation_input.plan_disambiguator_view,
+            num_replicates=simulation_input.num_replicates,
+            select_edge_randomly=simulation_input.select_edge_randomly,
+            use_landmark_to_select_edge=simulation_input.use_landmark_to_select_edge),
+        simulation_input=simulation_input.model_copy(deep=True))

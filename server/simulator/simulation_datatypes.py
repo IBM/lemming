@@ -1,6 +1,22 @@
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from planners.drivers.landmark_driver_datatype import Landmark
+from helpers.planner_helper.planner_helper_data_types import (
+    Landmark,
+    PlanDisambiguationView,
+    PlanningTask,
+    LandmarkCategory,
+)
+
+
+class SimulationInput(BaseModel):
+    plan_disambiguator_view: PlanDisambiguationView
+    landmark_category: LandmarkCategory
+    select_edge_randomly: bool
+    use_landmark_to_select_edge: bool
+    num_replicates: int
+    setting_name: str
+    planning_task: PlanningTask
 
 
 class SimulationResultUnit(BaseModel):
@@ -9,6 +25,11 @@ class SimulationResultUnit(BaseModel):
     num_remaining_plans: int
     is_from_landmark: Optional[bool]
     is_disambiguation_done: bool
+
+
+class SimulationOutput(BaseModel):
+    simulation_results: List[List[SimulationResultUnit]]
+    simulation_input: SimulationInput
 
 
 class EdgeSelectionPayload(BaseModel):

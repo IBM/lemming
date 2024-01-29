@@ -38,6 +38,25 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=False,
+            num_replicates=2,
+            setting_name="test",
+            planning_task=TestSimulationRunner.planning_task
+        )
+        simulation_output = run_simulation(simulation_input)
+        metrics = simulation_output.simulation_results
+
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
+    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(self):
+        simulation_input = SimulationInput(
+            plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            landmark_category=LandmarkCategory.RWH,
+            select_edge_randomly=False,
+            use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=True,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -55,6 +74,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -72,6 +92,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -89,6 +110,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -106,6 +128,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -123,6 +146,7 @@ class TestSimulationRunner(unittest.TestCase):
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=True,
             use_landmark_to_select_edge=False,
+            use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task

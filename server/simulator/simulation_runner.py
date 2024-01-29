@@ -1,4 +1,5 @@
 import random
+import sys
 from typing import Dict, List, Optional, Tuple
 
 from networkx import Graph
@@ -40,16 +41,25 @@ def is_landmark_choice_info(choice_info: ChoiceInfo) -> bool:
 def get_edges_from_choice_infos(
         choice_infos: List[ChoiceInfo],
         use_landmark: bool,
-        is_landmark: bool = True) -> List[EdgeChoiceUnit]:
+        is_landmark: bool,
+        use_greedy_disjunctive_action_selection: bool) -> List[EdgeChoiceUnit]:
     action_names_landmarks: List[EdgeChoiceUnit] = []
     for choice_info in choice_infos:
         if use_landmark:
             if is_landmark_choice_info(choice_info) == is_landmark and len(choice_info.action_name_plan_hash_map) > 0:
-                action_names_landmarks.append(
-                    EdgeChoiceUnit(
-                        edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
-                        landmark=choice_info.landmark
-                    ))
+                if use_greedy_disjunctive_action_selection:
+                    if choice_info.landmark.disjunctive:
+                        action_names_landmarks.append(
+                            EdgeChoiceUnit(
+                                edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
+                                landmark=choice_info.landmark
+                            ))
+                else:
+                    action_names_landmarks.append(
+                        EdgeChoiceUnit(
+                            edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
+                            landmark=choice_info.landmark
+                        ))
         else:
             if len(choice_info.action_name_plan_hash_map) > 0:
                 action_names_landmarks.append(
@@ -60,10 +70,48 @@ def get_edges_from_choice_infos(
     return action_names_landmarks
 
 
-def choose_edge_landmark(edge_choice_units: List[EdgeChoiceUnit]) -> EdgeSelectionUnit:
+def get_edge_with_min_plans(edge_choice_units: List[EdgeChoiceUnit]) -> Optional[List[Tuple[Tuple[str, str], List[str], Landmark]]]:
+    edges_with_minimum_num_plans: Optional[List[Tuple[Tuple[str,
+                                                            str], List[str], Landmark]]] = None
+    max_num_plan_hashes = sys.maxsize
+    for edge_choice_unit in edge_choice_units:
+        for edge, plan_hashes in edge_choice_unit.edge_name_plan_hash_dict.items():
+            num_plan_hashes = len(plan_hashes)
+            if num_plan_hashes > 0:
+                if num_plan_hashes == max_num_plan_hashes:
+                    edges_with_minimum_num_plans.append(
+                        (edge, plan_hashes, edge_choice_unit.landmark))
+                elif num_plan_hashes < max_num_plan_hashes:
+                    edges_with_minimum_num_plans = [
+                        (edge, plan_hashes, edge_choice_unit.landmark)]
+                    max_num_plan_hashes = num_plan_hashes
+    return edges_with_minimum_num_plans
+
+
+def choose_edge_landmark(
+        edge_choice_units: List[EdgeChoiceUnit],
+        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionUnit:
     """
     returns chosen edge, plan hashes, and landmark
     """
+    if use_greedy_disjunctive_action_selection:  # greedy edge selection with disjunctive action landmarks
+        edges_with_landmarks_min_plans = get_edge_with_min_plans(
+            edge_choice_units)
+        if edges_with_landmarks_min_plans is not None:
+            idx_0 = random.randint(0, len(edges_with_landmarks_min_plans)-1)
+            chosen_edge_choice_unit = edges_with_landmarks_min_plans[idx_0]
+            return EdgeSelectionUnit(
+                edge=chosen_edge_choice_unit[0],
+                plan_hashes=chosen_edge_choice_unit[1],
+                landmark=chosen_edge_choice_unit[2],
+            )
+        else:
+            return EdgeSelectionUnit(
+                edge=None,
+                plan_hashes=None,
+                landmark=None,
+            )
+
     if len(edge_choice_units) >= 1:
         idx_0 = random.randint(0, len(edge_choice_units)-1)
         edges = list(edge_choice_units[idx_0].edge_name_plan_hash_dict.keys())
@@ -74,6 +122,7 @@ def choose_edge_landmark(edge_choice_units: List[EdgeChoiceUnit]) -> EdgeSelecti
             plan_hashes=edge_choice_units[idx_0].edge_name_plan_hash_dict[chosen_edge],
             landmark=edge_choice_units[idx_0].landmark,
         )
+
     return EdgeSelectionUnit(
         edge=None,
         plan_hashes=None,
@@ -83,21 +132,40 @@ def choose_edge_landmark(edge_choice_units: List[EdgeChoiceUnit]) -> EdgeSelecti
 
 def get_edge_landmark_from_plan_disambiguator_output(
         plan_disambiguator_output: PlanDisambiguatorOutput,
-        use_landmark_to_select_edge: bool) -> EdgeSelectionUnit:
+        use_landmark_to_select_edge: bool,
+        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionUnit:
     if use_landmark_to_select_edge:
+        if use_greedy_disjunctive_action_selection:
+            edge_choice_units = get_edges_from_choice_infos(
+                plan_disambiguator_output.choice_infos,
+                use_landmark=True,
+                is_landmark=True,
+                use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
+            edge_selection_unit = choose_edge_landmark(
+                edge_choice_units=edge_choice_units,
+                use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
+            if edge_selection_unit.edge is not None:
+                return edge_selection_unit
         edge_choice_units = get_edges_from_choice_infos(
-            plan_disambiguator_output.choice_infos, use_landmark=True, is_landmark=True)
+            plan_disambiguator_output.choice_infos,
+            use_landmark=True,
+            is_landmark=True,
+            use_greedy_disjunctive_action_selection=False)
         edge_selection_unit = choose_edge_landmark(
-            edge_choice_units)
+            edge_choice_units=edge_choice_units,
+            use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
         if edge_selection_unit.edge is None:  # edges not from landmarks
             edge_choice_units = get_edges_from_choice_infos(
-                plan_disambiguator_output.choice_infos, use_landmark=True, is_landmark=False)
+                plan_disambiguator_output.choice_infos,
+                use_landmark=True,
+                is_landmark=False,
+                use_greedy_disjunctive_action_selection=False)
             edge_selection_unit = choose_edge_landmark(
                 edge_choice_units)
         return edge_selection_unit
 
     edge_choice_units = get_edges_from_choice_infos(
-        plan_disambiguator_output.choice_infos, use_landmark=False)
+        plan_disambiguator_output.choice_infos, use_landmark=False, is_landmark=False, use_greedy_disjunctive_action_selection=False)
     return choose_edge_landmark(edge_choice_units)
 
 
@@ -116,10 +184,12 @@ def add_new_selection_to_plan_disambiguator_input(
 
 def select_edge_among_choiceinfos(
         plan_disambiguator_output: PlanDisambiguatorOutput,
-        use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
+        use_landmark_to_select_edge: bool,
+        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionPayload:
     edge_selection_unit = get_edge_landmark_from_plan_disambiguator_output(
         plan_disambiguator_output=plan_disambiguator_output,
-        use_landmark_to_select_edge=use_landmark_to_select_edge)
+        use_landmark_to_select_edge=use_landmark_to_select_edge,
+        use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
 
     return EdgeSelectionPayload(
         selected_edge=edge_selection_unit.edge,
@@ -147,7 +217,8 @@ def select_edge(
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph,
         select_edge_randomly: bool,
-        use_landmark_to_select_edge: bool) -> EdgeSelectionPayload:
+        use_landmark_to_select_edge: bool,
+        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionPayload:
     """
     returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
     """
@@ -161,7 +232,8 @@ def select_edge(
     return (select_edge_random(
         edge_plan_hash_dict=edge_plan_hash_dict, g=g) if select_edge_randomly else select_edge_among_choiceinfos(
         plan_disambiguator_output=plan_disambiguator_output,
-        use_landmark_to_select_edge=use_landmark_to_select_edge))
+        use_landmark_to_select_edge=use_landmark_to_select_edge,
+        use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection))
 
 
 def get_plan_disambuguator_output(
@@ -195,7 +267,8 @@ def simulate_view(
         plan_disambiguator_view: PlanDisambiguationView,
         num_replicates: int,
         select_edge_randomly: bool,
-        use_landmark_to_select_edge: bool) -> List[List[SimulationResultUnit]]:
+        use_landmark_to_select_edge: bool,
+        use_greedy_disjunctive_action_selection: bool) -> List[List[SimulationResultUnit]]:
     plan_disambiguator_input = PlanDisambiguatorInput(
         selection_priority=None,
         selection_infos=[],
@@ -234,7 +307,8 @@ def simulate_view(
                 edge_plan_hash_dict=edge_plan_hash_dict,
                 g=g,
                 select_edge_randomly=select_edge_randomly,
-                use_landmark_to_select_edge=use_landmark_to_select_edge)
+                use_landmark_to_select_edge=use_landmark_to_select_edge,
+                use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
 
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(
@@ -286,5 +360,6 @@ def run_simulation(
             plan_disambiguator_view=simulation_input.plan_disambiguator_view,
             num_replicates=simulation_input.num_replicates,
             select_edge_randomly=simulation_input.select_edge_randomly,
-            use_landmark_to_select_edge=simulation_input.use_landmark_to_select_edge),
+            use_landmark_to_select_edge=simulation_input.use_landmark_to_select_edge,
+            use_greedy_disjunctive_action_selection=simulation_input.use_greedy_disjunctive_action_selection),
         simulation_input=simulation_input.model_copy(deep=True))

@@ -24,7 +24,8 @@ def edit_edge_labels(g: Graph) -> Graph:
             and "label" in edge_data[0]
         ):
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", edge_data[0]
+                       ["label"]).strip('"').strip()
             )
 
     return new_graph
@@ -70,9 +71,25 @@ def get_edge_label(g: Graph, edge: Any) -> str:
     return ""
 
 
+def add_node_to_queue(
+        g: Graph,
+        edges: List[Tuple[str, str]],
+        edges_traversed: List[str],
+        queue: List[Tuple[str, List[str]]],
+        is_forward: bool) -> List[Tuple[str, List[str]]]:
+    new_queue = deepcopy(queue)
+    for edge in edges:
+        edge_label = get_edge_label(g, edge)
+        tmp_edge = edge[1][:] if is_forward else edge[0][:]
+        new_queue.append(
+            (tmp_edge, deepcopy(edges_traversed + [edge_label]))
+        )
+    return new_queue
+
+
 def get_first_node_with_multiple_out_edges(
     g: Graph,
-    is_forward: bool = True,
+    is_forward: bool,
 ) -> Tuple[List[Tuple[Any, List[Any], List[Any]]], Set[Any]]:
     """
     returns a list of tuples of 1) node with multiple out edges, 2) out edges
@@ -98,8 +115,20 @@ def get_first_node_with_multiple_out_edges(
                 if is_forward
                 else list(g.in_edges(node))
             )
+
+            if edges is None or len(edges) == 0:
+                nodes_visited.add(node)
+                continue
+
             if is_forward:
-                if len(edges) > 1:
+                if len(edges) == 1:
+                    new_queue = add_node_to_queue(
+                        g=g,
+                        edges=edges,
+                        edges_traversed=edges_traversed,
+                        queue=new_queue,
+                        is_forward=is_forward)
+                else:
                     nodes_with_multiple_edges.append(
                         (
                             deepcopy(node),
@@ -107,39 +136,22 @@ def get_first_node_with_multiple_out_edges(
                             deepcopy(edges_traversed),
                         )
                     )
-                    nodes_visited.add(node)
-                    continue
             else:  # backward
-                if len(out_edges) > 1 or len(edges) > 1:
-                    if len(out_edges) > 1:
-                        nodes_with_multiple_edges.append(
-                            (
-                                deepcopy(node),
-                                deepcopy(out_edges),
-                                deepcopy(edges_traversed),
-                            )
+                if len(out_edges) > 1:
+                    nodes_with_multiple_edges.append(
+                        (
+                            deepcopy(node),
+                            deepcopy(out_edges),
+                            deepcopy(edges_traversed),
                         )
-                        nodes_visited.add(node)
-                    if len(edges) > 1:
-                        nodes_with_multiple_edges.append(
-                            (
-                                deepcopy(node),
-                                deepcopy(edges),
-                                deepcopy(edges_traversed),
-                            )
-                        )
-                        nodes_visited.add(node)
-                    continue
-            if edges is not None and len(edges) == 1:
-                edge = edges[0]  # only one edge can be here
-                edge_label = get_edge_label(g, edge)
-                edges_traversed_so_far = edges_traversed + [edge_label]
-                new_queue.append(
-                    (edge[1], deepcopy(edges_traversed_so_far))
-                    if is_forward
-                    else (edge[0], deepcopy(edges_traversed_so_far))
-                )
-
+                    )
+                else:
+                    new_queue = add_node_to_queue(
+                        g=g,
+                        edges=edges,
+                        edges_traversed=edges_traversed,
+                        queue=new_queue,
+                        is_forward=is_forward)
             nodes_visited.add(node)
         queue = new_queue
     return nodes_with_multiple_edges, nodes_visited

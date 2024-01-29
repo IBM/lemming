@@ -69,7 +69,6 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
-    @unittest.skip("Build Backward flow needs to be fixed")
     def test_run_simulation_build_backward_flow(self):
         landmark_category = LandmarkCategory.RWH
         planning_task = PlanningTask(

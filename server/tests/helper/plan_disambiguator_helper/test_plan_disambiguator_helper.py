@@ -67,7 +67,7 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         selection_info_0 = SelectionInfo(
             selected_plan_hashes=[
                 "6a81b2a65657b4444a989205b590c346",
-                "'9d49f737b4735da2a3b0d85e3be0bf67'",
+                "9d49f737b4735da2a3b0d85e3be0bf67",
             ],
         )
         selection_info_1 = SelectionInfo(

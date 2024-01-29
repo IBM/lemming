@@ -122,7 +122,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
                 "b458359fe5af1ceb47b53d23ebb4d635",
             ],
         )
-        selection_flow_output = get_selection_flow_output(
+        selection_flow_output, _, _ = get_selection_flow_output(
             [selected_landmark_0],
             TestSelectionFlowHelper.gripper_landmarks,
             TestSelectionFlowHelper.gripper_domain,
@@ -141,7 +141,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             selected_first_achiever="",
             selected_plan_hashes=[],
         )
-        selection_flow_output = get_selection_flow_output(
+        selection_flow_output, _, _ = get_selection_flow_output(
             [selected_landmark_0],
             TestSelectionFlowHelper.gripper_landmarks,
             TestSelectionFlowHelper.gripper_domain,
@@ -160,7 +160,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
             selected_first_achiever="",
             selected_plan_hashes=[],
         )
-        selection_flow_output = get_selection_flow_output(
+        selection_flow_output, _, _ = get_selection_flow_output(
             [selected_landmark_0],
             TestSelectionFlowHelper.travel_landmarks,
             TestSelectionFlowHelper.travel_domain,
@@ -175,7 +175,7 @@ class TestSelectionFlowHelper(unittest.TestCase):
     def test_get_selection_flow_output_no_landmarks_no_selection_info(
         self,
     ) -> None:
-        selection_flow_output = get_selection_flow_output(
+        selection_flow_output, _, _ = get_selection_flow_output(
             [],
             [],
             TestSelectionFlowHelper.gripper_domain,

@@ -1,13 +1,13 @@
 import os
 import unittest
-from helpers.common_helper.file_helper import read_str_from_file
+from helpers.common_helper.file_helper import read_str_from_file, create_file_from_base_model, get_model_from_file
 from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguationView,
     LandmarkCategory,
     PlanningTask,
 )
 from simulator.simulation_runner import run_simulation
-from simulator.simulation_datatypes import (SimulationInput)
+from simulator.simulation_datatypes import (SimulationInput, SimulationOutput)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../data/pddl/{}.pddl"
@@ -157,3 +157,24 @@ class TestSimulationRunner(unittest.TestCase):
         self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
+
+    def test_run_simulation_select_flow_file_ops(self):
+        simulation_input = SimulationInput(
+            plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            landmark_category=LandmarkCategory.RWH,
+            select_edge_randomly=False,
+            use_landmark_to_select_edge=True,
+            use_greedy_disjunctive_action_selection=False,
+            num_replicates=2,
+            setting_name="test",
+            planning_task=TestSimulationRunner.planning_task
+        )
+        simulation_output = run_simulation(simulation_input)
+
+        # file write
+        file_path = "sample_output.txt"
+        create_file_from_base_model(file_path, simulation_output)
+        # file read
+        simulation_output = get_model_from_file(file_path, SimulationOutput)
+
+        self.assertIsNotNone(simulation_output)

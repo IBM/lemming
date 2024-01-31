@@ -161,12 +161,18 @@ def get_edge_landmark_from_plan_disambiguator_output(
                 is_landmark=False,
                 use_greedy_disjunctive_action_selection=False)
             edge_selection_unit = choose_edge_landmark(
-                edge_choice_units)
+                edge_choice_units=edge_choice_units,
+                use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
         return edge_selection_unit
 
     edge_choice_units = get_edges_from_choice_infos(
-        plan_disambiguator_output.choice_infos, use_landmark=False, is_landmark=False, use_greedy_disjunctive_action_selection=False)
-    return choose_edge_landmark(edge_choice_units)
+        plan_disambiguator_output.choice_infos,
+        use_landmark=False,
+        is_landmark=False,
+        use_greedy_disjunctive_action_selection=False)
+    return choose_edge_landmark(
+        edge_choice_units=edge_choice_units,
+        use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
 
 
 def add_new_selection_to_plan_disambiguator_input(

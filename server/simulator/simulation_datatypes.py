@@ -10,7 +10,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 
 
 class SimulationInput(BaseModel):
-    plan_disambiguator_view: PlanDisambiguationView
+    plan_disambiguator_view: PlanDisambiguationView = PlanDisambiguationView.SELECT
     landmark_category: LandmarkCategory = LandmarkCategory.RWH
     select_edge_randomly: bool = True
     use_landmark_to_select_edge: bool = False
@@ -38,18 +38,31 @@ class SimulationOutput(BaseModel):
     simulation_results: List[List[SimulationResultUnit]]
     simulation_input: SimulationInput
 
-    def get_num_landmarks_from_chosen_edge(self, List[SimulationResultUnit]) -> int:
-        return len(filter lambda edge: edge., self.chosen_edge)
+    def get_num_edges_chosen(self, simulation_result_units: List[SimulationResultUnit]) -> int:
+        if len(simulation_result_units) == 0:
+            return 0
+        if simulation_result_units[-1].is_disambiguation_done:
+            return (len(simulation_result_units) - 1)
+        return len(simulation_result_units)
+
+    def get_num_landmarks(self, simulation_result_units: List[SimulationResultUnit]) -> int:
+        return len(
+            list(filter(
+                lambda simulation_result_unit: (
+                    simulation_result_unit.is_from_landmark is not None and simulation_result_unit.is_from_landmark), simulation_result_units)))
 
     def get_simulation_metrics(self) -> List[SimulationMetrics]:
         return list(
-            map(lambda simulation_result: SimulationMetrics(
-            num_edges_chosen=(len(simulation_result.chosen_edge) -1 if simulation_result.chosen_edge is not None and len(simulation_result.chosen_edge) > 1 else 0),
-            num_landmarks_chosen=0,
-            is_disambiguation_done=False
-        ), self.simulation_results)
+            map(lambda simulation_result_units: SimulationMetrics(
+                num_edges_chosen=self.get_num_edges_chosen(
+                    simulation_result_units),
+                num_landmarks_chosen=self.get_num_landmarks(
+                    simulation_result_units),
+                is_disambiguation_done=simulation_result_units[-1].is_disambiguation_done if len(
+                    simulation_result_units) > 0 else False
+            ), self.simulation_results)
         )
-        
+
 
 class EdgeSelectionPayload(BaseModel):
     selected_edge: Optional[str]

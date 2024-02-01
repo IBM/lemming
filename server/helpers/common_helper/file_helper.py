@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from fastapi import File, UploadFile
-from os import listdir
+from os import listdir, path
 from os.path import join, abspath, isfile, isdir
 from pathlib import Path
 from typing import List
@@ -71,3 +71,9 @@ def write_str_on_file(path: str, content: str) -> None:
 
 def convert_json_str_to_dict(ip: SupportsRead[Union[str, bytes]]) -> Any:
     return json.load(ip)
+
+
+def write_file_with_model_path(file_name: str, file_path: str, file_extension: str, model: BaseModel) -> str:
+    file_path = path.join(file_path, file_name + "." + file_extension)
+    create_file_from_base_model(file_path, model)
+    return file_path

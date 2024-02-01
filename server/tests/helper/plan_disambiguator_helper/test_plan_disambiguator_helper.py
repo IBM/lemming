@@ -1,8 +1,6 @@
 from typing import List
-
 import unittest
 import os
-
 from planners.drivers.planner_driver_datatype import PlanningResult
 from helpers.common_helper.file_helper import read_str_from_file
 from helpers.planner_helper.planner_helper import (

@@ -1,6 +1,7 @@
 import os
 import unittest
-from helpers.common_helper.file_helper import read_str_from_file, create_file_from_base_model, get_model_from_file
+from helpers.common_helper.file_helper import (
+    read_str_from_file, create_file_from_base_model, get_model_from_file)
 from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguationView,
     LandmarkCategory,
@@ -159,17 +160,19 @@ class TestSimulationRunner(unittest.TestCase):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_select_flow_file_ops(self):
+        num_replicates = 2
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
             select_edge_randomly=False,
             use_landmark_to_select_edge=True,
             use_greedy_disjunctive_action_selection=False,
-            num_replicates=2,
+            num_replicates=num_replicates,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
         )
         simulation_output = run_simulation(simulation_input)
+        metrics = simulation_output.get_simulation_metrics()
 
         # file write
         file_path = "sample_output.txt"
@@ -178,3 +181,4 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_output = get_model_from_file(file_path, SimulationOutput)
 
         self.assertIsNotNone(simulation_output)
+        self.assertEqual(len(metrics), num_replicates)

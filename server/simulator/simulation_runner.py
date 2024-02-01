@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import random
 import sys
 from typing import Dict, List, Optional, Tuple
@@ -24,10 +26,12 @@ from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
 from simulator.simulation_datatypes import (
-    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit, SimulationInput, SimulationOutput)
+    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit, SimulationInput, SimulationOutput, SimulationMestricUnits)
 from helpers.graph_helper.graph_helper import (
     get_edge_label,
 )
+from helpers.common_helper.file_helper import (
+    read_str_from_file, create_file_from_base_model, get_model_from_file, write_file_with_model_path)
 
 
 def set_random_seed(seed: int) -> None:
@@ -369,3 +373,21 @@ def run_simulation(
             use_landmark_to_select_edge=simulation_input.use_landmark_to_select_edge,
             use_greedy_disjunctive_action_selection=simulation_input.use_greedy_disjunctive_action_selection),
         simulation_input=simulation_input.model_copy(deep=True))
+
+
+def run_simulation_unit(simulation_input: SimulationInput) -> Tuple[str, str]:
+    simulation_output = run_simulation(simulation_input)
+    metrics = simulation_output.get_simulation_metrics()
+    raw_output_file_path = write_file_with_model_path(
+        file_name=simulation_input.get_name() + "_raw_output",
+        file_path=simulation_input.folder_path,
+        file_extension="txt",
+        model=simulation_output
+    )
+    metrics_file_path = write_file_with_model_path(
+        file_name=simulation_input.get_name() + "_metrics",
+        file_path=simulation_input.folder_path,
+        file_extension="txt",
+        model=SimulationMestricUnits(simulation_metrics_units=metrics)
+    )
+    return raw_output_file_path, metrics_file_path

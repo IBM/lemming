@@ -17,13 +17,24 @@ class SimulationInput(BaseModel):
     use_greedy_disjunctive_action_selection: bool = False
     num_replicates: int = 1
     setting_name: str = "test"
+    folder_path: str = ""
     planning_task: PlanningTask
+
+    def get_name(self) -> str:
+        lst = [self.setting_name, self.plan_disambiguator_view.value, self.landmark_category.value,
+               f"r{str(self.select_edge_randomly)}", f"l{self.use_landmark_to_select_edge}", f"g{str(self.use_greedy_disjunctive_action_selection)}",
+               ]
+        return "_".join(lst)
 
 
 class SimulationMetrics(BaseModel):
     num_edges_chosen: int
     num_landmarks_chosen: int
     is_disambiguation_done: bool
+
+
+class SimulationMestricUnits(BaseModel):
+    simulation_metrics_units: List[SimulationMetrics]
 
 
 class SimulationResultUnit(BaseModel):

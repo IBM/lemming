@@ -7,8 +7,9 @@ from helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
     PlanningTask,
 )
-from simulator.simulation_runner import run_simulation
-from simulator.simulation_datatypes import (SimulationInput, SimulationOutput)
+from simulator.simulation_runner import (run_simulation, run_simulation_unit)
+from simulator.simulation_datatypes import (
+    SimulationInput, SimulationOutput, SimulationMestricUnits)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../data/pddl/{}.pddl"
@@ -159,7 +160,7 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
-    def test_run_simulation_select_flow_file_ops(self):
+    def test_run_simulation_unit(self):
         num_replicates = 2
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
@@ -171,14 +172,14 @@ class TestSimulationRunner(unittest.TestCase):
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.get_simulation_metrics()
-
-        # file write
-        file_path = "sample_output.txt"
-        create_file_from_base_model(file_path, simulation_output)
+        raw_output_file_path, metrics_file_path = run_simulation_unit(
+            simulation_input)
         # file read
-        simulation_output = get_model_from_file(file_path, SimulationOutput)
+        simulation_output = get_model_from_file(
+            raw_output_file_path, SimulationOutput)
+        simulation_metrics = get_model_from_file(
+            metrics_file_path, SimulationMestricUnits)
 
         self.assertIsNotNone(simulation_output)
-        self.assertEqual(len(metrics), num_replicates)
+        self.assertEqual(
+            len(simulation_metrics.simulation_metrics_units), num_replicates)

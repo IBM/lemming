@@ -12,7 +12,7 @@ def get_landmarks(
     domain: str,
     problem: str,
 ) -> List[Landmark]:
-    if category is not LandmarkCategory.RWH.value:
+    if category != LandmarkCategory.RWH.value:
         raise NotImplementedError
 
     with (

@@ -1,6 +1,6 @@
 import random
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from networkx import Graph
 from helpers.planner_helper.planner_helper import (
@@ -207,13 +207,17 @@ def select_edge_among_choiceinfos(
     )
 
 
+def handle_edge(edge: Any) -> Tuple[str, str]:
+    return tuple(edge.split("_")) if isinstance(edge, str) else edge
+
+
 def select_edge_random_from_edge_plan_hash_dict(
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph) -> EdgeSelectionPayload:
     edge, plan_hashes = random.choice(list(edge_plan_hash_dict.items()))
 
     return EdgeSelectionPayload(
-        selected_edge=get_edge_label(g, edge),
+        selected_edge=get_edge_label(g, handle_edge(edge)),
         is_edge_selected=True,
         is_edge_from_landmark=False,
         plan_hashes=plan_hashes
@@ -221,9 +225,9 @@ def select_edge_random_from_edge_plan_hash_dict(
 
 
 def get_all_actions_from_edge_plan_hash_dict(
-        edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
+        edge_plan_hash_dict: Dict[str, List[str]],
         g: Graph) -> List[str]:
-    return list(set(map(lambda edge: get_edge_label(g, edge.split("_")), edge_plan_hash_dict.keys())))
+    return list(set(map(lambda edge: get_edge_label(g, handle_edge(edge)), edge_plan_hash_dict.keys())))
 
 
 def select_edge(

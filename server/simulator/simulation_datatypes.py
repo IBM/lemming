@@ -43,6 +43,7 @@ class SimulationResultUnit(BaseModel):
     num_remaining_plans: int
     is_from_landmark: Optional[bool]
     is_disambiguation_done: bool
+    num_choice_infos: Optional[int] = None
     num_nodes: Optional[int] = None
     num_edges: Optional[int] = None
     num_actions: Optional[int] = None

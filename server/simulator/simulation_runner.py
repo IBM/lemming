@@ -315,6 +315,8 @@ def simulate_view(
                             plan_disambiguator_output.plans),
                         is_from_landmark=None,
                         is_disambiguation_done=True,
+                        num_choice_infos=len(
+                            plan_disambiguator_output.choice_infos),
                         num_nodes=len(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(
@@ -350,6 +352,8 @@ def simulate_view(
                         is_from_landmark=edge_selection_payload.is_edge_from_landmark,
                         is_disambiguation_done=(
                             len(plan_disambiguator_output.plans) == 1),
+                        num_choice_infos=len(
+                            plan_disambiguator_output.choice_infos),
                         num_nodes=len(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(
@@ -369,6 +373,8 @@ def simulate_view(
                             plan_disambiguator_output.plans),
                         is_from_landmark=None,
                         is_disambiguation_done=False,
+                        num_choice_infos=len(
+                            plan_disambiguator_output.choice_infos),
                         num_nodes=len(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(

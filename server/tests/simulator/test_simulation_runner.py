@@ -1,7 +1,7 @@
 import os
 import unittest
 from helpers.common_helper.file_helper import (
-    read_str_from_file, create_file_from_base_model, get_model_from_file)
+    read_str_from_file, get_model_from_file)
 from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguationView,
     LandmarkCategory,

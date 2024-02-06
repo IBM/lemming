@@ -1,5 +1,3 @@
-import os
-from pathlib import Path
 import random
 import sys
 from typing import Dict, List, Optional, Tuple
@@ -31,7 +29,7 @@ from helpers.graph_helper.graph_helper import (
     get_edge_label,
 )
 from helpers.common_helper.file_helper import (
-    read_str_from_file, create_file_from_base_model, get_model_from_file, write_file_with_model_path)
+    write_file_with_model_path)
 
 
 def set_random_seed(seed: int) -> None:

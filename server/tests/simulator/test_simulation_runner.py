@@ -57,6 +57,7 @@ class TestSimulationRunner(unittest.TestCase):
                 self.assertGreater(simulation_unit.num_nodes, 0)
                 self.assertGreater(simulation_unit.num_remaining_plans, 0)
                 self.assertGreater(len(simulation_unit.plan_costs), 0)
+                self.assertIsNotNone(simulation_unit.num_choice_infos)
 
     def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(self):
         simulation_input = SimulationInput(

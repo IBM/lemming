@@ -207,7 +207,7 @@ def select_edge_among_choiceinfos(
     )
 
 
-def select_edge_random(
+def select_edge_random_from_edge_plan_hash_dict(
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph) -> EdgeSelectionPayload:
     edge, plan_hashes = random.choice(list(edge_plan_hash_dict.items()))
@@ -220,7 +220,7 @@ def select_edge_random(
     )
 
 
-def get_all_actions(
+def get_all_actions_from_edge_plan_hash_dict(
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph) -> List[str]:
     return list(set(map(lambda edge: get_edge_label(g, edge.split("_")), edge_plan_hash_dict.keys())))
@@ -243,7 +243,7 @@ def select_edge(
             is_edge_from_landmark=False,
             plan_hashes=None
         )
-    return (select_edge_random(
+    return (select_edge_random_from_edge_plan_hash_dict(
         edge_plan_hash_dict=edge_plan_hash_dict, g=g) if select_edge_randomly else select_edge_among_choiceinfos(
         plan_disambiguator_output=plan_disambiguator_output,
         use_landmark_to_select_edge=use_landmark_to_select_edge,
@@ -319,7 +319,7 @@ def simulate_view(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(
                             plan_disambiguator_output.edge_plan_hashes_dict),
-                        num_actions=len(get_all_actions(
+                        num_actions=len(get_all_actions_from_edge_plan_hash_dict(
                             edge_plan_hash_dict=plan_disambiguator_output.edge_plan_hashes_dict,
                             g=g)),
                         plan_costs=plan_disambiguator_output.get_plan_costs()
@@ -356,7 +356,7 @@ def simulate_view(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(
                             plan_disambiguator_output.edge_plan_hashes_dict),
-                        num_actions=len(get_all_actions(
+                        num_actions=len(get_all_actions_from_edge_plan_hash_dict(
                             edge_plan_hash_dict=plan_disambiguator_output.edge_plan_hashes_dict,
                             g=g)),
                         plan_costs=plan_disambiguator_output.get_plan_costs()
@@ -377,7 +377,7 @@ def simulate_view(
                             plan_disambiguator_output.node_plan_hashes_dict),
                         num_edges=len(
                             plan_disambiguator_output.edge_plan_hashes_dict),
-                        num_actions=len(get_all_actions(
+                        num_actions=len(get_all_actions_from_edge_plan_hash_dict(
                             edge_plan_hash_dict=plan_disambiguator_output.edge_plan_hashes_dict,
                             g=g)),
                         plan_costs=plan_disambiguator_output.get_plan_costs()

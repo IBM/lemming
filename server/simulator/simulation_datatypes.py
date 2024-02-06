@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from planners.drivers.landmark_driver_datatype import Landmark
@@ -9,21 +10,31 @@ from helpers.planner_helper.planner_helper_data_types import (
 )
 
 
+class EdgeSelectionType(str, Enum):
+    RANDOM = "random"
+    CHOICE_INFO = "choice_info"
+    FREQUENCY_MOST = "frequency_most"
+    FREQUENCY_LEAST = "frequency_least"
+    LANDMARK = "landmark"
+    LANDMARK_GREEDY = "landmark_greedy"
+    DISTANCE_INITIAL = "distance_initial"
+    DISTANCE_GOAL = "distance_goal"
+
+
 class SimulationInput(BaseModel):
     plan_disambiguator_view: PlanDisambiguationView = PlanDisambiguationView.SELECT
     landmark_category: LandmarkCategory = LandmarkCategory.RWH
-    select_edge_randomly: bool = True
-    use_landmark_to_select_edge: bool = False
-    use_greedy_disjunctive_action_selection: bool = False
+    edge_selection_type: EdgeSelectionType = EdgeSelectionType.RANDOM
     num_replicates: int = 1
     setting_name: str = "test"
     folder_path: str = ""
     planning_task: PlanningTask
 
     def get_name(self) -> str:
-        lst = [self.setting_name, self.plan_disambiguator_view.value, self.landmark_category.value,
-               f"r{str(self.select_edge_randomly)}", f"l{self.use_landmark_to_select_edge}", f"g{str(self.use_greedy_disjunctive_action_selection)}",
-               ]
+        lst = [self.setting_name,
+               self.plan_disambiguator_view.value,
+               self.landmark_category.value,
+               self.edge_selection_type.value]
         return "_".join(lst)
 
 

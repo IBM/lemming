@@ -9,7 +9,7 @@ from helpers.planner_helper.planner_helper_data_types import (
 )
 from simulator.simulation_runner import (run_simulation, run_simulation_unit)
 from simulator.simulation_datatypes import (
-    SimulationInput, SimulationOutput, SimulationMestricUnits)
+    SimulationInput, SimulationOutput, SimulationMestricUnits, EdgeSelectionType)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../data/pddl/{}.pddl"
@@ -38,9 +38,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=False,
-            use_landmark_to_select_edge=True,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.LANDMARK,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -63,9 +61,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=False,
-            use_landmark_to_select_edge=True,
-            use_greedy_disjunctive_action_selection=True,
+            edge_selection_type=EdgeSelectionType.LANDMARK_GREEDY,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -81,9 +77,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=True,
-            use_landmark_to_select_edge=True,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.RANDOM,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -99,9 +93,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=False,
-            use_landmark_to_select_edge=False,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.CHOICE_INFO,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -117,9 +109,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=True,
-            use_landmark_to_select_edge=False,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.RANDOM,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -135,9 +125,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=False,
-            use_landmark_to_select_edge=False,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.CHOICE_INFO,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -153,9 +141,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=True,
-            use_landmark_to_select_edge=False,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.RANDOM,
             num_replicates=2,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task
@@ -172,9 +158,7 @@ class TestSimulationRunner(unittest.TestCase):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
-            select_edge_randomly=False,
-            use_landmark_to_select_edge=True,
-            use_greedy_disjunctive_action_selection=False,
+            edge_selection_type=EdgeSelectionType.LANDMARK,
             num_replicates=num_replicates,
             setting_name="test",
             planning_task=TestSimulationRunner.planning_task

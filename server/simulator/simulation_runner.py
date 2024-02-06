@@ -24,7 +24,7 @@ from helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
 from simulator.simulation_datatypes import (
-    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit, SimulationInput, SimulationOutput, SimulationMestricUnits)
+    SimulationResultUnit, EdgeSelectionPayload, EdgeSelectionUnit, EdgeChoiceUnit, SimulationInput, SimulationOutput, SimulationMestricUnits, EdgeSelectionType)
 from helpers.graph_helper.graph_helper import (
     get_edge_label,
 )
@@ -234,12 +234,11 @@ def select_edge(
         plan_disambiguator_output: PlanDisambiguatorOutput,
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph,
-        select_edge_randomly: bool,
-        use_landmark_to_select_edge: bool,
-        use_greedy_disjunctive_action_selection: bool) -> EdgeSelectionPayload:
+        edge_selection_type: EdgeSelectionType) -> EdgeSelectionPayload:
     """
     returns a plan_disambiguator input, a status to indicate if an edge is elected, a status to indicate if an edge is from landmark, and plan hashes
     """
+
     if len(plan_disambiguator_output.plans) <= 1:
         return EdgeSelectionPayload(
             selected_edge=None,
@@ -247,11 +246,21 @@ def select_edge(
             is_edge_from_landmark=False,
             plan_hashes=None
         )
-    return (select_edge_random_from_edge_plan_hash_dict(
-        edge_plan_hash_dict=edge_plan_hash_dict, g=g) if select_edge_randomly else select_edge_among_choiceinfos(
-        plan_disambiguator_output=plan_disambiguator_output,
-        use_landmark_to_select_edge=use_landmark_to_select_edge,
-        use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection))
+
+    if ((edge_selection_type == EdgeSelectionType.CHOICE_INFO)
+            or (edge_selection_type == EdgeSelectionType.LANDMARK)
+            or (edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY)):
+        return select_edge_among_choiceinfos(
+            plan_disambiguator_output=plan_disambiguator_output,
+            use_landmark_to_select_edge=((edge_selection_type == EdgeSelectionType.LANDMARK) or (
+                edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY)),
+            use_greedy_disjunctive_action_selection=(edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY))
+
+    if edge_selection_type == EdgeSelectionType.RANDOM:
+        return select_edge_random_from_edge_plan_hash_dict(
+            edge_plan_hash_dict=edge_plan_hash_dict, g=g)
+
+    return EdgeSelectionPayload()
 
 
 def get_plan_disambuguator_output(
@@ -284,9 +293,8 @@ def simulate_view(
         landmarks: List[Landmark],
         plan_disambiguator_view: PlanDisambiguationView,
         num_replicates: int,
-        select_edge_randomly: bool,
-        use_landmark_to_select_edge: bool,
-        use_greedy_disjunctive_action_selection: bool) -> List[List[SimulationResultUnit]]:
+        edge_selection_type: EdgeSelectionType,
+) -> List[List[SimulationResultUnit]]:
     plan_disambiguator_input = PlanDisambiguatorInput(
         selection_priority=None,
         selection_infos=[],
@@ -335,9 +343,7 @@ def simulate_view(
                 plan_disambiguator_output=plan_disambiguator_output,
                 edge_plan_hash_dict=edge_plan_hash_dict,
                 g=g,
-                select_edge_randomly=select_edge_randomly,
-                use_landmark_to_select_edge=use_landmark_to_select_edge,
-                use_greedy_disjunctive_action_selection=use_greedy_disjunctive_action_selection)
+                edge_selection_type=edge_selection_type)
 
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(
@@ -408,9 +414,7 @@ def run_simulation(
             landmarks=landmarks,
             plan_disambiguator_view=simulation_input.plan_disambiguator_view,
             num_replicates=simulation_input.num_replicates,
-            select_edge_randomly=simulation_input.select_edge_randomly,
-            use_landmark_to_select_edge=simulation_input.use_landmark_to_select_edge,
-            use_greedy_disjunctive_action_selection=simulation_input.use_greedy_disjunctive_action_selection),
+            edge_selection_type=simulation_input.edge_selection_type),
         simulation_input=simulation_input.model_copy(deep=True))
 
 

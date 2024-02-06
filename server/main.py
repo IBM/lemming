@@ -54,6 +54,8 @@ from pddl.parser.problem import ProblemParser
 
 from planners.symk import SymKPlanner
 
+FILEPATH = Path(__file__).parent.resolve()
+
 app = FastAPI(
     title="Lemming",
     description=app_description,
@@ -87,13 +89,19 @@ async def file_upload(file: UploadFile = File(...)) -> str:
 
 @app.post("/import_domain/{domain_name}")
 def import_domain(domain_name: str) -> LemmingTask:
+    path_to_domain_file = Path.joinpath(FILEPATH, f"data/{domain_name}/domain.pddl").resolve()
+    path_to_problem_file = Path.joinpath(FILEPATH, f"data/{domain_name}/problem.pddl").resolve()
+
     planning_task = PlanningTask(
-        domain=open(f"./data/{domain_name}/domain.pddl").read(),
-        problem=open(f"./data/{domain_name}/problem.pddl").read(),
+        domain=open(path_to_domain_file).read(),
+        problem=open(path_to_problem_file).read(),
     )
 
     try:
-        plans = json.load(open(f"./data/{domain_name}/plans.json"))
+        path_to_plan_file = Path.joinpath(FILEPATH,
+                                          f"data/{domain_name}/plans.json").resolve()
+
+        plans = json.load(open(path_to_plan_file))
         plans = [Plan.model_validate(item) for item in plans]
 
     except Exception as e:
@@ -101,7 +109,10 @@ def import_domain(domain_name: str) -> LemmingTask:
         plans = []
 
     try:
-        prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
+        path_to_prompt_file = Path.joinpath(FILEPATH,
+                                            f"data/{domain_name}/prompt.json").resolve()
+
+        prompt = json.load(open(path_to_prompt_file))
         nl_prompts = [CachedPrompt.model_validate(item) for item in prompt]
 
     except Exception as e:
@@ -195,9 +206,8 @@ def generate_nl2ltl_integration(
 async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     domain_name = request.domain_name
     if domain_name:
-        custom_prompt = prompt_builder(
-            prompt_path=Path(f"data/{domain_name}/prompt.json").resolve()
-        )
+        path_to_prompt_file = Path.joinpath(FILEPATH, f"data/{domain_name}/prompt.json").resolve()
+        custom_prompt = prompt_builder(prompt_path=path_to_prompt_file)
     else:
         raise NotImplementedError
 

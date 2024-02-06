@@ -51,6 +51,12 @@ class TestSimulationRunner(unittest.TestCase):
         self.assertEqual(len(metrics), simulation_input.num_replicates)
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
+            for simulation_unit in metrics[i]:
+                self.assertGreater(simulation_unit.num_actions, 0)
+                self.assertGreater(simulation_unit.num_edges, 0)
+                self.assertGreater(simulation_unit.num_nodes, 0)
+                self.assertGreater(simulation_unit.num_remaining_plans, 0)
+                self.assertGreater(len(simulation_unit.plan_costs), 0)
 
     def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(self):
         simulation_input = SimulationInput(

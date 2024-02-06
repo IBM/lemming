@@ -151,6 +151,9 @@ class PlanDisambiguatorOutput(BaseModel):
             raise HTTPException(status_code=422, detail="Unprocessable Entity")
         return self
 
+    def get_plan_costs(self) -> List[int]:
+        return list(map(lambda plan: plan.cost, self.plans))
+
 
 class LemmingTask(BaseModel):
     planning_task: PlanningTask

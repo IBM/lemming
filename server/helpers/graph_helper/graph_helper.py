@@ -56,7 +56,7 @@ def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
     return end_goal[0]
 
 
-def get_edge_label(g: Graph, edge: Any) -> str:
+def get_edge_label(g: Graph, edge: Tuple[str, str]) -> str:
     if len(g.nodes) == 0:
         return ""
     edge_data = g.get_edge_data(edge[0], edge[1])

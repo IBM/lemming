@@ -13,10 +13,12 @@ from helpers.planner_helper.planner_helper_data_types import (
 class EdgeSelectionType(str, Enum):
     RANDOM = "random"
     CHOICE_INFO = "choice_info"
-    FREQUENCY_MOST = "frequency_most"
-    FREQUENCY_LEAST = "frequency_least"
+    FREQUENCY_ACTION_MOST = "frequency_most"
+    FREQUENCY_ACTION_LEAST = "frequency_least"
     LANDMARK = "landmark"
     LANDMARK_GREEDY = "landmark_greedy"
+    LANDMARK_CLOSEST_TO_GOAL = "landmark_closest_to_goal"
+    LANDMARK_CLOSEST_TO_INITIAL = "landmark_closest_to_initial"
     DISTANCE_INITIAL = "distance_initial"
     DISTANCE_GOAL = "distance_goal"
 

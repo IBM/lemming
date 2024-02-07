@@ -231,6 +231,7 @@ def get_all_actions_from_edge_plan_hash_dict(
 
 
 def select_edge(
+        plan_disambiguator_input: PlanDisambiguatorInput,
         plan_disambiguator_output: PlanDisambiguatorOutput,
         edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
         g: Graph,
@@ -249,12 +250,17 @@ def select_edge(
 
     if ((edge_selection_type == EdgeSelectionType.CHOICE_INFO)
             or (edge_selection_type == EdgeSelectionType.LANDMARK)
-            or (edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY)):
+            or (edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY)
+            or (edge_selection_type == EdgeSelectionType.LANDMARK_CLOSEST_TO_GOAL)
+            or (edge_selection_type == EdgeSelectionType.LANDMARK_CLOSEST_TO_INITIAL)):
         return select_edge_among_choiceinfos(
             plan_disambiguator_output=plan_disambiguator_output,
             use_landmark_to_select_edge=((edge_selection_type == EdgeSelectionType.LANDMARK) or (
                 edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY)),
             use_greedy_disjunctive_action_selection=(edge_selection_type == EdgeSelectionType.LANDMARK_GREEDY))
+
+    if ((edge_selection_type == EdgeSelectionType.FREQUENCY_ACTION_MOST) or (edge_selection_type == EdgeSelectionType.FREQUENCY_ACTION_LEAST)):
+        pass
 
     if edge_selection_type == EdgeSelectionType.RANDOM:
         return select_edge_random_from_edge_plan_hash_dict(
@@ -340,6 +346,7 @@ def simulate_view(
                 continue
 
             edge_selection_payload = select_edge(
+                plan_disambiguator_input=plan_disambiguator_input_rep,
                 plan_disambiguator_output=plan_disambiguator_output,
                 edge_plan_hash_dict=edge_plan_hash_dict,
                 g=g,

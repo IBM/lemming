@@ -37,8 +37,8 @@ We also strongly recommend using a virtual environment, such
 as [anaconda](https://www.anaconda.com/), for development.
 
 ```bash
-$ conda create --name lemming python=3.10.11
-$ conda activate lemming
+user:~$ conda create --name lemming python=3.10.11
+user:~$ conda activate lemming
 ```
 
 ### Install Dependencies
@@ -47,7 +47,7 @@ $ conda activate lemming
 (lemming) user:~$ pip install -e .
 ```
 
-(Optional) For the NL2LTL integration, install it without the Rasa dependency and build submodules.
+Set up NL2LTL integration without the Rasa dependency and build submodules.
 
 ```bash
 (lemming) user:~$ pip install nl2ltl --no-deps
@@ -56,6 +56,9 @@ $ conda activate lemming
 (lemming) user:~$ ./scripts/build-submodules.sh
 (lemming) user:~$ pip install --upgrade --no-deps --force-reinstall pydantic==2.5.2
 ```
+
+In order to use the NL2LTL Integration, you must add your OpenAI API key 
+to your environment variables with the name `OPENAI_API_KEY`.
 
 ### Start the Lemming Server
 

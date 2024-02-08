@@ -90,36 +90,3 @@ exclude = '''
   | dist
 )/
 '''
-
-[tool.mypy]
-plugins = [
-  "pydantic.mypy"
-]
-
-follow_imports = "silent"
-warn_redundant_casts = true
-warn_unused_ignores = true
-disallow_any_generics = true
-check_untyped_defs = true
-no_implicit_reexport = true
-
-# for strict mypy: (this is the tricky one :-))
-disallow_untyped_defs = true
-
-[tool.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
-
-[tool.pylint."MAIN"]
-py-version=3.10
-
-[tool.pylint."FORMAT"]
-max-line-length = 120
-
-[tool.flake8]
-max-line-length = 120
-extend-ignore = ["E203","E226","E302","E41","W503","C901"]
-count = true
-max-complexity = 18
-# exclude = "tests/*"

@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from helpers.common_helper.str_helper import format_plan
+from server.helpers.common_helper.str_helper import format_plan
 
 
 class TestStrHelper(unittest.TestCase):

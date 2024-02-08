@@ -4,28 +4,42 @@ from typing import List, Dict, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from nl2ltl import translate
 from nl2ltl.declare.base import Template
+from nl2ltl.engines.gpt.core import GPTEngine, Models
 from pddl.formatter import domain_to_string, problem_to_string
+from pddl.parser.domain import DomainParser
+from pddl.parser.problem import ProblemParser
 
-from helpers.common_helper.static_data_helper import app_description
-from helpers.nl2plan_helper.utils import temporary_directory
-from helpers.nl2plan_helper.ltl2plan_helper import (
+from server.helpers.common_helper.file_helper import (
+    read_str_from_upload_file,
+)
+from server.helpers.common_helper.static_data_helper import app_description
+from server.helpers.nl2plan_helper.ltl2plan_helper import (
     compile_instance,
     get_goal_formula,
 )
-from helpers.nl2plan_helper.manage_formulas import (
+from server.helpers.nl2plan_helper.manage_formulas import (
     get_formulas_from_matched_formulas,
 )
-from helpers.nl2plan_helper.nl2ltl_helper import (
+from server.helpers.nl2plan_helper.nl2ltl_helper import CachedPrompt
+from server.helpers.nl2plan_helper.nl2ltl_helper import (
     NL2LTLRequest,
     prompt_builder,
     LTLFormula,
 )
-from helpers.plan_disambiguator_helper.build_flow_helper import (
+from server.helpers.nl2plan_helper.utils import temporary_directory
+from server.helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
-from helpers.nl2plan_helper.nl2ltl_helper import CachedPrompt
-from helpers.planner_helper.planner_helper_data_types import (
+from server.helpers.plan_disambiguator_helper.selection_flow_helper import (
+    get_selection_flow_output,
+)
+from server.helpers.planner_helper.planner_helper import (
+    get_landmarks_by_landmark_category,
+    get_plan_topk,
+)
+from server.helpers.planner_helper.planner_helper_data_types import (
     LemmingTask,
     PlanDisambiguatorInput,
     PlanDisambiguatorOutput,
@@ -34,25 +48,11 @@ from helpers.planner_helper.planner_helper_data_types import (
     Plan,
     LTL2PDDLRequest,
 )
-from helpers.planner_helper.planner_helper import (
-    get_landmarks_by_landmark_category,
-    get_plan_topk,
+from server.planners.drivers.landmark_driver_datatype import (
+    LandmarksResponseModel,
 )
-from helpers.common_helper.file_helper import (
-    read_str_from_upload_file,
-)
-from helpers.plan_disambiguator_helper.selection_flow_helper import (
-    get_selection_flow_output,
-)
-from planners.drivers.landmark_driver_datatype import LandmarksResponseModel
-from planners.drivers.planner_driver_datatype import PlanningResult
-
-from nl2ltl import translate
-from nl2ltl.engines.gpt.core import GPTEngine, Models
-from pddl.parser.domain import DomainParser
-from pddl.parser.problem import ProblemParser
-
-from planners.symk import SymKPlanner
+from server.planners.drivers.planner_driver_datatype import PlanningResult
+from server.planners.symk import SymKPlanner
 
 app = FastAPI(
     title="Lemming",
@@ -75,7 +75,7 @@ app.add_middleware(
 
 
 @app.get("/")
-def hello_lemming() -> str:
+async def hello_lemming() -> str:
     return "Hello Lemming!"
 
 
@@ -86,7 +86,7 @@ async def file_upload(file: UploadFile = File(...)) -> str:
 
 
 @app.post("/import_domain/{domain_name}")
-def import_domain(domain_name: str) -> LemmingTask:
+async def import_domain(domain_name: str) -> LemmingTask:
     planning_task = PlanningTask(
         domain=open(f"./data/{domain_name}/domain.pddl").read(),
         problem=open(f"./data/{domain_name}/problem.pddl").read(),

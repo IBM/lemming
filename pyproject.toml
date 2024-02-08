@@ -92,43 +92,52 @@ exclude = '''
 '''
 
 [tool.mypy]
+plugins = [
+ "pydantic.mypy"
+]
 python_version="3.10"
 mypy_path = "server"
 
 show_column_numbers = true
 
-# show error messages from unrelated files
-follow_imports = "normal"
-
 # suppress errors about unsatisfied imports
 ignore_missing_imports = true
+
+follow_imports = "silent" # for pydantic
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+
+# for strict mypy: (this is the tricky one :-))
+disallow_untyped_defs = true
 
 # be strict
 disallow_untyped_calls = true
 warn_return_any = true
 strict_optional = true
 warn_no_return = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-disallow_any_generics = true
 no_implicit_optional = true
 
 # Unreachable blocks have been an issue when compiling mypyc, let's try
 # to avoid 'em in the first place.
 warn_unreachable = true
 
-# The following are off by default.  Flip them on if you feel adventurous.
-disallow_untyped_defs = true
-check_untyped_defs = true
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [tool.pylint."MAIN"]
 py-version=3.10
 
 [tool.pylint."FORMAT"]
-max-line-length = 80
+max-line-length = 120
 
 [tool.flake8]
-extend-ignore = ["E203"]
+extend-ignore = ["E203","E226","E302","E41","W503","C901"]
 count = true
-max-line-length = 80
+max-line-length = 120
 max-complexity = 18
+# exclude = "tests/*"

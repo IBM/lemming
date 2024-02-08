@@ -3,10 +3,10 @@ import unittest
 from nl2ltl.declare.declare import Response
 from pylogics.syntax.ltl import Atomic
 
-from helpers.nl2plan_helper.manage_formulas import (
+from server.helpers.nl2plan_helper.manage_formulas import (
     get_formulas_from_matched_formulas,
 )
-from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula
+from server.helpers.nl2plan_helper.nl2ltl_helper import LTLFormula
 
 
 class TestNl2Plan(unittest.TestCase):

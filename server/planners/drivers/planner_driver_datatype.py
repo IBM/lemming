@@ -2,7 +2,7 @@ from __future__ import annotations
 from pydantic import BaseModel, model_validator
 from typing import List, Optional, Any
 
-from helpers.common_helper.hash_helper import get_list_hash
+from server.helpers.common_helper.hash_helper import get_list_hash
 
 
 class Plan(BaseModel):

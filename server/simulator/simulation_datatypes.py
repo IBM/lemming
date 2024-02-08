@@ -1,8 +1,7 @@
 from enum import Enum
 from typing import Dict, List, Optional
 from pydantic import BaseModel
-from planners.drivers.landmark_driver_datatype import Landmark
-from helpers.planner_helper.planner_helper_data_types import (
+from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     PlanDisambiguationView,
     PlanningTask,
@@ -24,7 +23,9 @@ class EdgeSelectionType(str, Enum):
 
 
 class SimulationInput(BaseModel):
-    plan_disambiguator_view: PlanDisambiguationView = PlanDisambiguationView.SELECT
+    plan_disambiguator_view: PlanDisambiguationView = (
+        PlanDisambiguationView.SELECT
+    )
     landmark_category: LandmarkCategory = LandmarkCategory.RWH
     edge_selection_type: EdgeSelectionType = EdgeSelectionType.RANDOM
     num_replicates: int = 1
@@ -33,10 +34,12 @@ class SimulationInput(BaseModel):
     planning_task: PlanningTask
 
     def get_name(self) -> str:
-        lst = [self.setting_name,
-               self.plan_disambiguator_view.value,
-               self.landmark_category.value,
-               self.edge_selection_type.value]
+        lst = [
+            self.setting_name,
+            self.plan_disambiguator_view.value,
+            self.landmark_category.value,
+            self.edge_selection_type.value,
+        ]
         return "_".join(lst)
 
 
@@ -67,29 +70,48 @@ class SimulationOutput(BaseModel):
     simulation_results: List[List[SimulationResultUnit]]
     simulation_input: SimulationInput
 
-    def get_num_edges_chosen(self, simulation_result_units: List[SimulationResultUnit]) -> int:
+    def get_num_edges_chosen(
+        self, simulation_result_units: List[SimulationResultUnit]
+    ) -> int:
         if len(simulation_result_units) == 0:
             return 0
         if simulation_result_units[-1].is_disambiguation_done:
-            return (len(simulation_result_units) - 1)
+            return len(simulation_result_units) - 1
         return len(simulation_result_units)
 
-    def get_num_landmarks(self, simulation_result_units: List[SimulationResultUnit]) -> int:
+    def get_num_landmarks(
+        self, simulation_result_units: List[SimulationResultUnit]
+    ) -> int:
         return len(
-            list(filter(
-                lambda simulation_result_unit: (
-                    simulation_result_unit.is_from_landmark is not None and simulation_result_unit.is_from_landmark), simulation_result_units)))
+            list(
+                filter(
+                    lambda simulation_result_unit: (
+                        simulation_result_unit.is_from_landmark is not None
+                        and simulation_result_unit.is_from_landmark
+                    ),
+                    simulation_result_units,
+                )
+            )
+        )
 
     def get_simulation_metrics(self) -> List[SimulationMetrics]:
         return list(
-            map(lambda simulation_result_units: SimulationMetrics(
-                num_edges_chosen=self.get_num_edges_chosen(
-                    simulation_result_units),
-                num_landmarks_chosen=self.get_num_landmarks(
-                    simulation_result_units),
-                is_disambiguation_done=simulation_result_units[-1].is_disambiguation_done if len(
-                    simulation_result_units) > 0 else False
-            ), self.simulation_results)
+            map(
+                lambda simulation_result_units: SimulationMetrics(
+                    num_edges_chosen=self.get_num_edges_chosen(
+                        simulation_result_units
+                    ),
+                    num_landmarks_chosen=self.get_num_landmarks(
+                        simulation_result_units
+                    ),
+                    is_disambiguation_done=(
+                        simulation_result_units[-1].is_disambiguation_done
+                        if len(simulation_result_units) > 0
+                        else False
+                    ),
+                ),
+                self.simulation_results,
+            )
         )
 
 

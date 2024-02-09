@@ -128,16 +128,6 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         )
         self.assertEqual(len(plans), 6)
 
-    def test_get_plans_filetered_by_selected_plan_hashes_none_plan_hash(
-        self,
-    ) -> None:
-        selected_landmark = SelectionInfo(selected_plan_hashes=None)
-        plans = get_plans_filetered_by_selected_plan_hashes(
-            selected_landmark,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        self.assertEqual(len(plans), 6)
-
     def test_get_plans_filetered_by_selected_plan_hashes_valid_plan_hash(
         self,
     ) -> None:

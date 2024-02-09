@@ -163,7 +163,7 @@ def get_plans_with_selection_info(
 
 
 def get_plans_with_selection_infos(
-    selection_infos: Optional[List[SelectionInfo]],
+    selection_infos: List[SelectionInfo],
     plans: List[Plan],
 ) -> List[Plan]:
     """
@@ -512,7 +512,7 @@ def set_distance_to_terminal_nodes(
 
 def process_selection_priority(
     choice_infos_input: List[ChoiceInfo],
-    selection_priority: Optional[str],
+    selection_priority: SelectionPriority,
     edge_label_nodes_dict: Dict[str, List[str]],
     node_dist_from_initial_state: Dict[str, int],
     node_dist_from_end_state: Dict[str, int],

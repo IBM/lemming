@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from networkx import Graph
 from server.helpers.common_helper.exception_handler import (
@@ -24,9 +24,9 @@ from server.helpers.graph_helper.graph_helper import (
 )
 
 
-@planner_exception_handler
+@planner_exception_handler  # type: ignore
 def get_build_flow_output(
-    selection_infos: Optional[List[SelectionInfo]],
+    selection_infos: List[SelectionInfo],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

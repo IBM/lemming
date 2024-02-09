@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import pydot
 from server.helpers.common_helper.data_type_helper import merge_sets
@@ -41,7 +41,7 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Iterable[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> List[Any]:
     if len(g.nodes) == 0:
         return []
     degrees = g.in_degree() if is_forward else g.out_degree()

@@ -1,3 +1,4 @@
+from pathlib import Path
 import random
 import sys
 from typing import Any, Dict, List, Optional, Tuple
@@ -61,7 +62,7 @@ def get_edges_from_choice_infos(
                 and len(choice_info.action_name_plan_hash_map) > 0
             ):
                 if use_greedy_disjunctive_action_selection:
-                    if choice_info.landmark.disjunctive:
+                    if choice_info.landmark.disjunctive:  # type: ignore
                         action_names_landmarks.append(
                             EdgeChoiceUnit(
                                 edge_name_plan_hash_dict=choice_info.action_name_plan_hash_map,
@@ -88,10 +89,10 @@ def get_edges_from_choice_infos(
 
 def get_edge_with_min_plans(
     edge_choice_units: List[EdgeChoiceUnit],
-) -> Optional[List[Tuple[Tuple[str, str], List[str], Landmark]]]:
-    edges_with_minimum_num_plans: Optional[
-        List[Tuple[Tuple[str, str], List[str], Landmark]]
-    ] = None
+) -> Optional[List[Tuple[str, List[str], Optional[Landmark]]]]:  # type: ignore
+    edges_with_minimum_num_plans: List[
+        Tuple[str, List[str], Optional[Landmark]]
+    ] = []
     max_num_plan_hashes = sys.maxsize
     for edge_choice_unit in edge_choice_units:
         for (
@@ -125,7 +126,10 @@ def choose_edge_landmark(
         edges_with_landmarks_min_plans = get_edge_with_min_plans(
             edge_choice_units
         )
-        if edges_with_landmarks_min_plans is not None:
+        if (
+            edges_with_landmarks_min_plans is not None
+            and len(edges_with_landmarks_min_plans) > 0
+        ):
             idx_0 = random.randint(0, len(edges_with_landmarks_min_plans) - 1)
             chosen_edge_choice_unit = edges_with_landmarks_min_plans[idx_0]
             return EdgeSelectionUnit(
@@ -217,7 +221,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
 def add_new_selection_to_plan_disambiguator_input(
     plan_disambiguator_input: PlanDisambiguatorInput,
     selected_edge: str,
-    selected_plan_hashes: Optional[List[str]],
+    selected_plan_hashes: List[str],
 ) -> PlanDisambiguatorInput:
     selection_info = SelectionInfo(
         selected_first_achiever=selected_edge,
@@ -362,7 +366,7 @@ def get_plan_disambuguator_output(
 
 def simulate_view(
     planning_task: PlanningTask,
-    planning_result: Optional[PlanningResult],
+    planning_result: PlanningResult,
     landmarks: List[Landmark],
     plan_disambiguator_view: PlanDisambiguationView,
     num_replicates: int,
@@ -527,18 +531,18 @@ def run_simulation(
     )
 
 
-def run_simulation_unit(simulation_input: SimulationInput) -> Tuple[str, str]:
+def run_simulation_unit(simulation_input: SimulationInput) -> Tuple[Path, Path]:
     simulation_output = run_simulation(simulation_input)
     metrics = simulation_output.get_simulation_metrics()
     raw_output_file_path = write_file_with_model_path(
         file_name=simulation_input.get_name() + "_raw_output",
-        file_path=simulation_input.folder_path,
+        file_path=Path(simulation_input.folder_path),
         file_extension="txt",
         model=simulation_output,
     )
     metrics_file_path = write_file_with_model_path(
         file_name=simulation_input.get_name() + "_metrics",
-        file_path=simulation_input.folder_path,
+        file_path=Path(simulation_input.folder_path),
         file_extension="txt",
         model=SimulationMestricUnits(simulation_metrics_units=metrics),
     )

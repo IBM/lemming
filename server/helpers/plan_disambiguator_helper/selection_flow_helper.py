@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from networkx import Graph
 from server.helpers.planner_helper.planner_helper_data_types import (
@@ -25,9 +25,9 @@ from server.helpers.graph_helper.graph_helper import (
 )
 
 
-@planner_exception_handler
+@planner_exception_handler  # type: ignore
 def get_selection_flow_output(
-    selection_infos: Optional[List[SelectionInfo]],
+    selection_infos: List[SelectionInfo],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

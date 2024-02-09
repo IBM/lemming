@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List, Dict, cast
+from typing import List, Dict, Optional, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -80,7 +80,7 @@ async def hello_lemming() -> str:
 
 
 @app.post("/file_upload")
-async def file_upload(file: UploadFile = File(...)) -> str:
+async def file_upload(file: UploadFile = File(...)) -> Optional[str]:
     file_contents = read_str_from_upload_file(file)
     return file_contents
 
@@ -245,8 +245,8 @@ async def ltl_compile(
     # Planning with SymK planner
     symk_planner = SymKPlanner()
 
-    planning_result: PlanningResult = symk_planner.plan(planning_task)
-    plans = planning_result.plans
+    planning_result = symk_planner.plan(planning_task)
+    plans = planning_result.plans if planning_result is not None else []
     lemming_task = LemmingTask(planning_task=planning_task, plans=plans)
 
     return lemming_task

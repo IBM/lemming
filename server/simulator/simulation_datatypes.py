@@ -116,10 +116,10 @@ class SimulationOutput(BaseModel):
 
 
 class EdgeSelectionPayload(BaseModel):
-    selected_edge: Optional[str]
+    selected_edge: str
     is_edge_selected: bool
     is_edge_from_landmark: bool
-    plan_hashes: Optional[List[str]]
+    plan_hashes: List[str]
 
 
 class EdgeSelectionUnit(BaseModel):

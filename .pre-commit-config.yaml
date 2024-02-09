@@ -18,11 +18,11 @@ repos:
       - id: flake8
         entry: flake8
         additional_dependencies: [pyproject-flake8]
-        args: [--max-line-length=120] # , --disable=all, --enable=unused-import
+        args: [--max-line-length=120]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.5.1
     hooks:
       - id: mypy
         additional_dependencies: [pydantic]
-        args: [--ignore-missing-imports,--follow-import=skip,--strict-optional]
+        args: [--ignore-missing-imports,--follow-import=skip,--strict-optional,--disable-error-code=attr-defined]

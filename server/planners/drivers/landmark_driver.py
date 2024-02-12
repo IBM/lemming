@@ -3,8 +3,10 @@ from typing import List
 import tempfile
 
 from forbiditerative import planners
-from planners.drivers.landmark_driver_datatype import Landmark
-from helpers.planner_helper.planner_helper_data_types import LandmarkCategory
+from server.planners.drivers.landmark_driver_datatype import Landmark
+from server.helpers.planner_helper.planner_helper_data_types import (
+    LandmarkCategory,
+)
 
 
 def get_landmarks(

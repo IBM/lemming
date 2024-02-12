@@ -9,4 +9,6 @@ def get_hash(data: Any) -> str:
 
 
 def get_list_hash(lst: List[str]) -> str:
-    return get_hash(bytearray(str(tuple(lst)), "utf-8")) if len(lst) > 0 else ""
+    if len(lst) > 0:
+        return get_hash(bytearray(str(tuple(lst)), "utf-8"))
+    return ""

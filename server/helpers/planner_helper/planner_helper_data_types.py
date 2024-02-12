@@ -4,10 +4,10 @@ import sys
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, field_validator, model_validator
 
-from helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
+from server.helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
 
-from planners.drivers.planner_driver_datatype import Plan
-from planners.drivers.landmark_driver_datatype import Landmark
+from server.planners.drivers.planner_driver_datatype import Plan
+from server.planners.drivers.landmark_driver_datatype import Landmark
 
 from fastapi import HTTPException
 
@@ -15,9 +15,9 @@ from fastapi import HTTPException
 class PlanningTask(BaseModel):
     """The planning problem to solve."""
 
-    domain: str
+    domain: str = ""
     """The PDDL domain"""
-    problem: str
+    problem: str = ""
     """The PDDL problem"""
     num_plans: int = 1
     """The overall number of plans. Used in TopK or TopQ planners."""
@@ -34,8 +34,8 @@ class PlanningTask(BaseModel):
     @model_validator(mode="after")
     def check_for_none(self) -> PlanningTask:
         if (
-            self.domain is None
-            or self.problem is None
+            self.domain == ""
+            or self.problem == ""
             or len(self.domain) == 0
             or len(self.problem) == 0
         ):
@@ -48,8 +48,8 @@ class PlanningTask(BaseModel):
 
 
 class SelectionInfo(BaseModel):
-    selected_first_achiever: Optional[str] = None
-    selected_plan_hashes: Optional[List[str]] = []
+    selected_first_achiever: str = ""
+    selected_plan_hashes: List[str] = []
 
 
 class SelectionPriority(Enum):
@@ -141,15 +141,18 @@ class PlanDisambiguatorOutput(BaseModel):
     plans: List[Plan] = []
     choice_infos: List[ChoiceInfo] = []
     networkx_graph: Dict[str, Any] = {}
-    first_achiever_edge_dict: Optional[Dict[str, Any]] = None
-    node_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
-    edge_plan_hashes_dict: Optional[Dict[str, List[str]]] = None
+    first_achiever_edge_dict: Dict[str, Any] = {}
+    node_plan_hashes_dict: Dict[str, List[str]] = {}
+    edge_plan_hashes_dict: Dict[str, List[str]] = {}
 
     @model_validator(mode="after")
     def check_for_none(self) -> PlanDisambiguatorOutput:
         if self is None:
             raise HTTPException(status_code=422, detail="Unprocessable Entity")
         return self
+
+    def get_plan_costs(self) -> List[int]:
+        return list(map(lambda plan: plan.cost, self.plans))
 
 
 class LemmingTask(BaseModel):

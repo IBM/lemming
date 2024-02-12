@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from copy import deepcopy
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
-import pydot
-from networkx import Graph, nx_pydot, set_node_attributes
-from networkx.readwrite import json_graph
+from copy import deepcopy
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-from helpers.common_helper.data_type_helper import merge_sets
-from helpers.planner_helper.planner_helper_data_types import (
+import pydot
+from server.helpers.common_helper.data_type_helper import merge_sets
+from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
 )
+from networkx import Graph, nx_pydot, set_node_attributes
+from networkx.readwrite import json_graph
 
 
 def edit_edge_labels(g: Graph) -> Graph:
@@ -23,9 +23,9 @@ def edit_edge_labels(g: Graph) -> Graph:
             and len(edge_data) > 0
             and "label" in edge_data[0]
         ):
+            data = edge_data[0]["label"]
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]
-                       ["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", data).strip('"').strip()
             )
 
     return new_graph
@@ -41,7 +41,7 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Iterable[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> List[Any]:
     if len(g.nodes) == 0:
         return []
     degrees = g.in_degree() if is_forward else g.out_degree()
@@ -56,7 +56,7 @@ def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
     return end_goal[0]
 
 
-def get_edge_label(g: Graph, edge: Any) -> str:
+def get_edge_label(g: Graph, edge: Tuple[str, str]) -> str:
     if len(g.nodes) == 0:
         return ""
     edge_data = g.get_edge_data(edge[0], edge[1])
@@ -72,18 +72,17 @@ def get_edge_label(g: Graph, edge: Any) -> str:
 
 
 def add_node_to_queue(
-        g: Graph,
-        edges: List[Tuple[str, str]],
-        edges_traversed: List[str],
-        queue: List[Tuple[str, List[str]]],
-        is_forward: bool) -> List[Tuple[str, List[str]]]:
+    g: Graph,
+    edges: List[Tuple[str, str]],
+    edges_traversed: List[str],
+    queue: List[Tuple[str, List[str]]],
+    is_forward: bool,
+) -> List[Tuple[str, List[str]]]:
     new_queue = deepcopy(queue)
     for edge in edges:
         edge_label = get_edge_label(g, edge)
         tmp_edge = edge[1][:] if is_forward else edge[0][:]
-        new_queue.append(
-            (tmp_edge, deepcopy(edges_traversed + [edge_label]))
-        )
+        new_queue.append((tmp_edge, deepcopy(edges_traversed + [edge_label])))
     return new_queue
 
 
@@ -127,7 +126,8 @@ def get_first_node_with_multiple_out_edges(
                         edges=edges,
                         edges_traversed=edges_traversed,
                         queue=new_queue,
-                        is_forward=is_forward)
+                        is_forward=is_forward,
+                    )
                 else:
                     nodes_with_multiple_edges.append(
                         (
@@ -151,7 +151,8 @@ def get_first_node_with_multiple_out_edges(
                         edges=edges,
                         edges_traversed=edges_traversed,
                         queue=new_queue,
-                        is_forward=is_forward)
+                        is_forward=is_forward,
+                    )
             nodes_visited.add(node)
         queue = new_queue
     return nodes_with_multiple_edges, nodes_visited
@@ -308,9 +309,9 @@ def get_node_edge_name_plan_hash_list(
     start_nodes = get_root_node_in_digraph(g, is_forward)
     node_list_plan_hash_dict: Dict[str, List[str]] = dict()
     edge_list_plan_hash_dict: Dict[Tuple[Any, Any], List[str]] = dict()
-    edge_label_nodes_set_dict: Dict[
-        str, Set[str]
-    ] = dict()  # a Dictionary of edge labels and sets of nodes
+    edge_label_nodes_set_dict: Dict[str, Set[str]] = (
+        dict()
+    )  # a Dictionary of edge labels and sets of nodes
     queue: List[Any] = list()
     queue.extend(start_nodes)
     depth = 0

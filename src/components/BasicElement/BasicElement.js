@@ -17,6 +17,7 @@ import {
     TabList,
     Tabs,
     Tab,
+    Toggle,
     StructuredListWrapper,
     StructuredListHead,
     StructuredListBody,
@@ -82,6 +83,7 @@ class PlanArea extends React.Component {
                 upload_tab: 0,
                 num_plans: 10,
                 quality_bound: 1.2,
+                select_by_name: true,
             },
             notifications: {
                 import_select: false,
@@ -597,6 +599,16 @@ class PlanArea extends React.Component {
         this.selectLandmarks(Array.from(commits));
     }
 
+    setSelectionMode(e) {
+        this.setState({
+            ...this.state,
+            controls: {
+                ...this.state.controls,
+                select_by_name: !this.state.controls.select_by_name,
+            },
+        });
+    }
+
     render() {
         return (
             <Grid>
@@ -979,19 +991,41 @@ class PlanArea extends React.Component {
                                                 {!this.state.notifications
                                                     .viz_loading &&
                                                     this.state.graph && (
-                                                        <Component
-                                                            key={id}
-                                                            onEdgeClick={this.onEdgeClick.bind(
-                                                                this
-                                                            )}
-                                                            commitChanges={this.commitChanges.bind(
-                                                                this
-                                                            )}
-                                                            state={this.state}
-                                                            update_planner_payload={this.update_planner_payload.bind(
-                                                                this
-                                                            )}
-                                                        />
+                                                        <>
+                                                            <br />
+                                                            <Toggle
+                                                                aria-label="toggle commit mode"
+                                                                id="toggle-selection-mode"
+                                                                size="sm"
+                                                                labelText=""
+                                                                labelA="Select by EDGE"
+                                                                labelB="Select by NAME"
+                                                                toggled={
+                                                                    this.state
+                                                                        .controls
+                                                                        .select_by_name
+                                                                }
+                                                                onClick={this.setSelectionMode.bind(
+                                                                    this
+                                                                )}
+                                                            />
+
+                                                            <Component
+                                                                key={id}
+                                                                onEdgeClick={this.onEdgeClick.bind(
+                                                                    this
+                                                                )}
+                                                                commitChanges={this.commitChanges.bind(
+                                                                    this
+                                                                )}
+                                                                state={
+                                                                    this.state
+                                                                }
+                                                                update_planner_payload={this.update_planner_payload.bind(
+                                                                    this
+                                                                )}
+                                                            />
+                                                        </>
                                                     )}
                                             </div>
                                         );

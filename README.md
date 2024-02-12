@@ -57,7 +57,7 @@ Set up NL2LTL integration without the Rasa dependency and build submodules.
 (lemming) user:~$ pip install --upgrade --no-deps --force-reinstall pydantic==2.5.2
 ```
 
-In order to use the NL2LTL Integration, you must add your OpenAI API key 
+In order to use the NL2LTL Integration, you must add your OpenAI API key
 to your environment variables with the name `OPENAI_API_KEY`.
 
 ### Start the Lemming Server

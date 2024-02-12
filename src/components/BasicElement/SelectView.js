@@ -51,11 +51,10 @@ const SelectView = props => {
 
     const onEdgeClick = edge => {
         const label = parseEdgeName(edge.label);
-
         if (commit_mode) {
             setCommits(label);
         } else {
-            props.onEdgeClick(label);
+            props.onEdgeClick(edge);
         }
     };
 
@@ -90,7 +89,7 @@ const SelectView = props => {
                 {nodes.length > 0 && !props.no_feedback && (
                     <div className="hover-zone">
                         <Toggle
-                            aria-label="toggle commitm mode"
+                            aria-label="toggle commit mode"
                             id="toggle-commit-mode"
                             size="sm"
                             labelText=""

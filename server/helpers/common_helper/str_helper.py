@@ -1,5 +1,5 @@
 from typing import List
-from planners.drivers.planner_driver_datatype import Plan, PlanningResult
+from server.planners.drivers.planner_driver_datatype import Plan, PlanningResult
 
 
 def format_plan(actions: List[str]) -> List[str]:

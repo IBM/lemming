@@ -1,16 +1,16 @@
 import unittest
-from simulator.simulation_datatypes import (
+from server.simulator.simulation_datatypes import (
     SimulationResultUnit,
     SimulationOutput,
     SimulationInput,
 )
-from helpers.planner_helper.planner_helper_data_types import (
+from server.helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
 )
 
 
 class TestSimulationDatatype(unittest.TestCase):
-    def test_get_simulation_metrics(self):
+    def test_get_simulation_metrics(self) -> None:
         simulation_results = [
             [
                 SimulationResultUnit(

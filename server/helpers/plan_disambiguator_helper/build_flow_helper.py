@@ -1,30 +1,32 @@
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from networkx import Graph
-from helpers.common_helper.exception_handler import planner_exception_handler
-from helpers.planner_helper.planner_helper_data_types import (
+from server.helpers.common_helper.exception_handler import (
+    planner_exception_handler,
+)
+from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     SelectionInfo,
     Plan,
     PlanDisambiguatorOutput,
     ChoiceInfo,
 )
-from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
+from server.helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_choice_info_multiple_edges_without_landmark,
     get_plan_disambiguator_output_filtered_by_selection_infos,
     sort_choice_info_by_distance_to_terminal_nodes,
     set_distance_to_terminal_nodes,
 )
-from helpers.graph_helper.graph_helper import (
+from server.helpers.graph_helper.graph_helper import (
     get_first_node_with_multiple_out_edges,
     get_dict_from_graph,
     get_graph_upto_nodes,
 )
 
 
-@planner_exception_handler
+@planner_exception_handler  # type: ignore
 def get_build_flow_output(
-    selection_infos: Optional[List[SelectionInfo]],
+    selection_infos: List[SelectionInfo],
     landmarks: List[Landmark],
     domain: str,
     problem: str,

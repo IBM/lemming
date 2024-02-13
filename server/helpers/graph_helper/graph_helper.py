@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from copy import deepcopy
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple, Iterable
-import pydot
-from networkx import Graph, nx_pydot, set_node_attributes
-from networkx.readwrite import json_graph
+from copy import deepcopy
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-from helpers.common_helper.data_type_helper import merge_sets
-from helpers.planner_helper.planner_helper_data_types import (
+import pydot
+from server.helpers.common_helper.data_type_helper import merge_sets
+from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
     Plan,
 )
+from networkx import Graph, nx_pydot, set_node_attributes
+from networkx.readwrite import json_graph
 
 
 def edit_edge_labels(g: Graph) -> Graph:
@@ -23,8 +23,9 @@ def edit_edge_labels(g: Graph) -> Graph:
             and len(edge_data) > 0
             and "label" in edge_data[0]
         ):
+            data = edge_data[0]["label"]
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", data).strip('"').strip()
             )
 
     return new_graph
@@ -40,7 +41,7 @@ def get_dict_from_graph(g: Graph) -> Any:
     return json_graph.node_link_data(g)
 
 
-def get_root_node_in_digraph(g: Graph, is_forward: bool) -> Iterable[Any]:
+def get_root_node_in_digraph(g: Graph, is_forward: bool) -> List[Any]:
     if len(g.nodes) == 0:
         return []
     degrees = g.in_degree() if is_forward else g.out_degree()
@@ -55,7 +56,7 @@ def get_end_goal_node_in_digraph(g: Graph) -> Optional[Any]:
     return end_goal[0]
 
 
-def get_edge_label(g: Graph, edge: Any) -> str:
+def get_edge_label(g: Graph, edge: Tuple[str, str]) -> str:
     if len(g.nodes) == 0:
         return ""
     edge_data = g.get_edge_data(edge[0], edge[1])

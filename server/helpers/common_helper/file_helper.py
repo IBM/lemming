@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from _typeshed import SupportsRead
 
 
-def create_folders_if_not_exist(path_str: str):
+def create_folders_if_not_exist(path_str: str) -> None:
     path = Path(path_str)
     if not path.exists():
         path.mkdir(parents=True)
@@ -82,8 +82,8 @@ def convert_json_str_to_dict(ip: SupportsRead[Union[str, bytes]]) -> Any:
 
 
 def write_file_with_model_path(
-    file_name: str, file_path: str, file_extension: str, model: BaseModel
-) -> str:
-    file_path = path.join(file_path, file_name + "." + file_extension)
+    file_name: str, file_path: Path, file_extension: str, model: BaseModel
+) -> Path:
+    file_path = Path(path.join(file_path, file_name + "." + file_extension))
     create_file_from_base_model(file_path, model)
     return file_path

@@ -1,6 +1,6 @@
 import unittest
 
-from helpers.common_helper.hash_helper import get_list_hash
+from server.helpers.common_helper.hash_helper import get_list_hash
 
 
 class TestHashHelper(unittest.TestCase):

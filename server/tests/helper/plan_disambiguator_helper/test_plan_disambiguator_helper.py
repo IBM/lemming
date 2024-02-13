@@ -1,20 +1,20 @@
 from typing import List
 import unittest
 import os
-from planners.drivers.planner_driver_datatype import PlanningResult
-from helpers.common_helper.file_helper import read_str_from_file
-from helpers.planner_helper.planner_helper import (
+from server.planners.drivers.planner_driver_datatype import PlanningResult
+from server.helpers.common_helper.file_helper import read_str_from_file
+from server.helpers.planner_helper.planner_helper import (
     get_landmarks_by_landmark_category,
     get_plan_topk,
 )
-from helpers.planner_helper.planner_helper_data_types import (
+from server.helpers.planner_helper.planner_helper_data_types import (
     LandmarkCategory,
     SelectionInfo,
     Landmark,
     PlanningTask,
     ChoiceInfo,
 )
-from helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
+from server.helpers.plan_disambiguator_helper.plan_disambiguator_helper import (
     get_plans_with_selection_infos,
     get_split_by_actions,
     get_plan_disambiguator_output_filtered_by_selection_infos,
@@ -122,16 +122,6 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
         self,
     ) -> None:
         selected_landmark = SelectionInfo(selected_plan_hashes=[])
-        plans = get_plans_filetered_by_selected_plan_hashes(
-            selected_landmark,
-            TestPlanDisambiguatorHelper.planner_response_model.plans,
-        )
-        self.assertEqual(len(plans), 6)
-
-    def test_get_plans_filetered_by_selected_plan_hashes_none_plan_hash(
-        self,
-    ) -> None:
-        selected_landmark = SelectionInfo(selected_plan_hashes=None)
         plans = get_plans_filetered_by_selected_plan_hashes(
             selected_landmark,
             TestPlanDisambiguatorHelper.planner_response_model.plans,

@@ -5,23 +5,23 @@ from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple
 from networkx import Graph
 
-from planners.drivers.planner_driver_datatype import PlanningResult
-from helpers.planner_helper.planner_helper_data_types import (
+from server.planners.drivers.planner_driver_datatype import PlanningResult
+from server.helpers.planner_helper.planner_helper_data_types import (
     ChoiceInfo,
-    Landmark,
-    Plan,
     PlanningTask,
     SelectionInfo,
     SelectionPriority,
 )
-from helpers.planner_helper.planner_helper import get_dot_graph_str
-from helpers.graph_helper.graph_helper import (
+from server.helpers.planner_helper.planner_helper import get_dot_graph_str
+from server.helpers.graph_helper.graph_helper import (
     convert_dot_str_to_networkx_graph,
     get_node_edge_name_plan_hash_list,
     get_graph_with_number_of_plans_label,
     get_node_distance_from_terminal_node,
     get_edge_label,
 )
+from server.planners.drivers.planner_driver_datatype import Plan
+from server.planners.drivers.landmark_driver_datatype import Landmark
 
 
 def get_min_dist_between_nodes_from_terminal_node_by_node(
@@ -163,7 +163,7 @@ def get_plans_with_selection_info(
 
 
 def get_plans_with_selection_infos(
-    selection_infos: Optional[List[SelectionInfo]],
+    selection_infos: List[SelectionInfo],
     plans: List[Plan],
 ) -> List[Plan]:
     """
@@ -366,19 +366,20 @@ def get_edge_label_plan_hashes_dict(
 
 def get_plan_hashes_with_edges(
     g: Graph,
-    edges: List[str],
+    edges: List[Tuple[str, str]],
     edge_plan_hash_dict: Dict[Tuple[Any, Any], List[str]],
     plans: List[Plan],
-) -> Dict[str, List[str]]:
-    action_name_plan_hashes_dict: Dict[str, List[str]] = {}
-    plan_hashes_from_plans: Set[str] = set(
+) -> Dict[str, List[Optional[str]]]:
+    action_name_plan_hashes_dict: Dict[str, List[Optional[str]]] = {}
+    plan_hashes_from_plans: Set[Optional[str]] = set(
         map(lambda plan: plan.plan_hash, plans)
     )
     for edge in edges:
         edge_label = get_edge_label(g, edge)
-        action_name_plan_hashes_dict[edge_label] = set(
+        edge_set = set(
             edge_plan_hash_dict[edge]
-        ).intersection(plan_hashes_from_plans)
+        )action_name_plan_hashes_dict[edge_label] = list(edge_set.intersection(plan_hashes_from_plans)
+        )
     return action_name_plan_hashes_dict
 
 
@@ -511,7 +512,7 @@ def set_distance_to_terminal_nodes(
 
 def process_selection_priority(
     choice_infos_input: List[ChoiceInfo],
-    selection_priority: Optional[str],
+    selection_priority: SelectionPriority,
     edge_label_nodes_dict: Dict[str, List[str]],
     node_dist_from_initial_state: Dict[str, int],
     node_dist_from_end_state: Dict[str, int],

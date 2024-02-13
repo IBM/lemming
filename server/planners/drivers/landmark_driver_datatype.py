@@ -4,9 +4,9 @@ from typing import List
 
 
 class Landmark(BaseModel):
-    facts: List[str]
-    disjunctive: bool
-    first_achievers: List[str]
+    facts: List[str] = []
+    disjunctive: bool = False
+    first_achievers: List[str] = []
 
     @model_validator(mode="after")
     def strip_landmark_strings(self) -> Landmark:

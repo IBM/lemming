@@ -6,10 +6,6 @@ from typing import List, Dict, Optional, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from nl2ltl.declare.base import Template
-from pddl.formatter import domain_to_string, problem_to_string
-from pddl.parser.domain import DomainParser
-from pddl.parser.problem import ProblemParser
 
 from server.helpers.common_helper.file_helper import (
     read_str_from_upload_file,
@@ -52,12 +48,6 @@ from server.planners.drivers.landmark_driver_datatype import (
     LandmarksResponseModel,
 )
 from server.planners.drivers.planner_driver_datatype import PlanningResult
-from server.planners.symk import SymKPlanner
-from helpers.plan_disambiguator_helper.selection_flow_helper import (
-    get_selection_flow_output,
-)
-from planners.drivers.landmark_driver_datatype import LandmarksResponseModel
-from planners.drivers.planner_driver_datatype import PlanningResult
 
 try:
     from nl2ltl.declare.base import Template
@@ -65,6 +55,7 @@ try:
     from nl2ltl.engines.gpt.core import GPTEngine, Models
     from pddl.parser.domain import DomainParser
     from pddl.parser.problem import ProblemParser
+    from pddl.formatter import domain_to_string, problem_to_string
     from planners.symk import SymKPlanner
 except ImportError as e:
     raise ImportError(e)

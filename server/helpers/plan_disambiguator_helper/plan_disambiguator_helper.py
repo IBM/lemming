@@ -376,9 +376,9 @@ def get_plan_hashes_with_edges(
     )
     for edge in edges:
         edge_label = get_edge_label(g, edge)
-        edge_set = set(
-            edge_plan_hash_dict[edge]
-        )action_name_plan_hashes_dict[edge_label] = list(edge_set.intersection(plan_hashes_from_plans)
+        edge_set = set(edge_plan_hash_dict[edge])
+        action_name_plan_hashes_dict[edge_label] = list(
+            edge_set.intersection(plan_hashes_from_plans)
         )
     return action_name_plan_hashes_dict
 

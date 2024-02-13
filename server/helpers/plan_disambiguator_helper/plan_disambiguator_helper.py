@@ -87,8 +87,7 @@ def split_plans_with_actions(
     returns a tuple of 1) a dictionary of first_achiever names and lists of plan
     indices and 2) the maximum number of plans with a first achiever
     """
-    plan_sets: List[Set[str]] = list(
-        map(lambda plan: set(plan.actions), plans))
+    plan_sets: List[Set[str]] = list(map(lambda plan: set(plan.actions), plans))
     action_name_list_plan_idx: Dict[str, List[int]] = dict()
     action_name_list_plan_hash: Dict[str, List[str]] = dict()
     plan_hashes_for_action: Set[str] = set()
@@ -180,13 +179,19 @@ def get_plans_with_selection_infos(
         return plans_before_filtering
 
     filtered_plan_hashes: Set[str] = set(
-        selection_infos[0].selected_plan_hashes)
+        selection_infos[0].selected_plan_hashes
+    )
     for i in range(len(selection_infos) - 1):
-        if len(selection_infos[i+1].selected_plan_hashes) > 0:
+        if len(selection_infos[i + 1].selected_plan_hashes) > 0:
             filtered_plan_hashes = filtered_plan_hashes.intersection(
-                set(selection_infos[i+1].selected_plan_hashes))
-    filtered_plans = list(filter(
-        lambda plan: plan.plan_hash in filtered_plan_hashes, plans_before_filtering))
+                set(selection_infos[i + 1].selected_plan_hashes)
+            )
+    filtered_plans = list(
+        filter(
+            lambda plan: plan.plan_hash in filtered_plan_hashes,
+            plans_before_filtering,
+        )
+    )
     return filtered_plans if len(filtered_plans) > 0 else plans_before_filtering
 
 
@@ -284,8 +289,7 @@ def get_plan_disambiguator_output_filtered_by_selection_infos(
         planning_results=PlanningResult(plans=selected_plans),
     )
     g = convert_dot_str_to_networkx_graph(dot_str)
-    node_dist_from_initial_state = get_node_distance_from_terminal_node(
-        g, True)
+    node_dist_from_initial_state = get_node_distance_from_terminal_node(g, True)
     node_dist_from_end_state = get_node_distance_from_terminal_node(g, False)
     (
         node_plan_hashes_dict,
@@ -337,7 +341,9 @@ def get_plan_idx_edge_dict(
     )
     plan_idx_edge_dict: Dict[int, Any] = dict()
     for plan_idx, plan in enumerate(plans):
-        if (is_forward and len_edges_traversed < len(plan.actions)) or abs(len_edges_traversed) <= len(plan.actions):
+        if (is_forward and len_edges_traversed < len(plan.actions)) or abs(
+            len_edges_traversed
+        ) <= len(plan.actions):
             plan_idx_edge_dict[plan_idx] = plan.actions[len_edges_traversed]
     return plan_idx_edge_dict
 
@@ -358,14 +364,21 @@ def get_edge_label_plan_hashes_dict(
     return edge_label_plan_hash_dict
 
 
-def get_plan_hashes_with_edges(g: Graph, edges: List[str], edge_plan_hash_dict: Dict[Tuple[Any, Any], List[str]], plans: List[Plan]) -> Dict[str, List[str]]:
+def get_plan_hashes_with_edges(
+    g: Graph,
+    edges: List[str],
+    edge_plan_hash_dict: Dict[Tuple[Any, Any], List[str]],
+    plans: List[Plan],
+) -> Dict[str, List[str]]:
     action_name_plan_hashes_dict: Dict[str, List[str]] = {}
     plan_hashes_from_plans: Set[str] = set(
-        map(lambda plan: plan.plan_hash, plans))
+        map(lambda plan: plan.plan_hash, plans)
+    )
     for edge in edges:
         edge_label = get_edge_label(g, edge)
-        action_name_plan_hashes_dict[edge_label] = set(edge_plan_hash_dict[edge]).intersection(
-            plan_hashes_from_plans)
+        action_name_plan_hashes_dict[edge_label] = set(
+            edge_plan_hash_dict[edge]
+        ).intersection(plan_hashes_from_plans)
     return action_name_plan_hashes_dict
 
 
@@ -377,12 +390,16 @@ def get_choice_info_multiple_edges_without_landmark(
     edges: List[Tuple[str, str]],
     plans: List[Plan],
 ) -> ChoiceInfo:
-    plan_hashes_from_node = set(
-        node_plan_hashes_dict[node_with_multiple_edges])
+    plan_hashes_from_node = set(node_plan_hashes_dict[node_with_multiple_edges])
     filtered_plans = list(
-        filter(lambda plan: plan.plan_hash in plan_hashes_from_node, plans))
+        filter(lambda plan: plan.plan_hash in plan_hashes_from_node, plans)
+    )
     action_name_plan_hashes_dict = get_plan_hashes_with_edges(
-        g, edges=edges, edge_plan_hash_dict=edge_plan_hash_dict, plans=filtered_plans)
+        g,
+        edges=edges,
+        edge_plan_hash_dict=edge_plan_hash_dict,
+        plans=filtered_plans,
+    )
 
     return ChoiceInfo(
         nodes_with_multiple_out_edges=[node_with_multiple_edges],

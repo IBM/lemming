@@ -203,9 +203,7 @@ class TestBuildFlowHelper(unittest.TestCase):
     ) -> None:
         selected_landmark_0 = SelectionInfo(
             selected_first_achiever="",
-            selected_plan_hashes=[
-                "6a81b2a65657b4444a989205b590c346"
-            ],
+            selected_plan_hashes=["6a81b2a65657b4444a989205b590c346"],
         )
         build_forward_flow_output, _, _ = get_build_flow_output(
             [selected_landmark_0],

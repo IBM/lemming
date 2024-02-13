@@ -1,6 +1,9 @@
 import unittest
 from simulator.simulation_datatypes import (
-    SimulationResultUnit, SimulationOutput, SimulationInput)
+    SimulationResultUnit,
+    SimulationOutput,
+    SimulationInput,
+)
 from helpers.planner_helper.planner_helper_data_types import (
     PlanningTask,
 )
@@ -8,72 +11,73 @@ from helpers.planner_helper.planner_helper_data_types import (
 
 class TestSimulationDatatype(unittest.TestCase):
     def test_get_simulation_metrics(self):
-        simulation_results = [[
-            SimulationResultUnit(
-                chosen_edge="a",
-                is_edge_selected=True,
-                num_remaining_plans=3,
-                is_from_landmark=True,
-                is_disambiguation_done=False
-            ),
-            SimulationResultUnit(
-                chosen_edge="b",
-                is_edge_selected=True,
-                num_remaining_plans=3,
-                is_from_landmark=False,
-                is_disambiguation_done=False
-            ),
-            SimulationResultUnit(
-                chosen_edge="c",
-                is_edge_selected=True,
-                num_remaining_plans=2,
-                is_from_landmark=False,
-                is_disambiguation_done=True
-            ),
-            SimulationResultUnit(
-                chosen_edge=None,
-                is_edge_selected=True,
-                num_remaining_plans=2,
-                is_from_landmark=False,
-                is_disambiguation_done=True
-            )
-        ],
+        simulation_results = [
             [
-            SimulationResultUnit(
-                chosen_edge="a",
-                is_edge_selected=True,
-                num_remaining_plans=3,
-                is_from_landmark=True,
-                is_disambiguation_done=False
-            ),
-            SimulationResultUnit(
-                chosen_edge="b",
-                is_edge_selected=True,
-                num_remaining_plans=3,
-                is_from_landmark=False,
-                is_disambiguation_done=False
-            ),
-            SimulationResultUnit(
-                chosen_edge="c",
-                is_edge_selected=True,
-                num_remaining_plans=2,
-                is_from_landmark=False,
-                is_disambiguation_done=True
-            ),
-            SimulationResultUnit(
-                chosen_edge="d",
-                is_edge_selected=True,
-                num_remaining_plans=2,
-                is_from_landmark=False,
-                is_disambiguation_done=False
-            )
-        ]]
+                SimulationResultUnit(
+                    chosen_edge="a",
+                    is_edge_selected=True,
+                    num_remaining_plans=3,
+                    is_from_landmark=True,
+                    is_disambiguation_done=False,
+                ),
+                SimulationResultUnit(
+                    chosen_edge="b",
+                    is_edge_selected=True,
+                    num_remaining_plans=3,
+                    is_from_landmark=False,
+                    is_disambiguation_done=False,
+                ),
+                SimulationResultUnit(
+                    chosen_edge="c",
+                    is_edge_selected=True,
+                    num_remaining_plans=2,
+                    is_from_landmark=False,
+                    is_disambiguation_done=True,
+                ),
+                SimulationResultUnit(
+                    chosen_edge=None,
+                    is_edge_selected=True,
+                    num_remaining_plans=2,
+                    is_from_landmark=False,
+                    is_disambiguation_done=True,
+                ),
+            ],
+            [
+                SimulationResultUnit(
+                    chosen_edge="a",
+                    is_edge_selected=True,
+                    num_remaining_plans=3,
+                    is_from_landmark=True,
+                    is_disambiguation_done=False,
+                ),
+                SimulationResultUnit(
+                    chosen_edge="b",
+                    is_edge_selected=True,
+                    num_remaining_plans=3,
+                    is_from_landmark=False,
+                    is_disambiguation_done=False,
+                ),
+                SimulationResultUnit(
+                    chosen_edge="c",
+                    is_edge_selected=True,
+                    num_remaining_plans=2,
+                    is_from_landmark=False,
+                    is_disambiguation_done=True,
+                ),
+                SimulationResultUnit(
+                    chosen_edge="d",
+                    is_edge_selected=True,
+                    num_remaining_plans=2,
+                    is_from_landmark=False,
+                    is_disambiguation_done=False,
+                ),
+            ],
+        ]
         simulation_output = SimulationOutput(
             simulation_results=simulation_results,
-            simulation_input=SimulationInput(planning_task=PlanningTask(
-                domain="s",
-                problem="s"
-            ))
+            simulation_input=SimulationInput(
+                planning_task=PlanningTask(domain="s", problem="s")
+            ),
         )
         metrics = simulation_output.get_simulation_metrics()
 

@@ -90,16 +90,20 @@ def get_selection_flow_output(
             )
         )
 
-        return (PlanDisambiguatorOutput(
-            plans=selected_plans,
-            choice_infos=choice_infos,
-            networkx_graph=networkx_graph,
-            node_plan_hashes_dict=node_plan_hashes_dict,
-            edge_plan_hashes_dict={
-                f"{label[0]}_{label[1]}": plan_hashes
-                for label, plan_hashes in edge_plan_hash_dict.items()
-            },
-        ), edge_plan_hash_dict, g)
+        return (
+            PlanDisambiguatorOutput(
+                plans=selected_plans,
+                choice_infos=choice_infos,
+                networkx_graph=networkx_graph,
+                node_plan_hashes_dict=node_plan_hashes_dict,
+                edge_plan_hashes_dict={
+                    f"{label[0]}_{label[1]}": plan_hashes
+                    for label, plan_hashes in edge_plan_hash_dict.items()
+                },
+            ),
+            edge_plan_hash_dict,
+            g,
+        )
     choice_infos = process_selection_priority(
         set_nodes_with_multiple_edges(
             append_landmarks_not_available_for_choice(landmarks, choice_infos),
@@ -121,13 +125,17 @@ def get_selection_flow_output(
         )
     )
 
-    return (PlanDisambiguatorOutput(
-        plans=selected_plans,
-        choice_infos=choice_infos,
-        networkx_graph=networkx_graph,
-        node_plan_hashes_dict=node_plan_hashes_dict,
-        edge_plan_hashes_dict={
-            f"{label[0]}_{label[1]}": plan_hashes
-            for label, plan_hashes in edge_plan_hash_dict.items()
-        },
-    ), edge_plan_hash_dict, g)
+    return (
+        PlanDisambiguatorOutput(
+            plans=selected_plans,
+            choice_infos=choice_infos,
+            networkx_graph=networkx_graph,
+            node_plan_hashes_dict=node_plan_hashes_dict,
+            edge_plan_hashes_dict={
+                f"{label[0]}_{label[1]}": plan_hashes
+                for label, plan_hashes in edge_plan_hash_dict.items()
+            },
+        ),
+        edge_plan_hash_dict,
+        g,
+    )

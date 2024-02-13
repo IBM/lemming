@@ -180,8 +180,11 @@ class TestPlanDisambiguatorHelper(unittest.TestCase):
     def test_append_landmarks_not_available_for_choice(self) -> None:
         landmark = Landmark(facts=["b"], first_achievers=[], disjunctive=True)
         landmarks = [
-            Landmark(facts=["a"], first_achievers=[
-                     "sadadas", "asdasdsad"], disjunctive=True),
+            Landmark(
+                facts=["a"],
+                first_achievers=["sadadas", "asdasdsad"],
+                disjunctive=True,
+            ),
             landmark,
         ]
         choice_infos = [ChoiceInfo(landmark=landmark)]

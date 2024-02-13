@@ -24,8 +24,7 @@ def edit_edge_labels(g: Graph) -> Graph:
             and "label" in edge_data[0]
         ):
             edge_data[0]["label"] = (
-                re.sub(r"\(.*?\)", "", edge_data[0]
-                       ["label"]).strip('"').strip()
+                re.sub(r"\(.*?\)", "", edge_data[0]["label"]).strip('"').strip()
             )
 
     return new_graph
@@ -72,18 +71,17 @@ def get_edge_label(g: Graph, edge: Any) -> str:
 
 
 def add_node_to_queue(
-        g: Graph,
-        edges: List[Tuple[str, str]],
-        edges_traversed: List[str],
-        queue: List[Tuple[str, List[str]]],
-        is_forward: bool) -> List[Tuple[str, List[str]]]:
+    g: Graph,
+    edges: List[Tuple[str, str]],
+    edges_traversed: List[str],
+    queue: List[Tuple[str, List[str]]],
+    is_forward: bool,
+) -> List[Tuple[str, List[str]]]:
     new_queue = deepcopy(queue)
     for edge in edges:
         edge_label = get_edge_label(g, edge)
         tmp_edge = edge[1][:] if is_forward else edge[0][:]
-        new_queue.append(
-            (tmp_edge, deepcopy(edges_traversed + [edge_label]))
-        )
+        new_queue.append((tmp_edge, deepcopy(edges_traversed + [edge_label])))
     return new_queue
 
 
@@ -127,7 +125,8 @@ def get_first_node_with_multiple_out_edges(
                         edges=edges,
                         edges_traversed=edges_traversed,
                         queue=new_queue,
-                        is_forward=is_forward)
+                        is_forward=is_forward,
+                    )
                 else:
                     nodes_with_multiple_edges.append(
                         (
@@ -151,7 +150,8 @@ def get_first_node_with_multiple_out_edges(
                         edges=edges,
                         edges_traversed=edges_traversed,
                         queue=new_queue,
-                        is_forward=is_forward)
+                        is_forward=is_forward,
+                    )
             nodes_visited.add(node)
         queue = new_queue
     return nodes_with_multiple_edges, nodes_visited
@@ -308,9 +308,9 @@ def get_node_edge_name_plan_hash_list(
     start_nodes = get_root_node_in_digraph(g, is_forward)
     node_list_plan_hash_dict: Dict[str, List[str]] = dict()
     edge_list_plan_hash_dict: Dict[Tuple[Any, Any], List[str]] = dict()
-    edge_label_nodes_set_dict: Dict[
-        str, Set[str]
-    ] = dict()  # a Dictionary of edge labels and sets of nodes
+    edge_label_nodes_set_dict: Dict[str, Set[str]] = (
+        dict()
+    )  # a Dictionary of edge labels and sets of nodes
     queue: List[Any] = list()
     queue.extend(start_nodes)
     depth = 0

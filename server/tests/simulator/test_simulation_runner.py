@@ -1,15 +1,20 @@
 import os
 import unittest
 from helpers.common_helper.file_helper import (
-    read_str_from_file, create_file_from_base_model, get_model_from_file)
+    read_str_from_file,
+    get_model_from_file,
+)
 from helpers.planner_helper.planner_helper_data_types import (
     PlanDisambiguationView,
     LandmarkCategory,
     PlanningTask,
 )
-from simulator.simulation_runner import (run_simulation, run_simulation_unit)
+from simulator.simulation_runner import run_simulation, run_simulation_unit
 from simulator.simulation_datatypes import (
-    SimulationInput, SimulationOutput, SimulationMestricUnits)
+    SimulationInput,
+    SimulationOutput,
+    SimulationMestricUnits,
+)
 
 my_dir = os.path.dirname(__file__)
 rel_pddl_path = "../data/pddl/{}.pddl"
@@ -31,7 +36,7 @@ class TestSimulationRunner(unittest.TestCase):
             quality_bound=20.0,
             timeout=None,
             case_sensitive=False,
-            action_name_prefix_preserve=None
+            action_name_prefix_preserve=None,
         )
 
     def test_run_simulation_select_flow(self):
@@ -43,7 +48,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -52,7 +57,9 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
-    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(self):
+    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(
+        self,
+    ):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
@@ -61,7 +68,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=True,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -79,7 +86,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -97,7 +104,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
 
@@ -115,7 +122,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -133,7 +140,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -151,7 +158,7 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=2,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         simulation_output = run_simulation(simulation_input)
         metrics = simulation_output.simulation_results
@@ -170,16 +177,20 @@ class TestSimulationRunner(unittest.TestCase):
             use_greedy_disjunctive_action_selection=False,
             num_replicates=num_replicates,
             setting_name="test",
-            planning_task=TestSimulationRunner.planning_task
+            planning_task=TestSimulationRunner.planning_task,
         )
         raw_output_file_path, metrics_file_path = run_simulation_unit(
-            simulation_input)
+            simulation_input
+        )
         # file read
         simulation_output = get_model_from_file(
-            raw_output_file_path, SimulationOutput)
+            raw_output_file_path, SimulationOutput
+        )
         simulation_metrics = get_model_from_file(
-            metrics_file_path, SimulationMestricUnits)
+            metrics_file_path, SimulationMestricUnits
+        )
 
         self.assertIsNotNone(simulation_output)
         self.assertEqual(
-            len(simulation_metrics.simulation_metrics_units), num_replicates)
+            len(simulation_metrics.simulation_metrics_units), num_replicates
+        )

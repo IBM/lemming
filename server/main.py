@@ -83,9 +83,9 @@ app.add_middleware(
 def requires_optional(fn):
     @functools.wraps(fn)
     def wrapper_decor(*args, **kwargs):
-        if "rasa" not in sys.modules:
+        if "nl2ltl" not in sys.modules:
             raise ModuleNotFoundError(
-                f"Rasa is required to instantiate {fn.__name__}"
+                f"NL2LTL is required to instantiate {fn.__name__}"
             )
         return fn(*args, **kwargs)
 

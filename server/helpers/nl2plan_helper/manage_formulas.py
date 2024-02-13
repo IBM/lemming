@@ -1,9 +1,12 @@
 from typing import Dict, List
 
-from nl2ltl.declare.base import Template
-from pylogics.utils.to_string import to_string
-
 from helpers.planner_helper.planner_helper_data_types import LTLFormula
+
+try:
+    from nl2ltl.declare.base import Template
+    from pylogics.utils.to_string import to_string
+except ImportError as e:
+    raise ImportError(e)
 
 
 def get_formulas_from_matched_formulas(

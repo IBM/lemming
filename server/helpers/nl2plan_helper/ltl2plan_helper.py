@@ -1,16 +1,19 @@
 from typing import Dict, List, Optional, Tuple
 
-from pylogics.parsers import parse_pltl
-
 from helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
     ToolCompiler,
 )
-from pddl.core import Domain, Problem
-from pddl.logic import Predicate
-from plan4past.compiler import Compiler
-from pylogics.syntax.base import Formula, And
-from pylogics.syntax.pltl import Atomic
+
+try:
+    from pddl.core import Domain, Problem
+    from pddl.logic import Predicate
+    from plan4past.compiler import Compiler
+    from pylogics.syntax.base import Formula, And
+    from pylogics.syntax.pltl import Atomic
+    from pylogics.parsers import parse_pltl
+except ImportError as e:
+    raise ImportError(e)
 
 
 def compile_instance(

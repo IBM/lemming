@@ -1,10 +1,11 @@
+import functools
 import json
+import sys
 from pathlib import Path
 from typing import List, Dict, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from nl2ltl.declare.base import Template
 from pddl.formatter import domain_to_string, problem_to_string
 
 from helpers.common_helper.static_data_helper import app_description
@@ -47,12 +48,15 @@ from helpers.plan_disambiguator_helper.selection_flow_helper import (
 from planners.drivers.landmark_driver_datatype import LandmarksResponseModel
 from planners.drivers.planner_driver_datatype import PlanningResult
 
-from nl2ltl import translate
-from nl2ltl.engines.gpt.core import GPTEngine, Models
-from pddl.parser.domain import DomainParser
-from pddl.parser.problem import ProblemParser
-
-from planners.symk import SymKPlanner
+try:
+    from nl2ltl.declare.base import Template
+    from nl2ltl import translate
+    from nl2ltl.engines.gpt.core import GPTEngine, Models
+    from pddl.parser.domain import DomainParser
+    from pddl.parser.problem import ProblemParser
+    from planners.symk import SymKPlanner
+except ImportError as e:
+    raise ImportError(e)
 
 FILEPATH = Path(__file__).parent.resolve()
 
@@ -74,6 +78,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def requires_optional(fn):
+    @functools.wraps(fn)
+    def wrapper_decor(*args, **kwargs):
+        if "rasa" not in sys.modules:
+            raise ModuleNotFoundError(
+                f"Rasa is required to instantiate {fn.__name__}"
+            )
+        return fn(*args, **kwargs)
+
+    return wrapper_decor
 
 
 @app.get("/")
@@ -201,6 +217,7 @@ def generate_build_backward(
     return plan_disambiguator_output
 
 
+@requires_optional
 @app.post("/generate_nl2ltl_integration")
 def generate_nl2ltl_integration(
     plan_disambiguator_input: PlanDisambiguatorInput,
@@ -208,6 +225,7 @@ def generate_nl2ltl_integration(
     return generate_select_view(plan_disambiguator_input)
 
 
+@requires_optional
 @app.post("/nl2ltl", response_model=None)
 async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     domain_name = request.domain_name
@@ -239,6 +257,7 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     return ltl_formulas
 
 
+@requires_optional
 @app.post("/ltl_compile/{tool}")
 async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler

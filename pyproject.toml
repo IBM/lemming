@@ -5,6 +5,7 @@ license = {file = "LICENSE"}
 authors = [
     { name = "Jung koo Kang", email = "jungkoo.kang@ibm.com" },
     { name = "Tathagata Chakraborti", email = "tchakra2@ibm.com" },
+    { name = "Francesco Fuggitti", email = "francesco.fuggitti@gmail.com" },
 ]
 description = "Human in the loop plan selection"
 readme = "README.md"
@@ -44,19 +45,22 @@ dependencies = [
     "networkx==3.1.0",
     "python-multipart==0.0.6",
     "uvicorn[standard] >=0.19.0",
-    "plan4past @ git+https://github.com/whitemech/Plan4Past.git",
 ]
 
 [project.optional-dependencies]
-test = ["coverage==7.2.5"]
 dev = [
     "check-manifest",
+    "coverage==7.2.5",
     "pytest==7.3.1",
     "black==22.3.0",
     "pylint==2.17.4",
     "flake8==6.0.0",
     "pre-commit==3.3.1",
     "Flake8-pyproject"
+]
+nl2ltl = [
+    "nl2ltl",
+    "plan4past @ git+https://github.com/whitemech/Plan4Past.git"
 ]
 
 [tool.setuptools]
@@ -67,6 +71,7 @@ include = ["server*"]
 
 [project.urls]
 "Repository" = "https://github.com/IBM/lemming"
+"Issues" = "https://github.com/IBM/lemming/issues"
 
 [build-system]
 requires = ["setuptools"]
@@ -128,7 +133,7 @@ py-version=3.10
 max-line-length = 80
 
 [tool.flake8]
-extend-ignore = ["E203"]
+extend-ignore = ["E203", "E501"]
 count = true
 max-line-length = 80
 max-complexity = 18

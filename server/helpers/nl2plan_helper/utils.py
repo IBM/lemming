@@ -1,5 +1,6 @@
 import contextlib
 import functools
+import inspect
 import sys
 import tempfile
 from pathlib import Path
@@ -35,6 +36,9 @@ def requires_optional(fn):
             raise ModuleNotFoundError(
                 f"NL2LTL is required to instantiate {fn.__name__}"
             )
-        return await fn(*args, **kwargs)
+        if inspect.iscoroutinefunction(fn):
+            return await fn(*args, **kwargs)
+        else:
+            return fn(*args, **kwargs)
 
     return wrapper_decor

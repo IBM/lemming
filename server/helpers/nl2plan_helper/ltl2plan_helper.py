@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional, Tuple
 
-from helpers.nl2plan_helper.utils import requires_optional
 from server.helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
     ToolCompiler,
@@ -19,7 +18,6 @@ except ImportError:
     is_nl2ltl_installed = False
 
 
-@requires_optional
 def compile_instance(
     domain: "Domain",
     problem: "Problem",
@@ -43,7 +41,6 @@ def compile_instance(
     return compiled_domain, compiled_problem
 
 
-@requires_optional
 def get_goal_formula(
     formulas: List[LTLFormula], reachability_goal: "Formula", tool: ToolCompiler
 ) -> "Formula":

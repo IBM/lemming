@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from pydantic import BaseModel
 from server.helpers.planner_helper.planner_helper_data_types import (
     Landmark,
@@ -116,14 +116,16 @@ class SimulationOutput(BaseModel):
 
 
 class EdgeSelectionPayload(BaseModel):
-    selected_edge: str
+    selected_edge_label: str
+    selected_edge: Tuple[str, str]
     is_edge_selected: bool
     is_edge_from_landmark: bool
     plan_hashes: List[str]
 
 
 class EdgeSelectionUnit(BaseModel):
-    edge: Optional[str]
+    edge_label: Optional[str]
+    edge: Optional[Tuple[str, str]]
     plan_hashes: Optional[List[str]]
     landmark: Optional[Landmark]
 

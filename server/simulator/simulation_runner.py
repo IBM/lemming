@@ -257,11 +257,13 @@ def get_edge_landmark_from_plan_disambiguator_output(
 
 def add_new_selection_to_plan_disambiguator_input(
     plan_disambiguator_input: PlanDisambiguatorInput,
-    selected_edge: str,
+    selected_edge_label: str,
+    selected_edge: Optional[Tuple[str, str]],
     selected_plan_hashes: List[str],
 ) -> PlanDisambiguatorInput:
     selection_info = SelectionInfo(
-        selected_first_achiever=selected_edge,
+        selected_first_achiever=selected_edge_label,
+        selected_edge=selected_edge,
         selected_plan_hashes=selected_plan_hashes,
     )
     new_plan_disambiguator_input = plan_disambiguator_input.model_copy(
@@ -317,14 +319,21 @@ def select_edge_by_frequency(
     edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
     g: Graph,
     edge_selection_type: EdgeSelectionType,
+    selection_infos: List[SelectionInfo],
 ) -> EdgeSelectionPayload:
+    edge_set = set(
+        map(
+            lambda selection_info: selection_info.selected_edge, selection_infos
+        )
+    )
     edge_label_edge_dict: Dict[str, List[Tuple[str, str]]] = {}
     for edge in edge_plan_hash_dict.keys():
-        # exclude edge already chosen
-        label = get_edge_label(g, handle_edge(edge))
-        if label not in edge_label_edge_dict:
-            edge_label_edge_dict[label] = []
-        edge_label_edge_dict[label].append(edge)
+        if edge not in edge_set:
+            label = get_edge_label(g, handle_edge(edge))
+            if label not in edge_label_edge_dict:
+                edge_label_edge_dict[label] = []
+            edge_label_edge_dict[label].append(edge)
+
     edges_sorted_by_frequency = sorted(
         edge_label_edge_dict.items(),
         key=lambda item: len(item[1]),
@@ -398,6 +407,7 @@ def select_edge(
             edge_plan_hash_dict=edge_plan_hash_dict,
             g=g,
             edge_selection_type=edge_selection_type,
+            selection_infos=plan_disambiguator_input.selection_infos,
         )
 
     if (
@@ -548,7 +558,8 @@ def simulate_view(
             if edge_selection_payload.is_edge_selected:
                 plan_disambiguator_input_rep = add_new_selection_to_plan_disambiguator_input(
                     plan_disambiguator_input=plan_disambiguator_input_rep,
-                    selected_edge=edge_selection_payload.selected_edge_label,
+                    selected_edge_label=edge_selection_payload.selected_edge_label,
+                    selected_edge=edge_selection_payload.selected_edge,
                     selected_plan_hashes=edge_selection_payload.plan_hashes,
                 )
                 simulation_result_unit.append(

@@ -1,4 +1,6 @@
 import contextlib
+import functools
+import sys
 import tempfile
 from pathlib import Path
 from typing import Generator
@@ -24,3 +26,15 @@ def temporary_directory() -> Generator[Path, None, None]:
         temp_dir.cleanup()
     except PermissionError:
         pass
+
+
+def requires_optional(fn):
+    @functools.wraps(fn)
+    async def wrapper_decor(*args, **kwargs):
+        if "nl2ltl" not in sys.modules:
+            raise ModuleNotFoundError(
+                f"NL2LTL is required to instantiate {fn.__name__}"
+            )
+        return await fn(*args, **kwargs)
+
+    return wrapper_decor

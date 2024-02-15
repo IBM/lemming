@@ -68,7 +68,9 @@ class TestSimulationRunner(unittest.TestCase):
                 self.assertIsNotNone(simulation_unit.plan_costs)
                 self.assertIsNotNone(simulation_unit.num_choice_infos)
 
-    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(self):
+    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(
+        self,
+    ):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,

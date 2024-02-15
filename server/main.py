@@ -1,6 +1,4 @@
-import functools
 import json
-import sys
 from pathlib import Path
 from typing import List, Dict, Optional, cast
 
@@ -24,7 +22,10 @@ from server.helpers.nl2plan_helper.nl2ltl_helper import (
     prompt_builder,
     LTLFormula,
 )
-from server.helpers.nl2plan_helper.utils import temporary_directory
+from server.helpers.nl2plan_helper.utils import (
+    temporary_directory,
+    requires_optional,
+)
 from server.helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
@@ -52,13 +53,16 @@ from server.planners.drivers.planner_driver_datatype import PlanningResult
 try:
     from nl2ltl.declare.base import Template
     from nl2ltl import translate
-    from nl2ltl.engines.gpt.core import GPTEngine, Models
+    from nl2ltl.engines.gpt.core import GPTEngine
     from pddl.parser.domain import DomainParser
     from pddl.parser.problem import ProblemParser
     from pddl.formatter import domain_to_string, problem_to_string
     from planners.symk import SymKPlanner
-except ImportError as e:
-    raise ImportError(e)
+
+    is_nl2ltl_installed = True
+except ImportError:
+    is_nl2ltl_installed = False
+
 
 FILEPATH = Path(__file__).parent.resolve()
 
@@ -80,18 +84,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def requires_optional(fn):
-    @functools.wraps(fn)
-    def wrapper_decor(*args, **kwargs):
-        if "nl2ltl" not in sys.modules:
-            raise ModuleNotFoundError(
-                f"NL2LTL is required to instantiate {fn.__name__}"
-            )
-        return fn(*args, **kwargs)
-
-    return wrapper_decor
 
 
 @app.get("/")
@@ -218,16 +210,16 @@ def generate_build_backward(
     return plan_disambiguator_output
 
 
-@requires_optional
 @app.post("/generate_nl2ltl_integration")
+@requires_optional
 def generate_nl2ltl_integration(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
     return generate_select_view(plan_disambiguator_input)
 
 
-@requires_optional
 @app.post("/nl2ltl", response_model=None)
+@requires_optional
 async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     domain_name = request.domain_name
     if domain_name:
@@ -243,7 +235,7 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
         tmp_file = tmp_file.resolve()
         tmp_file.write_text(custom_prompt, encoding="utf-8")
 
-        engine = GPTEngine(model=Models.DAVINCI3.value, prompt=tmp_file)
+        engine = GPTEngine(prompt=tmp_file)
 
     utterance = request.utterance
     matched_formulas: Dict[Template, float] = cast(
@@ -258,8 +250,8 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     return ltl_formulas
 
 
-@requires_optional
 @app.post("/ltl_compile/{tool}")
+@requires_optional
 async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler
 ) -> LemmingTask:

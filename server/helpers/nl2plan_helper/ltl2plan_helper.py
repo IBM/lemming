@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional, Tuple
 
+from helpers.nl2plan_helper.utils import requires_optional
 from server.helpers.planner_helper.planner_helper_data_types import (
     LTLFormula,
     ToolCompiler,
@@ -12,21 +13,25 @@ try:
     from pylogics.syntax.base import Formula, And
     from pylogics.syntax.pltl import Atomic
     from pylogics.parsers import parse_pltl
-except ImportError as e:
-    raise ImportError(e)
+
+    is_nl2ltl_installed = True
+except ImportError:
+    is_nl2ltl_installed = False
 
 
+@requires_optional
 def compile_instance(
-    domain: Domain,
-    problem: Problem,
-    formula: Formula,
+    domain: "Domain",
+    problem: "Problem",
+    formula: "Formula",
     tool: ToolCompiler,
-    mapping: Optional[Dict[Atomic, Predicate]] = None,
-) -> Tuple[Domain, Problem]:
+    mapping: Optional[Dict["Atomic", "Predicate"]] = None,
+) -> Tuple["Domain", "Problem"]:
     """Compile the PDDL domain and problem files and the LTL/PPLTL goal
     formula."""
-    compiled_domain, compiled_problem = Domain("empty"), Problem(
-        "p-empty", domain_name="empty"
+    compiled_domain, compiled_problem = (
+        Domain("empty"),
+        Problem("p-empty", domain_name="empty"),
     )
     if tool == ToolCompiler.P4P:
         compiler = Compiler(domain, problem, formula, mapping)
@@ -38,9 +43,10 @@ def compile_instance(
     return compiled_domain, compiled_problem
 
 
+@requires_optional
 def get_goal_formula(
-    formulas: List[LTLFormula], reachability_goal: Formula, tool: ToolCompiler
-) -> Formula:
+    formulas: List[LTLFormula], reachability_goal: "Formula", tool: ToolCompiler
+) -> "Formula":
     """Get the goal formula from the list of formulas."""
     if tool == ToolCompiler.P4P:
         if isinstance(reachability_goal, And):

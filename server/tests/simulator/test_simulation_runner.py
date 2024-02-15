@@ -102,6 +102,38 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
+    def test_run_simulation_select_flow_least_frequent_action(self) -> None:
+        simulation_input = SimulationInput(
+            plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            landmark_category=LandmarkCategory.RWH,
+            edge_selection_type=EdgeSelectionType.FREQUENCY_ACTION_LEAST,
+            num_replicates=2,
+            setting_name="test",
+            planning_task=TestSimulationRunner.planning_task,
+        )
+        simulation_output = run_simulation(simulation_input)
+        metrics = simulation_output.simulation_results
+
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
+    def test_run_simulation_select_flow_most_frequent_action(self) -> None:
+        simulation_input = SimulationInput(
+            plan_disambiguator_view=PlanDisambiguationView.SELECT,
+            landmark_category=LandmarkCategory.RWH,
+            edge_selection_type=EdgeSelectionType.FREQUENCY_ACTION_MOST,
+            num_replicates=2,
+            setting_name="test",
+            planning_task=TestSimulationRunner.planning_task,
+        )
+        simulation_output = run_simulation(simulation_input)
+        metrics = simulation_output.simulation_results
+
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
     def test_run_simulation_build_forward_flow(self) -> None:
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,

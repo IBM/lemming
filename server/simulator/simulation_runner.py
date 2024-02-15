@@ -139,13 +139,36 @@ def get_action_dist_dict(
 
 
 def get_edge_from_edge_choice_units_by_distance(
-    edge_choice_units: List[EdgeChoiceUnit], plans: List[Plan]
+    edge_choice_units: List[EdgeChoiceUnit],
+    plans: List[Plan],
+    edge_selection_type: EdgeSelectionType,
 ) -> Optional[List[Tuple[str, List[str], Optional[Landmark]]]]:  # type: ignore
     action_min_dist_from_initial, action_min_dist_from_goal = (
         get_action_dist_dict(plans=plans)
     )
     # WORK FROM HERE
-    return None
+    # MODIFY CODE BELOW
+    edges_with_minimum_num_plans: List[
+        Tuple[str, List[str], Optional[Landmark]]
+    ] = []
+    max_num_plan_hashes = sys.maxsize
+    for edge_choice_unit in edge_choice_units:
+        for (
+            edge,
+            plan_hashes,
+        ) in edge_choice_unit.edge_name_plan_hash_dict.items():
+            num_plan_hashes = len(plan_hashes)
+            if num_plan_hashes > 0:
+                if num_plan_hashes == max_num_plan_hashes:
+                    edges_with_minimum_num_plans.append(
+                        (edge, plan_hashes, edge_choice_unit.landmark)
+                    )
+                elif num_plan_hashes < max_num_plan_hashes:
+                    edges_with_minimum_num_plans = [
+                        (edge, plan_hashes, edge_choice_unit.landmark)
+                    ]
+                    max_num_plan_hashes = num_plan_hashes
+    return edges_with_minimum_num_plans
 
 
 def choose_edge_by_edge_label_random(
@@ -224,7 +247,9 @@ def choose_edge_landmark(
             edge_selection_type == EdgeSelectionType.LANDMARK_CLOSEST_TO_INITIAL
         ):
             edges_with_landmarks = get_edge_from_edge_choice_units_by_distance(
-                edge_choice_units=edge_choice_units, plans=plans
+                edge_choice_units=edge_choice_units,
+                plans=plans,
+                edge_selection_type=edge_selection_type,
             )
         return get_edge_selection_unit_with_edges_with_landmarks(
             edge_plan_hash_dict=edge_plan_hash_dict,

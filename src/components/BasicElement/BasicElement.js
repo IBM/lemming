@@ -221,9 +221,20 @@ class PlanArea extends React.Component {
 
     logViewChange(e) {
         this.props.changeView(e);
-        this.setState({ active_view: e.name }, () => {
-            this.generateViz();
-        });
+        this.setState(
+            {
+                active_view: e.name,
+                selected_landmarks: this.state.controls.select_by_name
+                    ? this.state.selected_landmarks
+                    : [],
+                unselected_landmarks: this.state.controls.select_by_name
+                    ? this.state.unselected_landmarks
+                    : [],
+            },
+            () => {
+                this.generateViz();
+            }
+        );
     }
 
     changeTab(tabIndex) {

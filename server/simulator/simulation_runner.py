@@ -3,7 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 import random
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from networkx import Graph
 from server.helpers.planner_helper.planner_helper import (
@@ -92,7 +92,7 @@ def get_edges_from_choice_infos(
 
 def get_edge_with_min_plans(
     edge_choice_units: List[EdgeChoiceUnit],
-) -> Optional[List[Tuple[str, List[str], Optional[Landmark]]]]:  # type: ignore
+) -> List[Tuple[str, List[str], Optional[Landmark]]]:
     """
     greedy edge selection with disjunctive action landmarks
     """
@@ -138,37 +138,76 @@ def get_action_dist_dict(
     return action_min_dist_from_initial, action_min_dist_from_goal
 
 
+def get_actions_used_for_disambiguation(
+    selection_infos: List[SelectionInfo] = [],
+) -> Set[str]:
+    return set(
+        map(
+            lambda selection_info: selection_info.selected_first_achiever,
+            selection_infos,
+        )
+    )
+
+
+def get_lanmark_payloads_for_actions_with_min_dist_from_states(
+    edge_choice_units: List[EdgeChoiceUnit],
+    action_min_dist_dict: Dict[str, int],
+    used_actions: Set[str],
+) -> List[Tuple[str, List[str], Optional[Landmark]]]:
+    min_dist = sys.maxsize
+    actions_min_dist: List[Tuple[str, List[str], Optional[Landmark]]] = []
+    for edge_choice_unit in edge_choice_units:
+        if edge_choice_unit.landmark is not None:
+            for (
+                edge_label,
+                plan_hashes,
+            ) in edge_choice_unit.edge_name_plan_hash_dict.items():
+                if (
+                    edge_label in used_actions
+                ):  # skip action already used for disambiguation
+                    continue
+                dist = (
+                    action_min_dist_dict[edge_label]
+                    if edge_label in action_min_dist_dict
+                    else sys.maxsize
+                )
+                if dist < min_dist:
+                    actions_min_dist = [
+                        (edge_label, plan_hashes, edge_choice_unit.landmark)
+                    ]
+                    min_dist = dist
+                elif dist == min_dist:
+                    actions_min_dist.append(
+                        (edge_label, plan_hashes, edge_choice_unit.landmark)
+                    )
+    return actions_min_dist
+
+
 def get_edge_from_edge_choice_units_by_distance(
     edge_choice_units: List[EdgeChoiceUnit],
     plans: List[Plan],
     edge_selection_type: EdgeSelectionType,
-) -> Optional[List[Tuple[str, List[str], Optional[Landmark]]]]:  # type: ignore
+    plan_disambiguator_input: PlanDisambiguatorInput,
+) -> List[Tuple[str, List[str], Optional[Landmark]]]:
+    """
+    returns edges of disjunctive action landmarks with minimum distance from initial state or goals
+    """
     action_min_dist_from_initial, action_min_dist_from_goal = (
         get_action_dist_dict(plans=plans)
     )
-    # WORK FROM HERE
-    # MODIFY CODE BELOW
-    edges_with_minimum_num_plans: List[
-        Tuple[str, List[str], Optional[Landmark]]
-    ] = []
-    max_num_plan_hashes = sys.maxsize
-    for edge_choice_unit in edge_choice_units:
-        for (
-            edge,
-            plan_hashes,
-        ) in edge_choice_unit.edge_name_plan_hash_dict.items():
-            num_plan_hashes = len(plan_hashes)
-            if num_plan_hashes > 0:
-                if num_plan_hashes == max_num_plan_hashes:
-                    edges_with_minimum_num_plans.append(
-                        (edge, plan_hashes, edge_choice_unit.landmark)
-                    )
-                elif num_plan_hashes < max_num_plan_hashes:
-                    edges_with_minimum_num_plans = [
-                        (edge, plan_hashes, edge_choice_unit.landmark)
-                    ]
-                    max_num_plan_hashes = num_plan_hashes
-    return edges_with_minimum_num_plans
+    action_min_dist_dict = (
+        action_min_dist_from_initial
+        if edge_selection_type == EdgeSelectionType.LANDMARK_CLOSEST_TO_INITIAL
+        else action_min_dist_from_goal
+    )
+    used_actions = get_actions_used_for_disambiguation(
+        plan_disambiguator_input.selection_infos
+    )
+    return get_lanmark_payloads_for_actions_with_min_dist_from_states(
+        edge_choice_units=edge_choice_units,
+        action_min_dist_dict=action_min_dist_dict,
+        used_actions=used_actions,
+    )
 
 
 def choose_edge_by_edge_label_random(
@@ -191,9 +230,6 @@ def get_edge_selection_unit_with_edges_with_landmarks(
         List[Tuple[str, List[str], Optional[Landmark]]]
     ],
 ) -> EdgeSelectionUnit:
-    """
-    greedy edge selection with disjunctive action landmarks
-    """
     if edges_with_landmarks is not None and len(edges_with_landmarks) > 0:
         idx_0 = random.randint(0, len(edges_with_landmarks) - 1)
         chosen_edge_choice_unit = edges_with_landmarks[idx_0]
@@ -223,6 +259,7 @@ def choose_edge_landmark(
     g: Graph,
     edge_selection_type: EdgeSelectionType,
     plans: List[Plan],
+    plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> EdgeSelectionUnit:
     """
     returns chosen edge, plan hashes, and landmark
@@ -250,6 +287,7 @@ def choose_edge_landmark(
                 edge_choice_units=edge_choice_units,
                 plans=plans,
                 edge_selection_type=edge_selection_type,
+                plan_disambiguator_input=plan_disambiguator_input,
             )
         return get_edge_selection_unit_with_edges_with_landmarks(
             edge_plan_hash_dict=edge_plan_hash_dict,
@@ -288,6 +326,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
     edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
     g: Graph,
     edge_selection_type: EdgeSelectionType,
+    plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> EdgeSelectionUnit:
     if use_landmark_to_select_edge:
         if use_greedy_disjunctive_action_selection:
@@ -304,6 +343,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
                 g=g,
                 edge_selection_type=edge_selection_type,
                 plans=plan_disambiguator_output.plans,
+                plan_disambiguator_input=plan_disambiguator_input,
             )
             if edge_selection_unit.edge_label is not None:
                 return edge_selection_unit
@@ -320,6 +360,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
             g=g,
             edge_selection_type=edge_selection_type,
             plans=plan_disambiguator_output.plans,
+            plan_disambiguator_input=plan_disambiguator_input,
         )
         if edge_selection_unit.edge_label is None:  # edges not from landmarks
             edge_choice_units = get_edges_from_choice_infos(
@@ -335,6 +376,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
                 g=g,
                 edge_selection_type=edge_selection_type,
                 plans=plan_disambiguator_output.plans,
+                plan_disambiguator_input=plan_disambiguator_input,
             )
         return edge_selection_unit
 
@@ -351,6 +393,7 @@ def get_edge_landmark_from_plan_disambiguator_output(
         g=g,
         edge_selection_type=edge_selection_type,
         plans=plan_disambiguator_output.plans,
+        plan_disambiguator_input=plan_disambiguator_input,
     )
 
 
@@ -379,6 +422,7 @@ def select_edge_among_choiceinfos(
     edge_plan_hash_dict: Dict[Tuple[str, str], List[str]],
     g: Graph,
     edge_selection_type: EdgeSelectionType,
+    plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> EdgeSelectionPayload:
     edge_selection_unit = get_edge_landmark_from_plan_disambiguator_output(
         plan_disambiguator_output=plan_disambiguator_output,
@@ -387,6 +431,7 @@ def select_edge_among_choiceinfos(
         edge_plan_hash_dict=edge_plan_hash_dict,
         g=g,
         edge_selection_type=edge_selection_type,
+        plan_disambiguator_input=plan_disambiguator_input,
     )
 
     return EdgeSelectionPayload(
@@ -532,6 +577,7 @@ def select_edge(
             edge_plan_hash_dict=edge_plan_hash_dict,
             g=g,
             edge_selection_type=edge_selection_type,
+            plan_disambiguator_input=plan_disambiguator_input,
         )
 
     if (edge_selection_type == EdgeSelectionType.FREQUENCY_ACTION_MOST) or (

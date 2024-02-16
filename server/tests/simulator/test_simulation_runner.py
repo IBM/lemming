@@ -45,6 +45,26 @@ class TestSimulationRunner(unittest.TestCase):
             action_name_prefix_preserve=None,
         )
 
+    def select_view_integration_test(
+        self,
+        plan_disambiguator_view: PlanDisambiguationView,
+        edge_selection_type: EdgeSelectionType,
+    ) -> None:
+        simulation_input = SimulationInput(
+            plan_disambiguator_view=plan_disambiguator_view,
+            landmark_category=LandmarkCategory.RWH,
+            edge_selection_type=edge_selection_type,
+            num_replicates=2,
+            setting_name="test",
+            planning_task=TestSimulationRunner.planning_task,
+        )
+        simulation_output = run_simulation(simulation_input)
+        metrics = simulation_output.simulation_results
+
+        self.assertEqual(len(metrics), simulation_input.num_replicates)
+        for i in range(len(metrics)):
+            self.assertGreaterEqual(len(metrics[i]), 1)
+
     def test_run_simulation_select_flow(self):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
@@ -71,132 +91,62 @@ class TestSimulationRunner(unittest.TestCase):
     def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(
         self,
     ) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.SELECT,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.LANDMARK_GREEDY,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT, EdgeSelectionType.LANDMARK_GREEDY
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_select_flow_random(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.SELECT,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.RANDOM,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT, EdgeSelectionType.RANDOM
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_select_flow_least_frequent_action(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.SELECT,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.FREQUENCY_ACTION_LEAST,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT,
+            EdgeSelectionType.FREQUENCY_ACTION_LEAST,
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_select_flow_most_frequent_action(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.SELECT,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.FREQUENCY_ACTION_MOST,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT,
+            EdgeSelectionType.FREQUENCY_ACTION_MOST,
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
 
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
+    def test_run_simulation_select_flow_landmark_dist_from_initial_state(
+        self,
+    ) -> None:
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT,
+            EdgeSelectionType.LANDMARK_CLOSEST_TO_INITIAL,
+        )
+
+    def test_run_simulation_select_flow_landmark_dist_from_goal_state(
+        self,
+    ) -> None:
+        self.select_view_integration_test(
+            PlanDisambiguationView.SELECT,
+            EdgeSelectionType.LANDMARK_CLOSEST_TO_GOAL,
+        )
 
     def test_run_simulation_build_forward_flow(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.CHOICE_INFO,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.BUILD_FORWARD, EdgeSelectionType.CHOICE_INFO
         )
-        simulation_output = run_simulation(simulation_input)
-
-        metrics = simulation_output.simulation_results
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_build_forward_flow_random(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.BUILD_FORWARD,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.RANDOM,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.BUILD_FORWARD, EdgeSelectionType.RANDOM
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_build_backward_flow(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.CHOICE_INFO,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.BUILD_BACKWARD, EdgeSelectionType.CHOICE_INFO
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_build_backward_random(self) -> None:
-        simulation_input = SimulationInput(
-            plan_disambiguator_view=PlanDisambiguationView.BUILD_BACKWARD,
-            landmark_category=LandmarkCategory.RWH,
-            edge_selection_type=EdgeSelectionType.RANDOM,
-            num_replicates=2,
-            setting_name="test",
-            planning_task=TestSimulationRunner.planning_task,
+        self.select_view_integration_test(
+            PlanDisambiguationView.BUILD_BACKWARD, EdgeSelectionType.RANDOM
         )
-        simulation_output = run_simulation(simulation_input)
-        metrics = simulation_output.simulation_results
-
-        self.assertEqual(len(metrics), simulation_input.num_replicates)
-        for i in range(len(metrics)):
-            self.assertGreaterEqual(len(metrics[i]), 1)
 
     def test_run_simulation_unit(self) -> None:
         num_replicates = 2

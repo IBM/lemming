@@ -466,18 +466,27 @@ class PlanArea extends React.Component {
                               []
                           );
 
-                this.setState({
-                    ...this.state,
-                    remaining_plans: data.plans,
-                    graph: data.networkx_graph,
-                    choice_infos: data.choice_infos,
-                    unselected_landmarks: unselected_landmarks,
-                    edge_plan_hashes_dict: data.edge_plan_hashes_dict,
-                    notifications: {
-                        ...this.state.notifications,
-                        viz_loading: false,
+                this.setState(
+                    {
+                        ...this.state,
+                        remaining_plans: data.plans,
+                        graph: data.networkx_graph,
+                        choice_infos: data.choice_infos,
+                        unselected_landmarks: unselected_landmarks,
+                        edge_plan_hashes_dict: data.edge_plan_hashes_dict,
+                        notifications: {
+                            ...this.state.notifications,
+                            viz_loading: false,
+                        },
                     },
-                });
+                    () => {
+                        const feedback = this.generateFeedback();
+                        this.setState({
+                            ...this.state,
+                            feedback: feedback,
+                        });
+                    }
+                );
             })
             .catch(err => {
                 console.error(err);
@@ -502,18 +511,18 @@ class PlanArea extends React.Component {
             feedback += `Have fun with the ${domain_name} domain!`;
         }
 
-        if (this.state.plans.length > 0) {
-            const max_cost = this.state.plans.reduce(
+        if (this.state.remaining_plans.length > 0) {
+            const max_cost = this.state.remaining_plans.reduce(
                 (max_cost, item) =>
                     item.cost > max_cost ? item.cost : max_cost,
                 0
             );
-            const min_cost = this.state.plans.reduce(
+            const min_cost = this.state.remaining_plans.reduce(
                 (min_cost, item) =>
                     item.cost <= min_cost ? item.cost : min_cost,
                 Infinity
             );
-            const num_plans = this.state.plans.length;
+            const num_plans = this.state.remaining_plans.length;
 
             if (num_plans > 1)
                 feedback += ` You have ${num_plans} plans to select from with minimum cost ${min_cost} and maximal cost ${max_cost}.`;

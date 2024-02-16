@@ -1,3 +1,9 @@
+function getPlanHashesByName(action_name, plans) {
+    return plans
+        .filter(plan => plan.actions.indexOf(action_name) > -1)
+        .map(item => item.plan_hash);
+}
+
 function generateDescription(data) {
     if (data.label) {
         return parseEdgeName(data.label);
@@ -6,6 +12,10 @@ function generateDescription(data) {
     }
 
     return '';
+}
+
+function generateEdgeKey(edge) {
+    return edge.fromId + '_' + edge.toId;
 }
 
 function generateStateDescription(raw_string) {
@@ -124,12 +134,35 @@ function getActiveNodes(state, all_flag) {
     if (!state.graph || !state.graph.nodes) return [];
 
     const basis_nodes = getBasisNodes(state, all_flag);
-    return basis_nodes === null
-        ? []
-        : state.graph.links
-              .filter(item => basis_nodes.indexOf(item.source) > -1)
-              .map(item => item.target)
-              .concat(basis_nodes);
+    var candidate_nodes = [];
+
+    if (!basis_nodes) return [];
+
+    if (!state.controls.select_by_name || state.active_view === 'Select View')
+        return state.graph.links
+            .filter(item => basis_nodes.indexOf(item.source) > -1)
+            .map(item => item.target)
+            .concat(basis_nodes);
+
+    basis_nodes.forEach(basis_node => {
+        var new_candidate_nodes = [];
+
+        state.graph.links
+            .filter(item => basis_node === item.source)
+            .forEach(item => {
+                if (
+                    getPlanHashesByName(parseEdgeName(item.label), state.plans)
+                        .length < state.plans.length
+                )
+                    new_candidate_nodes.push(item.target);
+            });
+
+        if (new_candidate_nodes) new_candidate_nodes.push(basis_node);
+
+        candidate_nodes = candidate_nodes.concat(new_candidate_nodes);
+    });
+
+    return candidate_nodes;
 }
 
 function generateURL(dir, file, ext) {
@@ -150,7 +183,9 @@ function shuffleArray(array) {
 }
 
 export {
+    getPlanHashesByName,
     generateDescription,
+    generateEdgeKey,
     generateStateDescription,
     generateNodes,
     generateEdges,

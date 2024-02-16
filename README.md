@@ -37,24 +37,38 @@ We also strongly recommend using a virtual environment, such
 as [anaconda](https://www.anaconda.com/), for development.
 
 ```bash
-$ conda create --name lemming python=3.10.11
-$ conda activate lemming
+user:~$ conda create --name lemming python=3.10.11
+user:~$ conda activate lemming
 ```
 
-### Install Dependencies
+### Install Lemming Dependencies
 
 ```bash
 (lemming) user:~$ pip install -e .
 ```
 
-(Optional) For the NL2LTL integration, install it without the Rasa dependency and build submodules.
+### Use the NL2LTL integration (optional)
+
+First, install `nl2ltl` and `plan4past` with:
 
 ```bash
-(lemming) user:~$ pip install nl2ltl --no-deps
-(lemming) user:~$ pip install pylogics openai==0.27.8 rasa==3.6.15
-(lemming) user:~$ brew install autoconf automake libtool # for MacOS
+(lemming) user:~$ pip install -e ".[nl2ltl]"
+```
+
+Then, build the `symk` planner with:
+
+```bash
 (lemming) user:~$ ./scripts/build-submodules.sh
-(lemming) user:~$ pip install --upgrade --no-deps --force-reinstall pydantic==2.5.2
+```
+
+(Make sure you have `autoconf`, `automake`, `cmake`, `g++`, `libtool`, and
+`make` pre-installed on your system).
+
+In order to use the NL2LTL Integration, don't forget to add your OpenAI API key
+to your environment variables with the name `OPENAI_API_KEY`.
+
+```bash
+(lemming) user:~$ export OPENAI_API_KEY=<your_openai_api_key>
 ```
 
 ### Start the Lemming Server
@@ -75,6 +89,12 @@ user:~$ yarn start
 ## Contributing
 
 Contributions are welcome! 🤗 For instructions on setting up, go [here](docs/CONTRIBUTING.md).
+
+You can install dev dependencies with:
+
+```bash
+(lemming) user:~$ pip install -e ".[dev]"
+```
 
 ## Citing our work
 

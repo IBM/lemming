@@ -1,4 +1,5 @@
 import React from 'react';
+import { getPlanHashesByName } from '../../components/Info';
 import { BuildForward } from './BuildForward';
 import { BuildBackward } from './BuildBackward';
 import { SelectView } from './SelectView';
@@ -17,6 +18,7 @@ import {
     TabList,
     Tabs,
     Tab,
+    Toggle,
     StructuredListWrapper,
     StructuredListHead,
     StructuredListBody,
@@ -40,12 +42,6 @@ const components = {
     SelectView: SelectView,
     NL2LTLIntegration: NL2LTLIntegration,
 };
-
-function getPlanHashesFromChoice(action_name, plans) {
-    return plans
-        .filter(plan => plan.actions.indexOf(action_name) > -1)
-        .map(item => item.plan_hash);
-}
 
 function getDomainName(domain_string) {
     const reg = /.*\(domain (.*)\).*/g;
@@ -76,12 +72,14 @@ class PlanArea extends React.Component {
             selected_landmarks: new Set(),
             unselected_landmarks: new Set(),
             choice_infos: [],
+            edge_plan_hashes_dict: {},
             controls: {
                 selected_domain: null,
                 modal_open: false,
                 upload_tab: 0,
                 num_plans: 10,
                 quality_bound: 1.2,
+                select_by_name: true,
             },
             notifications: {
                 import_select: false,
@@ -223,9 +221,20 @@ class PlanArea extends React.Component {
 
     logViewChange(e) {
         this.props.changeView(e);
-        this.setState({ active_view: e.name }, () => {
-            this.generateViz();
-        });
+        this.setState(
+            {
+                active_view: e.name,
+                selected_landmarks: this.state.controls.select_by_name
+                    ? this.state.selected_landmarks
+                    : [],
+                unselected_landmarks: this.state.controls.select_by_name
+                    ? this.state.unselected_landmarks
+                    : [],
+            },
+            () => {
+                this.generateViz();
+            }
+        );
     }
 
     changeTab(tabIndex) {
@@ -391,16 +400,27 @@ class PlanArea extends React.Component {
             this.state.active_view.toLowerCase().replace(/\s/g, '_');
 
         var cache_plans = this.state.plans;
-        const selection_infos = this.state.selected_landmarks.map((item, i) => {
-            const plan_hashes = getPlanHashesFromChoice(item, cache_plans);
-            cache_plans = cache_plans.filter(
-                item => plan_hashes.indexOf(item.plan_hash) > -1
-            );
+        var selection_infos = [];
 
-            return {
-                selected_first_achiever: item,
-                selected_plan_hashes: plan_hashes,
-            };
+        this.state.selected_landmarks.forEach(item => {
+            var plan_hashes = [];
+
+            if (this.state.controls.select_by_name || !item.key) {
+                plan_hashes = getPlanHashesByName(item.name, cache_plans);
+            } else {
+                plan_hashes = this.state.edge_plan_hashes_dict[item.key];
+            }
+
+            if (plan_hashes) {
+                cache_plans = cache_plans.filter(
+                    item => plan_hashes.indexOf(item.plan_hash) > -1
+                );
+
+                selection_infos.push({
+                    selected_first_achiever: item.name,
+                    selected_plan_hashes: plan_hashes,
+                });
+            }
         });
 
         var payload = {
@@ -433,23 +453,40 @@ class PlanArea extends React.Component {
                               (choices, item) =>
                                   item.landmark
                                       ? choices.concat(
-                                            item.landmark.first_achievers
+                                            item.landmark.first_achievers.map(
+                                                i => {
+                                                    return {
+                                                        name: i,
+                                                        key: null,
+                                                    };
+                                                }
+                                            )
                                         )
                                       : [],
                               []
                           );
 
-                this.setState({
-                    ...this.state,
-                    remaining_plans: data.plans,
-                    graph: data.networkx_graph,
-                    choice_infos: data.choice_infos,
-                    unselected_landmarks: unselected_landmarks,
-                    notifications: {
-                        ...this.state.notifications,
-                        viz_loading: false,
+                this.setState(
+                    {
+                        ...this.state,
+                        remaining_plans: data.plans,
+                        graph: data.networkx_graph,
+                        choice_infos: data.choice_infos,
+                        unselected_landmarks: unselected_landmarks,
+                        edge_plan_hashes_dict: data.edge_plan_hashes_dict,
+                        notifications: {
+                            ...this.state.notifications,
+                            viz_loading: false,
+                        },
                     },
-                });
+                    () => {
+                        const feedback = this.generateFeedback();
+                        this.setState({
+                            ...this.state,
+                            feedback: feedback,
+                        });
+                    }
+                );
             })
             .catch(err => {
                 console.error(err);
@@ -474,18 +511,18 @@ class PlanArea extends React.Component {
             feedback += `Have fun with the ${domain_name} domain!`;
         }
 
-        if (this.state.plans.length > 0) {
-            const max_cost = this.state.plans.reduce(
+        if (this.state.remaining_plans.length > 0) {
+            const max_cost = this.state.remaining_plans.reduce(
                 (max_cost, item) =>
                     item.cost > max_cost ? item.cost : max_cost,
                 0
             );
-            const min_cost = this.state.plans.reduce(
+            const min_cost = this.state.remaining_plans.reduce(
                 (min_cost, item) =>
                     item.cost <= min_cost ? item.cost : min_cost,
                 Infinity
             );
-            const num_plans = this.state.plans.length;
+            const num_plans = this.state.remaining_plans.length;
 
             if (num_plans > 1)
                 feedback += ` You have ${num_plans} plans to select from with minimum cost ${min_cost} and maximal cost ${max_cost}.`;
@@ -498,16 +535,18 @@ class PlanArea extends React.Component {
         var selected_landmarks = this.state.selected_landmarks;
         var unselected_landmarks = this.state.unselected_landmarks;
 
-        for (var i = 0; i < landmarks.length; i++) {
-            if (selected_landmarks.indexOf(landmarks[i]) === -1)
-                selected_landmarks.push(landmarks[i]);
+        landmarks.forEach(landmark => {
+            if (
+                selected_landmarks
+                    .map(item => item.name)
+                    .indexOf(landmark.name) === -1
+            )
+                selected_landmarks.push(landmark);
 
-            if (unselected_landmarks.indexOf(landmarks[i]) > -1)
-                unselected_landmarks.splice(
-                    unselected_landmarks.indexOf(landmarks[i]),
-                    1
-                );
-        }
+            unselected_landmarks = unselected_landmarks.filter(
+                l => l.name !== landmark.name
+            );
+        });
 
         this.setState(
             {
@@ -526,16 +565,18 @@ class PlanArea extends React.Component {
         var selected_landmarks = this.state.selected_landmarks;
         var unselected_landmarks = this.state.unselected_landmarks;
 
-        for (var i = 0; i < landmarks.length; i++) {
-            if (unselected_landmarks.indexOf(landmarks[i]) === -1)
-                unselected_landmarks.push(landmarks[i]);
+        landmarks.forEach(landmark => {
+            if (
+                unselected_landmarks
+                    .map(item => item.name)
+                    .indexOf(landmark.name) === -1
+            )
+                unselected_landmarks.push(landmark);
 
-            if (selected_landmarks.indexOf(landmarks[i]) > -1)
-                selected_landmarks.splice(
-                    selected_landmarks.indexOf(landmarks[i]),
-                    1
-                );
-        }
+            selected_landmarks = selected_landmarks.filter(
+                l => l.name !== landmark.name
+            );
+        });
 
         this.setState(
             {
@@ -589,12 +630,22 @@ class PlanArea extends React.Component {
         });
     }
 
-    onEdgeClick(edge) {
-        this.selectLandmarks([edge]);
+    onEdgeClick(selection_item) {
+        this.selectLandmarks([selection_item]);
     }
 
     commitChanges(commits) {
         this.selectLandmarks(Array.from(commits));
+    }
+
+    setSelectionMode(e) {
+        this.setState({
+            ...this.state,
+            controls: {
+                ...this.state.controls,
+                select_by_name: !this.state.controls.select_by_name,
+            },
+        });
     }
 
     render() {
@@ -979,19 +1030,48 @@ class PlanArea extends React.Component {
                                                 {!this.state.notifications
                                                     .viz_loading &&
                                                     this.state.graph && (
-                                                        <Component
-                                                            key={id}
-                                                            onEdgeClick={this.onEdgeClick.bind(
-                                                                this
+                                                        <>
+                                                            {this.state
+                                                                .active_view !==
+                                                                'NL2LTL Integration' && (
+                                                                <>
+                                                                    <br />
+                                                                    <Toggle
+                                                                        aria-label="toggle commit mode"
+                                                                        id="toggle-selection-mode"
+                                                                        size="sm"
+                                                                        labelText=""
+                                                                        labelA="Select by EDGE"
+                                                                        labelB="Select by NAME"
+                                                                        toggled={
+                                                                            this
+                                                                                .state
+                                                                                .controls
+                                                                                .select_by_name
+                                                                        }
+                                                                        onClick={this.setSelectionMode.bind(
+                                                                            this
+                                                                        )}
+                                                                    />
+                                                                </>
                                                             )}
-                                                            commitChanges={this.commitChanges.bind(
-                                                                this
-                                                            )}
-                                                            state={this.state}
-                                                            update_planner_payload={this.update_planner_payload.bind(
-                                                                this
-                                                            )}
-                                                        />
+
+                                                            <Component
+                                                                key={id}
+                                                                onEdgeClick={this.onEdgeClick.bind(
+                                                                    this
+                                                                )}
+                                                                commitChanges={this.commitChanges.bind(
+                                                                    this
+                                                                )}
+                                                                state={
+                                                                    this.state
+                                                                }
+                                                                update_planner_payload={this.update_planner_payload.bind(
+                                                                    this
+                                                                )}
+                                                            />
+                                                        </>
                                                     )}
                                             </div>
                                         );
@@ -1029,11 +1109,11 @@ class FeedbackArea extends React.Component {
     }
 
     selectLandmark(landmark) {
-        this.props.selectLandmarks([landmark]);
+        this.props.selectLandmarks([{ name: landmark, key: null }]);
     }
 
     deselectLandmark(landmark) {
-        this.props.deselectLandmarks([landmark]);
+        this.props.deselectLandmarks([{ name: landmark, key: null }]);
     }
 
     deleteUserPrompt(prompt) {
@@ -1041,11 +1121,15 @@ class FeedbackArea extends React.Component {
     }
 
     getNumPlans(item) {
-        const plan_hashes = getPlanHashesFromChoice(
+        const plan_hashes = getPlanHashesByName(
             item,
             this.state.remaining_plans
         );
         return plan_hashes.length;
+    }
+
+    resetSelections(e) {
+        this.props.deselectLandmarks(this.state.selected_landmarks);
     }
 
     render() {
@@ -1057,7 +1141,8 @@ class FeedbackArea extends React.Component {
 
                 <StructuredListWrapper ariaLabel="Choices">
                     {this.state.active_view !== 'NL2LTL Integration' &&
-                        this.state.choice_infos.length > 0 && (
+                        (this.state.selected_landmarks.length > 0 ||
+                            this.state.unselected_landmarks.length > 0) && (
                             <>
                                 <StructuredListHead>
                                     <StructuredListRow head>
@@ -1069,24 +1154,35 @@ class FeedbackArea extends React.Component {
                                 <StructuredListBody className="landmarks-list">
                                     {this.state.selected_landmarks.map(
                                         (item, i) => (
-                                            <StructuredListRow key={item}>
+                                            <StructuredListRow key={i}>
                                                 <StructuredListCell
-                                                    className="text-blue landmark-list-item"
-                                                    onClick={this.deselectLandmark.bind(
-                                                        this,
-                                                        item
-                                                    )}>
-                                                    {item}
+                                                    className={
+                                                        'text-blue' +
+                                                        (this.state.controls
+                                                            .select_by_name
+                                                            ? ' landmark-list-item'
+                                                            : '')
+                                                    }
+                                                    onClick={
+                                                        this.state.controls
+                                                            .select_by_name
+                                                            ? this.deselectLandmark.bind(
+                                                                  this,
+                                                                  item.name
+                                                              )
+                                                            : null
+                                                    }>
+                                                    {item.name}
                                                     <Tag
                                                         className="count-tag"
                                                         size="sm"
                                                         type="cool-gray"
                                                         title={this.getNumPlans(
-                                                            item
+                                                            item.name
                                                         ).toString()}>
                                                         {' '}
                                                         {this.getNumPlans(
-                                                            item
+                                                            item.name
                                                         )}{' '}
                                                     </Tag>
                                                 </StructuredListCell>
@@ -1097,24 +1193,35 @@ class FeedbackArea extends React.Component {
                                 <StructuredListBody className="landmarks-list">
                                     {this.state.unselected_landmarks.map(
                                         (item, i) => (
-                                            <StructuredListRow key={item}>
+                                            <StructuredListRow key={i}>
                                                 <StructuredListCell
-                                                    className="text-silver landmark-list-item"
-                                                    onClick={this.selectLandmark.bind(
-                                                        this,
-                                                        item
-                                                    )}>
-                                                    {item}
+                                                    className={
+                                                        'text-silver' +
+                                                        (this.state.controls
+                                                            .select_by_name
+                                                            ? ' landmark-list-item'
+                                                            : '')
+                                                    }
+                                                    onClick={
+                                                        this.state.controls
+                                                            .select_by_name
+                                                            ? this.selectLandmark.bind(
+                                                                  this,
+                                                                  item.name
+                                                              )
+                                                            : null
+                                                    }>
+                                                    {item.name}
                                                     <Tag
                                                         className="count-tag"
                                                         size="sm"
                                                         type="cool-gray"
                                                         title={this.getNumPlans(
-                                                            item
+                                                            item.name
                                                         ).toString()}>
                                                         {' '}
                                                         {this.getNumPlans(
-                                                            item
+                                                            item.name
                                                         )}{' '}
                                                     </Tag>
                                                 </StructuredListCell>
@@ -1133,6 +1240,19 @@ class FeedbackArea extends React.Component {
                                     interest, with ones currently selected by
                                     you in blue. Click to toggle selection.
                                 </Tile>
+                                {this.state.selected_landmarks.length > 0 && (
+                                    <>
+                                        <br />
+                                        <Button
+                                            kind="tertiary"
+                                            size="sm"
+                                            onClick={this.resetSelections.bind(
+                                                this
+                                            )}>
+                                            Reset
+                                        </Button>
+                                    </>
+                                )}
                             </>
                         )}
 

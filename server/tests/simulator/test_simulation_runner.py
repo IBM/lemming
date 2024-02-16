@@ -70,7 +70,7 @@ class TestSimulationRunner(unittest.TestCase):
 
     def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(
         self,
-    ) -> None:
+    ):
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,

@@ -4,12 +4,6 @@ from typing import List, Dict, Optional, cast
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from nl2ltl import translate
-from nl2ltl.declare.base import Template
-from nl2ltl.engines.gpt.core import GPTEngine, Models
-from pddl.formatter import domain_to_string, problem_to_string
-from pddl.parser.domain import DomainParser
-from pddl.parser.problem import ProblemParser
 
 from server.helpers.common_helper.file_helper import (
     read_str_from_upload_file,
@@ -28,7 +22,10 @@ from server.helpers.nl2plan_helper.nl2ltl_helper import (
     prompt_builder,
     LTLFormula,
 )
-from server.helpers.nl2plan_helper.utils import temporary_directory
+from server.helpers.nl2plan_helper.utils import (
+    temporary_directory,
+    requires_optional,
+)
 from server.helpers.plan_disambiguator_helper.build_flow_helper import (
     get_build_flow_output,
 )
@@ -52,7 +49,22 @@ from server.planners.drivers.landmark_driver_datatype import (
     LandmarksResponseModel,
 )
 from server.planners.drivers.planner_driver_datatype import PlanningResult
-from server.planners.symk import SymKPlanner
+
+try:
+    from nl2ltl.declare.base import Template
+    from nl2ltl import translate
+    from nl2ltl.engines.gpt.core import GPTEngine
+    from pddl.parser.domain import DomainParser
+    from pddl.parser.problem import ProblemParser
+    from pddl.formatter import domain_to_string, problem_to_string
+    from planners.symk import SymKPlanner
+
+    is_nl2ltl_installed = True
+except ImportError:
+    is_nl2ltl_installed = False
+
+
+FILEPATH = Path(__file__).parent.resolve()
 
 app = FastAPI(
     title="Lemming",
@@ -87,13 +99,23 @@ async def file_upload(file: UploadFile = File(...)) -> Optional[str]:
 
 @app.post("/import_domain/{domain_name}")
 async def import_domain(domain_name: str) -> LemmingTask:
+    path_to_domain_file = Path.joinpath(
+        FILEPATH, f"data/{domain_name}/domain.pddl"
+    ).resolve()
+    path_to_problem_file = Path.joinpath(
+        FILEPATH, f"data/{domain_name}/problem.pddl"
+    ).resolve()
     planning_task = PlanningTask(
-        domain=open(f"./data/{domain_name}/domain.pddl").read(),
-        problem=open(f"./data/{domain_name}/problem.pddl").read(),
+        domain=open(path_to_domain_file).read(),
+        problem=open(path_to_problem_file).read(),
     )
 
     try:
-        plans = json.load(open(f"./data/{domain_name}/plans.json"))
+        path_to_plan_file = Path.joinpath(
+            FILEPATH, f"data/{domain_name}/plans.json"
+        ).resolve()
+
+        plans = json.load(open(path_to_plan_file))
         plans = [Plan.model_validate(item) for item in plans]
 
     except Exception as e:
@@ -101,7 +123,11 @@ async def import_domain(domain_name: str) -> LemmingTask:
         plans = []
 
     try:
-        prompt = json.load(open(f"./data/{domain_name}/prompt.json"))
+        path_to_prompt_file = Path.joinpath(
+            FILEPATH, f"data/{domain_name}/prompt.json"
+        ).resolve()
+
+        prompt = json.load(open(path_to_prompt_file))
         nl_prompts = [CachedPrompt.model_validate(item) for item in prompt]
 
     except Exception as e:
@@ -185,6 +211,7 @@ def generate_build_backward(
 
 
 @app.post("/generate_nl2ltl_integration")
+@requires_optional
 def generate_nl2ltl_integration(
     plan_disambiguator_input: PlanDisambiguatorInput,
 ) -> PlanDisambiguatorOutput:
@@ -192,12 +219,14 @@ def generate_nl2ltl_integration(
 
 
 @app.post("/nl2ltl", response_model=None)
+@requires_optional
 async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
     domain_name = request.domain_name
     if domain_name:
-        custom_prompt = prompt_builder(
-            prompt_path=Path(f"data/{domain_name}/prompt.json").resolve()
-        )
+        path_to_prompt_file = Path.joinpath(
+            FILEPATH, f"data/{domain_name}/prompt.json"
+        ).resolve()
+        custom_prompt = prompt_builder(prompt_path=path_to_prompt_file)
     else:
         raise NotImplementedError
 
@@ -206,7 +235,7 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
         tmp_file = tmp_file.resolve()
         tmp_file.write_text(custom_prompt, encoding="utf-8")
 
-        engine = GPTEngine(model=Models.DAVINCI3.value, prompt=tmp_file)
+        engine = GPTEngine(prompt=tmp_file)
 
     utterance = request.utterance
     matched_formulas: Dict[Template, float] = cast(
@@ -222,6 +251,7 @@ async def nl2ltl(request: NL2LTLRequest) -> List[LTLFormula]:
 
 
 @app.post("/ltl_compile/{tool}")
+@requires_optional
 async def ltl_compile(
     request: LTL2PDDLRequest, tool: ToolCompiler
 ) -> LemmingTask:

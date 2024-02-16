@@ -1,257 +1,118 @@
 [
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
             "wo__getjobrequisitions_selector",
-            "wo__postjobs"
+            "wo__postjobsindeed"
         ],
         "cost": 103,
-        "plan_hash": "5afedcb9d4d94550102512a71b6fd48d"
+        "plan_hash": "2e0f0ab33e80d11f0f644c133d276f1e"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
+            "wo__getjobrequisitions_selector",
+            "wo__postjobslinkedin"
+        ],
+        "cost": 103,
+        "plan_hash": "9728573d245e423758ed5ec3922531fd"
+    },
+    {
+        "actions": [
+            "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
             "wo__getjobrequisitions",
             "wo__getjobrequisitions_selector",
-            "wo__update_jr_details",
-            "wo__postjobs"
+            "wo__postjobsindeed"
+        ],
+        "cost": 103,
+        "plan_hash": "14a147b1b2146516f957bb35c0024ebe"
+    },
+    {
+        "actions": [
+            "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
+            "wo__getjobrequisitions",
+            "wo__getjobrequisitions_selector",
+            "wo__postjobslinkedin"
+        ],
+        "cost": 103,
+        "plan_hash": "a9b41d10bb90e3929997352afe77728a"
+    },
+    {
+        "actions": [
+            "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
+            "wo__getjobrequisitions_selector",
+            "wo__getjobrequisitions",
+            "wo__postjobsindeed"
         ],
         "cost": 104,
-        "plan_hash": "5796744bb89e8c06a7de0cf7e1c4594e"
+        "plan_hash": "950836ea1215034c5c537ab57a110574"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
             "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "wo__postjobs"
-        ],
-        "cost": 153,
-        "plan_hash": "8666c54d087147a162790bac8adeac62"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
             "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---hiringmanagernote",
-            "wo__postjobs"
+            "wo__postjobslinkedin"
         ],
-        "cost": 153,
-        "plan_hash": "0a4539b24a8ade2b5b7caf129181fe96"
+        "cost": 104,
+        "plan_hash": "502872acc06c5131447ea99712ad5d73"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---hiringmanager",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
             "wo__getjobrequisitions_selector",
-            "wo__postjobs"
+            "wo__update_jr_details",
+            "wo__postjobsindeed"
         ],
-        "cost": 153,
-        "plan_hash": "b0b954ac28921aff9b0dd5d3a97dda24"
+        "cost": 104,
+        "plan_hash": "295de1e60c1b60ee9b1308fafab4d885"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---recruiter",
+            "slot-filler---channelname",
+            "wo__showapprovedjrs",
             "wo__getjobrequisitions_selector",
-            "wo__postjobs"
+            "wo__update_jr_details",
+            "wo__postjobslinkedin"
         ],
-        "cost": 153,
-        "plan_hash": "d7b6e839c019ee865dbaac33542431eb"
+        "cost": 104,
+        "plan_hash": "5b03f220347ae00a28e7d662ce47f4e0"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
             "wo__getjobrequisitions",
             "wo__getjobrequisitions_selector",
             "wo__update_jr_details",
-            "slot-filler---status_in_query_create_jr",
-            "wo__postjobs"
+            "wo__postjobsindeed"
         ],
-        "cost": 154,
-        "plan_hash": "6cff990ccbdfde8c36d272abd4704ffe"
+        "cost": 104,
+        "plan_hash": "1a0cdf8a150a242b2c5e3df768db132a"
     },
     {
         "actions": [
-            "slot-filler---channelname",
             "slot-filler---status_in_query_get_jrs",
+            "slot-filler---channelname",
             "wo__getjobrequisitions",
             "wo__getjobrequisitions_selector",
             "wo__update_jr_details",
-            "slot-filler---hiringmanagernote",
-            "wo__postjobs"
+            "wo__postjobslinkedin"
         ],
-        "cost": 154,
-        "plan_hash": "d16e99ce57c1b84ab10ad8ee1d750653"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "wo__createnewjobrequisitionexisting",
-            "wo__postjobs"
-        ],
-        "cost": 154,
-        "plan_hash": "49b7a689a9d0029fea1727f897b7542f"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---hiringmanagernote",
-            "wo__approve_jrs_approve_jrs_post",
-            "wo__postjobs"
-        ],
-        "cost": 154,
-        "plan_hash": "0253483550e501c48859c98991d93948"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---hiringmanager",
-            "wo__getjobrequisitions_selector",
-            "wo__update_jr_details",
-            "wo__postjobs"
-        ],
-        "cost": 154,
-        "plan_hash": "f107e3c4fe601900e3160a62cf2c4f86"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---recruiter",
-            "wo__getjobrequisitions_selector",
-            "wo__update_jr_details",
-            "wo__postjobs"
-        ],
-        "cost": 154,
-        "plan_hash": "de0cfee24de51df1809a532b2245084b"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "wo__update_jr_details",
-            "slot-filler---hiringmanagernote",
-            "wo__approve_jrs_approve_jrs_post",
-            "wo__postjobs"
-        ],
-        "cost": 155,
-        "plan_hash": "5680f94583199eca9ad4ad2721402e6d"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "wo__createnewjobrequisitionexisting",
-            "wo__update_jr_details",
-            "wo__postjobs"
-        ],
-        "cost": 155,
-        "plan_hash": "beb7c8566895b6ca71b7659595713f4c"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "slot-filler---hiringmanagernote",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "d6d4a01c453d2c59c8a05edfed1b6fb8"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---hiringmanager",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "8d25c1df5d6dd251de07813f89f60425"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---hiringmanager",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---hiringmanagernote",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "f73f3906253a6ebd676a9c17d9df48f7"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---recruiter",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---status_in_query_create_jr",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "f15ab6ea2e0fd85412229f7960460b57"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---recruiter",
-            "wo__getjobrequisitions_selector",
-            "slot-filler---hiringmanagernote",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "4f7b4b0d435db7a0001b0a065e429d20"
-    },
-    {
-        "actions": [
-            "slot-filler---channelname",
-            "slot-filler---status_in_query_get_jrs",
-            "wo__getjobrequisitions",
-            "slot-filler---hiringmanager",
-            "slot-filler---recruiter",
-            "wo__getjobrequisitions_selector",
-            "wo__postjobs"
-        ],
-        "cost": 203,
-        "plan_hash": "65217fafae7ebd86a1d8995c87f0f669"
+        "cost": 104,
+        "plan_hash": "c811ea1b36ba09dc573034db73bb2665"
     }
 ]

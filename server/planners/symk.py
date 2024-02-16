@@ -24,7 +24,10 @@ DEFAULT_BIN_SYMK_PATH = (
 ).absolute()
 DEFAULT_K = 10
 DEFAULT_Q = 2
-DEFAULT_HEURISTIC = f"(plan_selection=top_k(num_plans={str(DEFAULT_K)},dump_plans=false),quality={str(DEFAULT_Q)})"
+DEFAULT_HEURISTIC = (
+    f"(plan_selection=top_k(num_plans={str(DEFAULT_K)},"
+    f"dump_plans=false),quality={str(DEFAULT_Q)})"
+)
 DEFAULT_SEARCH = f"symq-bd({DEFAULT_HEURISTIC})"
 
 
@@ -130,6 +133,9 @@ class SymKPlanner(Planner):
             str(domain_path.absolute()),
             str(problem_path.absolute()),
             "--search",
-            f"symq-bd(plan_selection=top_k(num_plans={str(num_plans)},dump_plans=false),quality={str(quality)})",
+            (
+                f"symq-bd(plan_selection=top_k(num_plans={str(num_plans)},"
+                f"dump_plans=false),quality={str(quality)})"
+            ),
         ]
         subprocess.check_call(cmd)  # type: ignore

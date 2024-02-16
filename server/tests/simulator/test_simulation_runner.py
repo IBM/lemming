@@ -65,7 +65,7 @@ class TestSimulationRunner(unittest.TestCase):
         for i in range(len(metrics)):
             self.assertGreaterEqual(len(metrics[i]), 1)
 
-    def test_run_simulation_select_flow(self):
+    def test_run_simulation_select_flow(self) -> None:
         simulation_input = SimulationInput(
             plan_disambiguator_view=PlanDisambiguationView.SELECT,
             landmark_category=LandmarkCategory.RWH,
@@ -88,7 +88,7 @@ class TestSimulationRunner(unittest.TestCase):
                 self.assertIsNotNone(simulation_unit.plan_costs)
                 self.assertIsNotNone(simulation_unit.num_choice_infos)
 
-    def test_run_simulation_select_flow_greedy_disjunctive_action_landmark_selection(
+    def test_run_simulation_select_flow_greedy_action_landmark_selection(
         self,
     ) -> None:
         self.select_view_integration_test(

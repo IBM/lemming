@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import {
     generateDescription,
+    generateEdgeKey,
     parseEdgeName,
     generateNodes,
     generateEdges,
@@ -24,7 +25,9 @@ const BuildForward = props => {
 
     const onEdgeClick = edge => {
         const label = parseEdgeName(edge.label);
-        props.onEdgeClick(label);
+        const selection_item = { name: label, key: generateEdgeKey(edge) };
+
+        props.onEdgeClick(selection_item);
     };
 
     const onFocus = e => {

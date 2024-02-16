@@ -5,6 +5,7 @@ license = {file = "LICENSE"}
 authors = [
     { name = "Jung koo Kang", email = "jungkoo.kang@ibm.com" },
     { name = "Tathagata Chakraborti", email = "tchakra2@ibm.com" },
+    { name = "Francesco Fuggitti", email = "francesco.fuggitti@gmail.com" },
 ]
 description = "Human in the loop plan selection"
 readme = "README.md"
@@ -44,19 +45,22 @@ dependencies = [
     "networkx==3.1.0",
     "python-multipart==0.0.6",
     "uvicorn[standard] >=0.19.0",
-    "plan4past @ git+https://github.com/whitemech/Plan4Past.git",
 ]
 
 [project.optional-dependencies]
-test = ["coverage==7.2.5"]
 dev = [
     "check-manifest",
+    "coverage==7.2.5",
     "pytest==7.3.1",
     "black==22.3.0",
     "pylint==2.17.4",
     "flake8==6.0.0",
     "pre-commit==3.3.1",
     "Flake8-pyproject"
+]
+nl2ltl = [
+    "nl2ltl",
+    "plan4past @ git+https://github.com/whitemech/Plan4Past.git"
 ]
 
 [tool.setuptools]
@@ -67,6 +71,7 @@ include = ["server*"]
 
 [project.urls]
 "Repository" = "https://github.com/IBM/lemming"
+"Issues" = "https://github.com/IBM/lemming/issues"
 
 [build-system]
 requires = ["setuptools"]
@@ -90,3 +95,45 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.mypy]
+python_version="3.10"
+mypy_path = "server"
+
+show_column_numbers = true
+
+# show error messages from unrelated files
+follow_imports = "normal"
+
+# suppress errors about unsatisfied imports
+ignore_missing_imports = true
+
+# be strict
+disallow_untyped_calls = true
+warn_return_any = true
+strict_optional = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+no_implicit_optional = true
+
+# Unreachable blocks have been an issue when compiling mypyc, let's try
+# to avoid 'em in the first place.
+warn_unreachable = true
+
+# The following are off by default.  Flip them on if you feel adventurous.
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.pylint."MAIN"]
+py-version=3.10
+
+[tool.pylint."FORMAT"]
+max-line-length = 80
+
+[tool.flake8]
+extend-ignore = ["E203", "E501"]
+count = true
+max-line-length = 80
+max-complexity = 18

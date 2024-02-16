@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import {
     generateDescription,
+    generateEdgeKey,
     parseEdgeName,
     generateNodes,
     generateEdges,
@@ -41,7 +42,7 @@ const SelectView = props => {
         if (commits.length > 0) {
             const commit_msg =
                 'Selected edges: <strong>' +
-                commits.join(', ') +
+                commits.map(item => item.name).join(', ') +
                 "</strong>. Don't forget to commit!";
             setFeedbackText(commit_msg);
         } else {
@@ -51,11 +52,12 @@ const SelectView = props => {
 
     const onEdgeClick = edge => {
         const label = parseEdgeName(edge.label);
+        const selection_item = { name: label, key: generateEdgeKey(edge) };
 
         if (commit_mode) {
-            setCommits(label);
+            setCommits(selection_item);
         } else {
-            props.onEdgeClick(label);
+            props.onEdgeClick(selection_item);
         }
     };
 
@@ -90,7 +92,7 @@ const SelectView = props => {
                 {nodes.length > 0 && !props.no_feedback && (
                     <div className="hover-zone">
                         <Toggle
-                            aria-label="toggle commitm mode"
+                            aria-label="toggle commit mode"
                             id="toggle-commit-mode"
                             size="sm"
                             labelText=""

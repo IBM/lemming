@@ -138,7 +138,7 @@ function getActiveNodes(state, all_flag) {
 
     if (!basis_nodes) return [];
 
-    if (state.controls.select_by_name)
+    if (!state.controls.select_by_name || state.active_view === 'Select View')
         return state.graph.links
             .filter(item => basis_nodes.indexOf(item.source) > -1)
             .map(item => item.target)

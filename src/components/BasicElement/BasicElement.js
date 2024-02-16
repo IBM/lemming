@@ -1108,6 +1108,10 @@ class FeedbackArea extends React.Component {
         return plan_hashes.length;
     }
 
+    resetSelections(e) {
+        this.props.deselectLandmarks(this.state.selected_landmarks);
+    }
+
     render() {
         return (
             <>
@@ -1132,11 +1136,22 @@ class FeedbackArea extends React.Component {
                                         (item, i) => (
                                             <StructuredListRow key={i}>
                                                 <StructuredListCell
-                                                    className="text-blue landmark-list-item"
-                                                    onClick={this.deselectLandmark.bind(
-                                                        this,
-                                                        item.name
-                                                    )}>
+                                                    className={
+                                                        'text-blue' +
+                                                        (this.state.controls
+                                                            .select_by_name
+                                                            ? ' landmark-list-item'
+                                                            : '')
+                                                    }
+                                                    onClick={
+                                                        this.state.controls
+                                                            .select_by_name
+                                                            ? this.deselectLandmark.bind(
+                                                                  this,
+                                                                  item.name
+                                                              )
+                                                            : null
+                                                    }>
                                                     {item.name}
                                                     <Tag
                                                         className="count-tag"
@@ -1160,11 +1175,22 @@ class FeedbackArea extends React.Component {
                                         (item, i) => (
                                             <StructuredListRow key={i}>
                                                 <StructuredListCell
-                                                    className="text-silver landmark-list-item"
-                                                    onClick={this.selectLandmark.bind(
-                                                        this,
-                                                        item.name
-                                                    )}>
+                                                    className={
+                                                        'text-silver' +
+                                                        (this.state.controls
+                                                            .select_by_name
+                                                            ? ' landmark-list-item'
+                                                            : '')
+                                                    }
+                                                    onClick={
+                                                        this.state.controls
+                                                            .select_by_name
+                                                            ? this.selectLandmark.bind(
+                                                                  this,
+                                                                  item.name
+                                                              )
+                                                            : null
+                                                    }>
                                                     {item.name}
                                                     <Tag
                                                         className="count-tag"
@@ -1194,6 +1220,19 @@ class FeedbackArea extends React.Component {
                                     interest, with ones currently selected by
                                     you in blue. Click to toggle selection.
                                 </Tile>
+                                {this.state.selected_landmarks.length > 0 && (
+                                    <>
+                                        <br />
+                                        <Button
+                                            kind="tertiary"
+                                            size="sm"
+                                            onClick={this.resetSelections.bind(
+                                                this
+                                            )}>
+                                            Reset
+                                        </Button>
+                                    </>
+                                )}
                             </>
                         )}
 

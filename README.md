@@ -50,6 +50,7 @@ user:~$ conda activate lemming
 ### Use the NL2LTL integration (optional)
 
 First, install `nl2ltl` and `plan4past` with:
+
 ```bash
 (lemming) user:~$ pip install -e ".[nl2ltl]"
 ```
@@ -59,7 +60,8 @@ Then, build the `symk` planner with:
 ```bash
 (lemming) user:~$ ./scripts/build-submodules.sh
 ```
-(Make sure you have `autoconf`, `automake`, `cmake`, `g++`, `libtool`, and 
+
+(Make sure you have `autoconf`, `automake`, `cmake`, `g++`, `libtool`, and
 `make` pre-installed on your system).
 
 In order to use the NL2LTL Integration, don't forget to add your OpenAI API key

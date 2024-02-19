@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 import sys
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from pydantic import BaseModel, field_validator, model_validator
 
 from server.helpers.nl2plan_helper.nl2ltl_helper import LTLFormula, CachedPrompt
@@ -49,6 +49,7 @@ class PlanningTask(BaseModel):
 
 class SelectionInfo(BaseModel):
     selected_first_achiever: str = ""
+    selected_edge: Optional[Tuple[str, str]] = None
     selected_plan_hashes: List[str] = []
 
 

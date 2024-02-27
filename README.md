@@ -34,7 +34,7 @@ To build a Backend image, pip can be configured with `pip.conf` at the project r
 To bring up Lemming service,
 
 ```
-docker-compose --env-file backend.env -f docker-compose.yml up
+docker-compose --env-file ./backend.env -f docker-compose.yml up
 ```
 
 To teardown Lemming service,

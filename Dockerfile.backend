@@ -5,10 +5,11 @@ RUN apt-get update && \
     apt-get install -y cmake autoconf automake g++ libtool make
 
 COPY pip.conf /root/.config/pip/pip.conf
+COPY server /code/server
+COPY scripts /code/scripts
+COPY pyproject.toml /code/pyproject.toml
 
 WORKDIR /code
-
-COPY . /code/.
 
 RUN pip install --no-cache-dir -e .
 RUN pip install --no-cache-dir -e ".[nl2ltl]"

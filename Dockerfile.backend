@@ -13,7 +13,6 @@ WORKDIR /code
 
 RUN pip install --no-cache-dir -e .
 RUN pip install --no-cache-dir -e ".[nl2ltl]"
-RUN ls
 RUN chmod +x scripts/build-submodules.sh
 RUN scripts/build-submodules.sh
 

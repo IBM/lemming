@@ -19,6 +19,37 @@ information they need to deal with during the disambiguation process.
 > the [NL2LTL](https://github.com/IBM/nl2ltl) package was the runners-up for the People's Choice Best System Demonstration
 > Award. Read more about it [here](https://icaps23.icaps-conference.org/demos/papers/692_paper.pdf).
 
+
+## Run Docker Images
+
+Build a front-end image.
+
+```
+user:~$ yarn install
+user:~$ yarn build
+<!-- user:~$ docker build --progress plain -t lemming-front -f Dockerfile_frontend . -->
+```
+
+To build a Backend image, pip can be configured with `pip.conf` at the project root. This is to go around sporadic python index server issues. Your OpenAI API Key (`OPENAI_API_KEY`) should be defined in `docker-compose.yml` to use `NL2LTL` service at the backend
+
+<!-- Build a backend image. Make sure that there is no local cache for cmake or make for symk.
+
+```
+user:~$ docker build --progress plain -t lemming-backend -f Dockerfile_backend .
+``` -->
+To bring up Lemming service,
+
+```
+docker-compose -f docker-compose.yml up
+```
+
+To teardown Lemming service,
+
+```
+docker-compose -f docker-compose.yml down
+```
+
+
 ## Setting up locally
 
 [![Carbon](https://img.shields.io/badge/carbon-v11-black)](https://www.carbondesignsystem.com)

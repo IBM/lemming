@@ -21,7 +21,7 @@ services:
     networks:
       - mynetwork
     environment:
-      - OPENAI_API_KEY=YOUR_OPEN_AI_API_KEY
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
 networks:
   mynetwork:

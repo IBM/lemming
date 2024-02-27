@@ -27,20 +27,14 @@ Build a front-end image.
 ```
 user:~$ yarn install
 user:~$ yarn build
-<!-- user:~$ docker build --progress plain -t lemming-front -f Dockerfile_frontend . -->
 ```
 
-To build a Backend image, pip can be configured with `pip.conf` at the project root. This is to go around sporadic python index server issues. Your OpenAI API Key (`OPENAI_API_KEY`) should be defined in `docker-compose.yml` to use `NL2LTL` service at the backend
+To build a Backend image, pip can be configured with `pip.conf` at the project root. This is to go around sporadic python index server issues. Your OpenAI API Key (`OPENAI_API_KEY`) should be defined in `backend.env` to use `NL2LTL` service at the backend. For security, `backend.env` should be removed after the deployment.
 
-<!-- Build a backend image. Make sure that there is no local cache for cmake or make for symk.
-
-```
-user:~$ docker build --progress plain -t lemming-backend -f Dockerfile_backend .
-``` -->
 To bring up Lemming service,
 
 ```
-docker-compose -f docker-compose.yml up
+docker-compose --env-file backend.env -f docker-compose.yml up
 ```
 
 To teardown Lemming service,

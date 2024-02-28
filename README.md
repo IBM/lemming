@@ -22,11 +22,16 @@ information they need to deal with during the disambiguation process.
 
 ## Run Docker Images
 
-Build a front-end image.
+Pull down the repo
 
 ```
 user:~$ git clone git@github.com:IBM/lemming.git --recursive
 user:~$ cd lemming
+```
+
+Build a front-end image.
+
+```
 user:~$ yarn install
 user:~$ yarn build
 ```

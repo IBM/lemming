@@ -22,7 +22,7 @@ information they need to deal with during the disambiguation process.
 
 ## Run Docker Images
 
-Pull down the repo
+Pull down the repository.
 
 ```
 user:~$ git clone git@github.com:IBM/lemming.git --recursive

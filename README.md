@@ -25,6 +25,8 @@ information they need to deal with during the disambiguation process.
 Build a front-end image.
 
 ```
+user:~$ git clone git@github.com:IBM/lemming.git --recursive
+user:~$ cd lemming
 user:~$ yarn install
 user:~$ yarn build
 ```

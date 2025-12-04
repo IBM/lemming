@@ -1,3 +1,5 @@
+> :warning: This repository is no longer maintained. All future updates will go to https://github.com/TathagataChakraborti/lemming
+
 # Lemming
 
 [![IBM](https://img.shields.io/badge/IBM%20Research-AI-red)](https://research.ibm.com)
